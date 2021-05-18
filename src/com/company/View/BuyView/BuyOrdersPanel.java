@@ -1,5 +1,7 @@
 package com.company.View.BuyView;
 
+import com.company.View.OrderTablePanel;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -33,33 +35,16 @@ public class BuyOrdersPanel extends JPanel {
         constraints.gridy = 0;
         add(pastOrdersButton, constraints);
 
-        Label activeBidsLabel = new Label("Active Bids");
+        OrderTablePanel tablePanel = new OrderTablePanel("Active Bids", mockData, columnNames);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.gridx = 0;
         constraints.gridwidth = 2;
-        constraints.gridy = 1;
-        add(activeBidsLabel, constraints);
-
-        // Create Active Bids Table
-        JTable activeBidsTable = new JTable(mockData, columnNames);
-        JScrollPane scrollPane = new JScrollPane(activeBidsTable);
-        activeBidsTable.setFillsViewportHeight(true);
-
-        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1;
         constraints.gridx = 0;
-        constraints.gridwidth = 2;
-        constraints.gridy = 2;
-        add(activeBidsTable.getTableHeader(), constraints);
-
-//        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.fill = GridBagConstraints.BOTH;
-        constraints.gridx = 0;
-        constraints.gridwidth = 2;
-        constraints.gridy = 3;
-        constraints.gridheight = 3;
         constraints.weighty = 1.0;   //request any extra vertical space
-        constraints.anchor = GridBagConstraints.PAGE_START; //bottom of space
-        add(activeBidsTable, constraints);
+        constraints.gridy = 1;
+        add(tablePanel, constraints);
+
+
 
     }
 
