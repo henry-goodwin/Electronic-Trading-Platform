@@ -11,23 +11,23 @@ import java.util.TreeSet;
 
 public class JDBCPersonsDataSource implements PersonsDataSource {
 
-    public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `Person` (\n" +
+    public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `Persons` (\n" +
             "  `personID` int(11) NOT NULL AUTO_INCREMENT,\n" +
             "  `firstName` varchar(45) NOT NULL,\n" +
             "  `lastName` varchar(45) NOT NULL,\n" +
             "  PRIMARY KEY (`personID`)\n" +
             ");\n";
 
-    private static final String INSERT_PERSON = "INSERT INTO `cab302`.`Person`\n" +
+    private static final String INSERT_PERSON = "INSERT INTO `cab302`.`Persons`\n" +
             "(`firstName`,\n" +
             "`lastName`)\n" +
             "VALUES\n" +
             "(?,\n" +
             "?);";
 
-    private static final String GET_PERSONID = "SELECT `Person`.`personID` FROM `cab302`.`Person`;";
+    private static final String GET_PERSONID = "SELECT `Person`.`personID` FROM `cab302`.`Persons`;";
 
-    private static final String GET_PERSON = "SELECT * FROM `cab302`.`Person` WHERE personID=?;";
+    private static final String GET_PERSON = "SELECT * FROM `cab302`.`Persons` WHERE personID=?;";
 
     private Connection connection;
 
