@@ -1,6 +1,6 @@
-package com.company.View.BuyView;
+package com.company.GUI.BuyGUI;
 
-import com.company.View.OrderTablePanel;
+import com.company.GUI.OrderTablePanel;
 
 import javax.swing.*;
 import java.awt.*;
