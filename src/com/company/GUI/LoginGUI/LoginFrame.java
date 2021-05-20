@@ -46,7 +46,6 @@ public class LoginFrame extends JFrame {
         add(loginPanel, BorderLayout.CENTER);
 
         loginButton.addActionListener(e -> login());
-
         setupLayout();
         setSize(200,200);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -64,7 +63,21 @@ public class LoginFrame extends JFrame {
 
         // Reset the password
         passwordField.setText("");
+
         User user = usersData.get(username);
+
+        if (user.getPasswordHash().equals(hashPassword)){
+            //Login the user
+
+            // Check if user is admin
+            if (user.getAccountType() == "admin") {
+                // Present Admin Screen
+            } else if (user.getAccountType() == "standard") {
+                // Present Standard Screen
+            }
+        }
+
+
         // Login and open GUI
     }
 

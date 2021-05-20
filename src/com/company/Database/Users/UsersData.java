@@ -69,11 +69,12 @@ public class UsersData {
      * Retrieves Users details from the model.
      *
      * @param key the username to retrieve.
-     * @return the User object related to the userID.
+     * @return the User object related to the username.
      */
     public User get(Object key) {
         return usersData.getUser((String) key);
     }
+
 
     /**
      * Accessor for the list model.

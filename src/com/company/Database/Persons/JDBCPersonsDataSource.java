@@ -43,7 +43,6 @@ public class JDBCPersonsDataSource implements PersonsDataSource {
         try {
             Statement statement = connection.createStatement();
             statement.execute(CREATE_TABLE);
-            /* BEGIN MISSING CODE */
             addPerson = connection.prepareStatement(INSERT_PERSON);
             getPersonList = connection.prepareStatement(GET_PERSONID);
             getPerson = connection.prepareStatement(GET_PERSON);
@@ -75,11 +74,14 @@ public class JDBCPersonsDataSource implements PersonsDataSource {
 
             getPerson.setInt(1,personID);
             resultSet = getPerson.executeQuery();
-            resultSet.next();
 
-            person.setPersonID(resultSet.getInt("personID"));
-            person.setFirstname(resultSet.getString("firstName"));
-            person.setLastname(resultSet.getString("lastName"));
+            if (resultSet.next()) {
+
+                person.setPersonID(resultSet.getInt("personID"));
+                person.setFirstname(resultSet.getString("firstName"));
+                person.setLastname(resultSet.getString("lastName"));
+
+            }
 
         } catch (SQLException exception) {
             exception.printStackTrace();

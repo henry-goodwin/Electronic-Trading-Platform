@@ -5,6 +5,7 @@ import com.company.Database.Persons.JDBCPersonsDataSource;
 import com.company.Database.Persons.PersonsDataSource;
 import com.company.Model.Person;
 import com.company.Model.User;
+import com.company.Utilities.PasswordHasher;
 
 import java.sql.*;
 import java.util.Set;
@@ -12,17 +13,24 @@ import java.util.TreeSet;
 
 public class JDBCUsersDataSource implements UsersDataSource {
 
-    public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `Users` (\n" +
+    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `Users` (\n" +
             "  `userID` int(11) NOT NULL AUTO_INCREMENT,\n" +
             "  `accountType` varchar(45) NOT NULL,\n" +
             "  `personID` int(11) DEFAULT NULL,\n" +
-            "  `username` varchar(45) NOT NULL,\n" +
-            "  `password` varchar(45) NOT NULL,\n" +
+            "  `username` varchar(64) NOT NULL,\n" +
+            "  `password` varchar(64) NOT NULL,\n" +
             "  PRIMARY KEY (`userID`),\n" +
             "  UNIQUE KEY `UserID_UNIQUE` (`userID`),\n" +
             "  UNIQUE KEY `username_UNIQUE` (`username`)\n" +
             ");\n";
 
+    private static final String INSERT_DEFAULT_ADMIN = "INSERT INTO `cab302`.`Users`\n" +
+            "(\n" +
+            "`accountType`,\n" +
+            "`username`,\n" +
+            "`password`)\n" +
+            "VALUES\n" +
+            "('admin', 'admin', ?);";
 
     private static final String INSERT_USER = "INSERT INTO `cab302`.`Users`\n" +
             "(`accountType`,\n" +
@@ -49,6 +57,8 @@ public class JDBCUsersDataSource implements UsersDataSource {
 
     private Connection connection;
 
+    private PreparedStatement addDefaultAdmin;
+
     private PreparedStatement addUser;
 
     private PreparedStatement getUserList;
@@ -69,7 +79,8 @@ public class JDBCUsersDataSource implements UsersDataSource {
         try {
             Statement statement = connection.createStatement();
             statement.execute(CREATE_TABLE);
-            /* BEGIN MISSING CODE */
+
+            addDefaultAdmin = connection.prepareStatement(INSERT_DEFAULT_ADMIN);
             addUser = connection.prepareStatement(INSERT_USER);
             getUsernameList = connection.prepareStatement(GET_USERNAMES);
             getUserList = connection.prepareStatement(GET_USERID);
@@ -78,8 +89,24 @@ public class JDBCUsersDataSource implements UsersDataSource {
             deleteUserFromID = connection.prepareStatement(DELETE_USER_FROM_USERID);
             deleteUserFromUsername = connection.prepareStatement(DELETE_USER_FROM_USERNAME);
 
+            // Check if default admin exists, if it doesn't add to the database
+            addDefaultAdmin();
+
         } catch (SQLException exception) {
             exception.printStackTrace();
+        }
+    }
+
+    private void addDefaultAdmin() {
+        if (getUser("admin") == null) {
+            String hashedDefaultPassword = PasswordHasher.hashString(String.valueOf("root"));
+            try {
+                addDefaultAdmin.setString(1 ,hashedDefaultPassword);
+                addDefaultAdmin.execute();
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+            }
+
         }
     }
 
@@ -153,6 +180,7 @@ public class JDBCUsersDataSource implements UsersDataSource {
         } catch (SQLException exception) {
             // Show Failed Alert
 //            exception.printStackTrace();
+            return null;
         }
 
         return user;
