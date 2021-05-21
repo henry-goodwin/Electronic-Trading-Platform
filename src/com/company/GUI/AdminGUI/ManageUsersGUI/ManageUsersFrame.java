@@ -52,8 +52,6 @@ public class ManageUsersFrame extends JFrame {
         new NewUserGUI(new UsersData(), new PersonsData());
     }
 
-    private void newPersonFrame() {
-
-    }
+    private void newPersonFrame() { new NewPersonGUI(new PersonsData()); }
 
 }

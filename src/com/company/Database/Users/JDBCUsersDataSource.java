@@ -15,10 +15,10 @@ public class JDBCUsersDataSource implements UsersDataSource {
 
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `Users` (\n" +
             "  `userID` int(11) NOT NULL AUTO_INCREMENT,\n" +
-            "  `accountType` varchar(45) NOT NULL,\n" +
+            "  `accountType` varchar(255) NOT NULL,\n" +
             "  `personID` int(11) DEFAULT NULL,\n" +
-            "  `username` varchar(64) NOT NULL,\n" +
-            "  `password` varchar(64) NOT NULL,\n" +
+            "  `username` varchar(255) NOT NULL,\n" +
+            "  `password` varchar(255) NOT NULL,\n" +
             "  PRIMARY KEY (`userID`),\n" +
             "  UNIQUE KEY `UserID_UNIQUE` (`userID`),\n" +
             "  UNIQUE KEY `username_UNIQUE` (`username`)\n" +
@@ -103,7 +103,8 @@ public class JDBCUsersDataSource implements UsersDataSource {
     }
 
     private void addDefaultAdmin() {
-        if (getUser("admin") == null) {
+
+        if (checkUsernameAvailability("admin")) {
             String hashedDefaultPassword = PasswordHasher.hashString(String.valueOf("root"));
             try {
                 addDefaultAdmin.setString(1 ,hashedDefaultPassword);

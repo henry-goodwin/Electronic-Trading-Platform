@@ -14,8 +14,8 @@ public class JDBCPersonsDataSource implements PersonsDataSource {
 
     public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `Persons` (\n" +
             "  `personID` int(11) NOT NULL AUTO_INCREMENT,\n" +
-            "  `firstName` varchar(45) NOT NULL,\n" +
-            "  `lastName` varchar(45) NOT NULL,\n" +
+            "  `firstName` varchar(255) NOT NULL,\n" +
+            "  `lastName` varchar(255) NOT NULL,\n" +
             "  PRIMARY KEY (`personID`)\n" +
             ");\n";
 

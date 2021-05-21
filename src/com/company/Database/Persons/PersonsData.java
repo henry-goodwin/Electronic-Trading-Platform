@@ -50,4 +50,14 @@ public class PersonsData {
      */
     public ListModel<Person> getPersonsModel() { return  personDefaultListModel; }
 
+
+    /**
+     * Adds a Person to the database.
+     *
+     * @param person Person to add to the database.
+     */
+    public void addUser(Person person) {
+       personsDataSource.addPerson(person);
+    }
+
 }

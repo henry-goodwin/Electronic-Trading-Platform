@@ -104,8 +104,6 @@ public class NewUserGUI extends JFrame {
                 confirmPasswordField.getPassword().length == 0 || identityList.isSelectionEmpty()) {
             JOptionPane.showMessageDialog(getContentPane(), "Error: Please ensure all fields are valid");
         } else {
-            //
-
 
             // Perform Checks on passwords
             String hashedPassword = PasswordHasher.hashString(String.valueOf(passwordField.getPassword()));
