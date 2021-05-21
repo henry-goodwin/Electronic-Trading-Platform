@@ -1,6 +1,8 @@
 package com.company.GUI.AdminGUI;
 
+import com.company.Database.OrganisationUnit.OrganisationUnitData;
 import com.company.Database.Users.UsersData;
+import com.company.GUI.AdminGUI.ManageOrganisationUnitGUI.ManageOrgUnitsFrame;
 import com.company.GUI.AdminGUI.ManageUsersGUI.ManageUsersFrame;
 import com.company.GUI.LoginGUI.LoginFrame;
 
@@ -54,7 +56,7 @@ public class AdminFrame extends JFrame {
     }
 
     private void manageOrg() {
-
+        new ManageOrgUnitsFrame(new OrganisationUnitData());
     }
 
     private void manageUsers() {

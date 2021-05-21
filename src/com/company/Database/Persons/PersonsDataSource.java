@@ -9,7 +9,7 @@ import java.util.TreeMap;
 public interface PersonsDataSource {
 
     /**
-     * Adds a User to the datebase, if they are not already in the datebase
+     * Adds a User to the data, if they are not already in the database
      *
      * @param person Person to add
      */
@@ -31,13 +31,11 @@ public interface PersonsDataSource {
     void close();
 
     /**
-     * Retrieves a set of personIDs from the data source that are used in
+     * Retrieves a set of persons from the data source that are used in
      * the database.
      *
      * @return set of personIDs.
      */
-    Set<Integer> personIDSet();
-
     Set<Person> personsSet();
 
 }

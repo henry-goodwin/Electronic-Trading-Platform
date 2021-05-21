@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Person implements Comparable<Person>, Serializable {
 
-    private int personID;
+    private Integer personID;
     private String firstname;
     private String lastname;
 

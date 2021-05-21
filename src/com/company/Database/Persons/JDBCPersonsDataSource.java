@@ -12,18 +12,18 @@ import java.util.TreeSet;
 
 public class JDBCPersonsDataSource implements PersonsDataSource {
 
-    public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `Persons` (\n" +
-            "  `personID` int(11) NOT NULL AUTO_INCREMENT,\n" +
-            "  `firstName` varchar(255) NOT NULL,\n" +
-            "  `lastName` varchar(255) NOT NULL,\n" +
-            "  PRIMARY KEY (`personID`)\n" +
-            ");\n";
+    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `Persons` (" +
+            "  `personID` int(11) NOT NULL AUTO_INCREMENT," +
+            "  `firstName` varchar(255) NOT NULL," +
+            "  `lastName` varchar(255) NOT NULL," +
+            "  PRIMARY KEY (`personID`)" +
+            ");";
 
-    private static final String INSERT_PERSON = "INSERT INTO `cab302`.`Persons`\n" +
-            "(`firstName`,\n" +
-            "`lastName`)\n" +
-            "VALUES\n" +
-            "(?,\n" +
+    private static final String INSERT_PERSON = "INSERT INTO `cab302`.`Persons`" +
+            "(`firstName`," +
+            "`lastName`)" +
+            "VALUES" +
+            "(?," +
             "?);";
 
     private static final String GET_PERSONS = "SELECT * FROM `cab302`.`Persons`;";
@@ -106,26 +106,6 @@ public class JDBCPersonsDataSource implements PersonsDataSource {
     }
 
     @Override
-    public Set<Integer> personIDSet() {
-        Set<Integer> personIDs = new TreeSet<Integer>();
-        ResultSet resultSet = null;
-
-        try {
-            resultSet = getPersonList.executeQuery();
-
-            while (resultSet.next()) {
-                personIDs.add(resultSet.getInt("personID"));
-            }
-
-        } catch (SQLException exception) {
-            // Failed
-            exception.printStackTrace();
-        }
-
-        return personIDs;
-    }
-
-    @Override
     public Set<Person> personsSet() {
         Set<Person> persons = new TreeSet<Person>();
         ResultSet resultSet = null;
@@ -134,11 +114,7 @@ public class JDBCPersonsDataSource implements PersonsDataSource {
             resultSet = getPersons.executeQuery();
 
             while (resultSet.next()) {
-                Person person = new Person();
-                person.setPersonID(resultSet.getInt("personID"));
-                person.setFirstname(resultSet.getString("firstName"));
-                person.setLastname(resultSet.getString("lastName"));
-
+                Person person = new Person(resultSet.getInt("personID"), resultSet.getString("firstName"), resultSet.getString("lastName"));
                 persons.add(person);
             }
 
