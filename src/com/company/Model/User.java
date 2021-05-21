@@ -1,6 +1,8 @@
 package com.company.Model;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Comparable<User>, Serializable {
 
     private Integer userID;
     private String accountType;
@@ -20,6 +22,20 @@ public class User {
      */
     public User(Integer employeeID, String accountType, Person person, String username, String passwordHash) {
         this.userID = employeeID;
+        this.accountType= accountType;
+        this.person = person;
+        this.username= username;
+        this.passwordHash = passwordHash;
+    }
+
+    /**
+     * Constructor to set values for the Person's details.
+     * @param accountType
+     * @param person
+     * @param username
+     * @param passwordHash
+     */
+    public User(String accountType, Person person, String username, String passwordHash) {
         this.accountType= accountType;
         this.person = person;
         this.username= username;
@@ -76,4 +92,9 @@ public class User {
      */
     public void setPasswordHash(String passwordHash) {this.passwordHash = passwordHash;}
 
+
+    @Override
+    public int compareTo(User other) {
+        return this.username.compareTo(other.username);
+    }
 }

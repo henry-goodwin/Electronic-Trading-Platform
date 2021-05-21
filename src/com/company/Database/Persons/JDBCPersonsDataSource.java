@@ -7,6 +7,7 @@ import com.company.Model.User;
 
 import java.sql.*;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class JDBCPersonsDataSource implements PersonsDataSource {
@@ -25,7 +26,9 @@ public class JDBCPersonsDataSource implements PersonsDataSource {
             "(?,\n" +
             "?);";
 
-    private static final String GET_PERSONID = "SELECT `Person`.`personID` FROM `cab302`.`Persons`;";
+    private static final String GET_PERSONS = "SELECT * FROM `cab302`.`Persons`;";
+
+    private static final String GET_PERSONID = "SELECT `personID` FROM `cab302`.`Persons`;";
 
     private static final String GET_PERSON = "SELECT * FROM `cab302`.`Persons` WHERE personID=?;";
 
@@ -37,12 +40,15 @@ public class JDBCPersonsDataSource implements PersonsDataSource {
 
     private PreparedStatement getPerson;
 
+    private PreparedStatement getPersons;
+
     public JDBCPersonsDataSource() {
         connection = DBConnector.getInstance();
 
         try {
             Statement statement = connection.createStatement();
             statement.execute(CREATE_TABLE);
+            getPersons = connection.prepareStatement(GET_PERSONS);
             addPerson = connection.prepareStatement(INSERT_PERSON);
             getPersonList = connection.prepareStatement(GET_PERSONID);
             getPerson = connection.prepareStatement(GET_PERSON);
@@ -112,9 +118,35 @@ public class JDBCPersonsDataSource implements PersonsDataSource {
             }
 
         } catch (SQLException exception) {
+            // Failed
             exception.printStackTrace();
         }
 
         return personIDs;
+    }
+
+    @Override
+    public Set<Person> personsSet() {
+        Set<Person> persons = new TreeSet<Person>();
+        ResultSet resultSet = null;
+
+        try {
+            resultSet = getPersons.executeQuery();
+
+            while (resultSet.next()) {
+                Person person = new Person();
+                person.setPersonID(resultSet.getInt("personID"));
+                person.setFirstname(resultSet.getString("firstName"));
+                person.setLastname(resultSet.getString("lastName"));
+
+                persons.add(person);
+            }
+
+        } catch (SQLException exception) {
+            // Failed
+            exception.printStackTrace();
+        }
+
+        return persons;
     }
 }

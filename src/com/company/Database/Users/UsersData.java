@@ -1,15 +1,16 @@
 package com.company.Database.Users;
 
+import com.company.Model.Person;
 import com.company.Model.User;
 
 import javax.swing.*;
 
 public class UsersData {
 
-    DefaultListModel listModel;
-    DefaultListModel usernameListModel;
+    private DefaultListModel<User> listModel;
+    private DefaultListModel usernameListModel;
 
-    UsersDataSource usersData;
+    private UsersDataSource usersData;
 
     /**
      * Constructor initializes the list model that holds userID as Integers and
@@ -18,17 +19,13 @@ public class UsersData {
      *
      */
     public UsersData() {
-        listModel = new DefaultListModel();
+        listModel = new DefaultListModel<User>();
         usernameListModel = new DefaultListModel();
 
         usersData = new JDBCUsersDataSource();
 
-        for (Integer userIDs : usersData.userIDSet()) {
-            listModel.addElement(userIDs);
-        }
-
-        for (String username: usersData.usernameSet()) {
-            usernameListModel.addElement(username);
+        for (User user : usersData.userSet()) {
+            listModel.addElement(user);
         }
     }
 
@@ -58,7 +55,7 @@ public class UsersData {
     }
 
     /**
-     * Saves the data in the address book using a persistence
+     * Saves the data in the database using a persistence
      * mechanism.
      */
     public void persist() {
@@ -74,6 +71,14 @@ public class UsersData {
     public User get(Object key) {
         return usersData.getUser((String) key);
     }
+
+    /**
+     * Checks the availability of a username.
+     *
+     * @param username the username to check.
+     * @return the boolean of username availability.
+     */
+    public Boolean checkUsernameAvailability(String username) { return usersData.checkUsernameAvailability(username); }
 
 
     /**

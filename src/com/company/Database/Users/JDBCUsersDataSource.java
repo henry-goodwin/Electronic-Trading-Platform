@@ -30,7 +30,7 @@ public class JDBCUsersDataSource implements UsersDataSource {
             "`username`,\n" +
             "`password`)\n" +
             "VALUES\n" +
-            "('admin', 'admin', ?);";
+            "('Admin', 'admin', ?);";
 
     private static final String INSERT_USER = "INSERT INTO `cab302`.`Users`\n" +
             "(`accountType`,\n" +
@@ -45,7 +45,7 @@ public class JDBCUsersDataSource implements UsersDataSource {
 
     private static final String GET_USERID = "SELECT `userID` FROM `cab302`.`Users`;";
 
-    private static final String GET_USERNAMES = "SELECT `username` FROM `cab302`.`Users`;";
+    private static final String GET_USERS = "SELECT * FROM `cab302`.`Users`;";
 
     private static final String GET_USER_FROM_USERID = "SELECT * FROM `cab302`.`Users` WHERE userID=?;";
 
@@ -55,15 +55,17 @@ public class JDBCUsersDataSource implements UsersDataSource {
 
     private static final String DELETE_USER_FROM_USERNAME = "DELETE FROM `cab302`.`Users` WHERE username=?";
 
+    private static final String GET_USERNAME_COUNT = "SELECT COUNT(*) FROM Users WHERE username=?;";
+
     private Connection connection;
 
     private PreparedStatement addDefaultAdmin;
 
     private PreparedStatement addUser;
 
-    private PreparedStatement getUserList;
+    private PreparedStatement getUsersList;
 
-    private PreparedStatement getUsernameList;
+    private PreparedStatement getUserIDList;
 
     private PreparedStatement getUserFromID;
 
@@ -72,6 +74,8 @@ public class JDBCUsersDataSource implements UsersDataSource {
     private PreparedStatement deleteUserFromID;
 
     private PreparedStatement deleteUserFromUsername;
+
+    private PreparedStatement getUsernameCount;
 
     public JDBCUsersDataSource() {
         connection = DBConnector.getInstance();
@@ -82,12 +86,13 @@ public class JDBCUsersDataSource implements UsersDataSource {
 
             addDefaultAdmin = connection.prepareStatement(INSERT_DEFAULT_ADMIN);
             addUser = connection.prepareStatement(INSERT_USER);
-            getUsernameList = connection.prepareStatement(GET_USERNAMES);
-            getUserList = connection.prepareStatement(GET_USERID);
+            getUsersList = connection.prepareStatement(GET_USERS);
+            getUserIDList = connection.prepareStatement(GET_USERID);
             getUserFromID = connection.prepareStatement(GET_USER_FROM_USERID);
             getUserFromUsername = connection.prepareStatement(GET_USER_FROM_USERNAME);
             deleteUserFromID = connection.prepareStatement(DELETE_USER_FROM_USERID);
             deleteUserFromUsername = connection.prepareStatement(DELETE_USER_FROM_USERNAME);
+            getUsernameCount = connection.prepareStatement(GET_USERNAME_COUNT);
 
             // Check if default admin exists, if it doesn't add to the database
             addDefaultAdmin();
@@ -135,21 +140,23 @@ public class JDBCUsersDataSource implements UsersDataSource {
 
             getUserFromID.setInt(1,userID);
             resultSet = getUserFromID.executeQuery();
-            resultSet.next();
-            user.setEmployeeID(resultSet.getInt("userID"));
-            user.setAccountType(resultSet.getString("accountType"));
 
-            // Find and Set Persons Data
-            PersonsDataSource personsData = new JDBCPersonsDataSource();
-            Person person = personsData.getPerson(resultSet.getInt("personID"));
-            user.setPerson(person);
+            if (resultSet.next()) {
+                user.setEmployeeID(resultSet.getInt("userID"));
+                user.setAccountType(resultSet.getString("accountType"));
 
-            user.setUsername(resultSet.getString("username"));
-            user.setPasswordHash(resultSet.getString("password"));
+                // Find and Set Persons Data
+                PersonsDataSource personsData = new JDBCPersonsDataSource();
+                Person person = personsData.getPerson(resultSet.getInt("personID"));
+                user.setPerson(person);
 
+                user.setUsername(resultSet.getString("username"));
+                user.setPasswordHash(resultSet.getString("password"));
+            }
 
         } catch (SQLException exception) {
             exception.printStackTrace();
+            return null;
         }
 
         return user;
@@ -164,18 +171,19 @@ public class JDBCUsersDataSource implements UsersDataSource {
 
             getUserFromUsername.setString(1, username);
             resultSet = getUserFromUsername.executeQuery();
-            resultSet.next();
-            user.setEmployeeID(resultSet.getInt("userID"));
-            user.setAccountType(resultSet.getString("accountType"));
 
-            // Find and Set Persons Data
-            PersonsDataSource personsData = new JDBCPersonsDataSource();
-            Person person = personsData.getPerson(resultSet.getInt("personID"));
-            user.setPerson(person);
+            if (resultSet.next()) {
+                user.setEmployeeID(resultSet.getInt("userID"));
+                user.setAccountType(resultSet.getString("accountType"));
 
-            user.setUsername(resultSet.getString("username"));
-            user.setPasswordHash(resultSet.getString("password"));
+                // Find and Set Persons Data
+                PersonsDataSource personsData = new JDBCPersonsDataSource();
+                Person person = personsData.getPerson(resultSet.getInt("personID"));
+                user.setPerson(person);
 
+                user.setUsername(resultSet.getString("username"));
+                user.setPasswordHash(resultSet.getString("password"));
+            }
 
         } catch (SQLException exception) {
             // Show Failed Alert
@@ -185,6 +193,29 @@ public class JDBCUsersDataSource implements UsersDataSource {
 
         return user;
     }
+
+    @Override
+    public Boolean checkUsernameAvailability(String username) {
+        Integer usernameCount = 0 ;
+        ResultSet resultSet = null;
+
+        try {
+            getUsernameCount.setString(1, username);
+            resultSet = getUsernameCount.executeQuery();
+
+            if (resultSet.next()) {
+                usernameCount = resultSet.getInt("COUNT(*)");
+
+            }
+
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+            return false;
+        }
+
+        return (usernameCount <= 0);
+    }
+
 
     @Override
     public void deleteUser(Integer userID) {
@@ -221,7 +252,7 @@ public class JDBCUsersDataSource implements UsersDataSource {
         ResultSet resultSet = null;
 
         try {
-            resultSet = getUserList.executeQuery();
+            resultSet = getUserIDList.executeQuery();
 
             while (resultSet.next()) {
                 userIDs.add(resultSet.getInt("userID"));
@@ -236,21 +267,30 @@ public class JDBCUsersDataSource implements UsersDataSource {
     }
 
     @Override
-    public Set<String> usernameSet() {
-        Set<String> usernames = new TreeSet<String>();
+    public Set<User> userSet() {
+        Set<User> users = new TreeSet<User>();
         ResultSet resultSet = null;
 
         try {
-            resultSet = getUsernameList.executeQuery();
+            resultSet = getUsersList.executeQuery();
 
             while (resultSet.next()) {
-                usernames.add(resultSet.getString("username"));
+                User user = new User();
+                user.setEmployeeID(resultSet.getInt("userID"));
+                user.setUsername(resultSet.getString("username"));
+                user.setPasswordHash(resultSet.getString("password"));
+                user.setAccountType(resultSet.getString("accountType"));
+
+                // Find and Set Persons Data
+                PersonsDataSource personsData = new JDBCPersonsDataSource();
+                Person person = personsData.getPerson(resultSet.getInt("personID"));
+                user.setPerson(person);
             }
 
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
 
-        return usernames;
+        return users;
     }
 }

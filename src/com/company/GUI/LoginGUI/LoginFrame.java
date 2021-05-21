@@ -2,9 +2,11 @@ package com.company.GUI.LoginGUI;
 
 import com.company.Database.DBConnector;
 import com.company.Database.Users.UsersData;
+import com.company.GUI.AdminGUI.AdminFrame;
 import com.company.Model.User;
 import com.company.Utilities.PasswordHasher;
 
+import javax.swing.JOptionPane;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -47,7 +49,7 @@ public class LoginFrame extends JFrame {
 
         loginButton.addActionListener(e -> login());
         setupLayout();
-        setSize(200,200);
+        setSize(500,500);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);
         setVisible(true);
@@ -64,19 +66,29 @@ public class LoginFrame extends JFrame {
         // Reset the password
         passwordField.setText("");
 
-        User user = usersData.get(username);
+        if (usersData.get(username) != null) {
 
-        if (user.getPasswordHash().equals(hashPassword)){
-            //Login the user
+            User user = usersData.get(username);
 
-            // Check if user is admin
-            if (user.getAccountType() == "admin") {
-                // Present Admin Screen
-            } else if (user.getAccountType() == "standard") {
-                // Present Standard Screen
+            if (user.getPasswordHash().equals(hashPassword)){
+                //Login the user
+
+                // Check if user is admin
+                if (user.getAccountType().equals("Admin")) {
+                    // Present Admin Screen
+                    new AdminFrame();
+                    LoginFrame.this.dispose();
+
+                } else if (user.getAccountType().equals("Standard")) {
+                    // Present Standard Screen
+                }
+            } else {
+                JOptionPane.showMessageDialog(getContentPane(), "Login Failed: Invalid Username/Password");
+
             }
+        } else {
+            JOptionPane.showMessageDialog(getContentPane(), "Login Failed: Invalid Username/Password");
         }
-
 
         // Login and open GUI
     }

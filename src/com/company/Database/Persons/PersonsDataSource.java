@@ -4,6 +4,7 @@ import com.company.Model.Person;
 import com.company.Model.User;
 
 import java.util.Set;
+import java.util.TreeMap;
 
 public interface PersonsDataSource {
 
@@ -36,5 +37,7 @@ public interface PersonsDataSource {
      * @return set of personIDs.
      */
     Set<Integer> personIDSet();
+
+    Set<Person> personsSet();
 
 }

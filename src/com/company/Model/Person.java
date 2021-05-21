@@ -1,6 +1,8 @@
 package com.company.Model;
 
-public class Person {
+import java.io.Serializable;
+
+public class Person implements Comparable<Person>, Serializable {
 
     private int personID;
     private String firstname;
@@ -19,6 +21,18 @@ public class Person {
         this.firstname= firstname;
         this.lastname = lastname;
     }
+
+    /**
+     * Constructor to set values for the Person's details.
+     * @param firstname
+     * @param lastname
+     */
+    public Person(String firstname, String lastname) {
+        this.firstname= firstname;
+        this.lastname = lastname;
+    }
+
+    public String toString() { return (this.firstname + " " + this.lastname); }
 
     /**
      * @return the personID
@@ -49,4 +63,21 @@ public class Person {
      * @param lastname the lastname to set
      */
     public void setLastname(String lastname) {this.lastname = lastname;}
+
+    /**
+     * Compares this object with the specified object for order. Returns a
+     * negative integer, zero, or a positive integer as this object is less than,
+     * equal to, or greater than the specified object.
+     *
+     * @param other The other Person object to compare against.
+     * @return a negative integer, zero, or a positive integer as this object is
+     *         less than, equal to, or greater than the specified object.
+     * @throws ClassCastException if the specified object's type prevents it from
+     *            being compared to this object.
+     */
+
+    @Override
+    public int compareTo(Person other) {
+        return this.lastname.compareTo(other.lastname);
+    }
 }

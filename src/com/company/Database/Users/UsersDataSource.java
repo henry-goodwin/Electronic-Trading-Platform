@@ -21,6 +21,15 @@ public interface UsersDataSource {
      */
     User getUser(Integer userID);
 
+    /**
+     * Checks if a username is avaliable based on the username passed in
+     *
+     *
+     * @param username The username as a String to search for.
+     * @return boolean value of username availability
+     */
+    Boolean checkUsernameAvailability(String username);
+
 
     /**
      * Extracts all the details of a User from the database based on the
@@ -65,6 +74,6 @@ public interface UsersDataSource {
      *
      * @return set of usernames.
      */
-    Set<String> usernameSet();
+    Set<User> userSet();
 
 }
