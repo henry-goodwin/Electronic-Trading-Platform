@@ -3,6 +3,7 @@ package com.company.GUI.AdminGUI.ManageUsersGUI;
 import com.company.Database.Persons.PersonsData;
 import com.company.Database.Users.UsersData;
 import com.company.GUI.AdminGUI.AdminFrame;
+import com.company.NetworkDataSource.PersonsNDS;
 import com.company.NetworkDataSource.UsersNDS;
 
 import javax.swing.*;
@@ -50,9 +51,9 @@ public class ManageUsersFrame extends JFrame {
     }
 
     private void newUserFrame () {
-        new NewUserGUI(new UsersData(new UsersNDS()), new PersonsData());
+        new NewUserGUI(new UsersData(new UsersNDS()), new PersonsData(new PersonsNDS()));
     }
 
-    private void newPersonFrame() { new NewPersonGUI(new PersonsData()); }
+    private void newPersonFrame() { new NewPersonGUI(new PersonsData(new PersonsNDS())); }
 
 }

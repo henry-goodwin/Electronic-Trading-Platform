@@ -5,6 +5,7 @@ import com.company.Database.Users.UsersData;
 import com.company.GUI.AdminGUI.ManageOrganisationUnitGUI.ManageOrgUnitsFrame;
 import com.company.GUI.AdminGUI.ManageUsersGUI.ManageUsersFrame;
 import com.company.GUI.LoginGUI.LoginFrame;
+import com.company.NetworkDataSource.OrganisationUnitNDS;
 import com.company.NetworkDataSource.UsersNDS;
 
 import javax.swing.*;
@@ -57,7 +58,7 @@ public class AdminFrame extends JFrame {
     }
 
     private void manageOrg() {
-        new ManageOrgUnitsFrame(new OrganisationUnitData());
+        new ManageOrgUnitsFrame(new OrganisationUnitData(new OrganisationUnitNDS()));
     }
 
     private void manageUsers() {

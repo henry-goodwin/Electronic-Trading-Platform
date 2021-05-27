@@ -1,15 +1,20 @@
 package com.company.Server;
 
-import com.company.Common.Command;
+import com.company.Database.OrganisationUnit.JDBCOrganisationUnitDataSource;
+import com.company.Database.OrganisationUnit.OrganisationUnitDataSource;
+import com.company.Model.OrganisationUnit;
+import com.company.Utilities.Command;
+import com.company.Database.Persons.JDBCPersonsDataSource;
+import com.company.Database.Persons.PersonsDataSource;
 import com.company.Database.Users.JDBCUsersDataSource;
 import com.company.Database.Users.UsersDataSource;
+import com.company.Model.Person;
 import com.company.Model.User;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NetworkServer {
@@ -32,6 +37,8 @@ public class NetworkServer {
      */
 //    private AddressBookDataSource database;
     private UsersDataSource usersDatabase;
+    private PersonsDataSource personsDatabase;
+    private OrganisationUnitDataSource organisationUnitDatabase;
 
     /**
      * Handles the connection received from ServerSocket.
@@ -150,6 +157,56 @@ public class NetworkServer {
                 outputStream.flush();
             }
             break;
+
+            case ADD_PERSON: {
+                final Person person = (Person) inputStream.readObject();
+                synchronized (personsDatabase) {
+                    personsDatabase.addPerson(person);
+                }
+            }
+            break;
+
+            case GET_PERSON: {
+                final Integer personID = (Integer) inputStream.readObject();
+                synchronized (personsDatabase) {
+                    final Person person = personsDatabase.getPerson(personID);
+                    outputStream.writeObject(person);
+                }
+                outputStream.flush();
+            }
+            break;
+            case GET_PERSON_SET: {
+                synchronized (personsDatabase) {
+                    outputStream.writeObject(personsDatabase.personsSet());
+                }
+                outputStream.flush();
+            }
+            break;
+
+            case ADD_ORGANISATION_UNIT: {
+                final OrganisationUnit organisationUnit = (OrganisationUnit) inputStream.readObject();
+                synchronized (organisationUnitDatabase) {
+                    organisationUnitDatabase.addOrganisationUnit(organisationUnit);
+                }
+            }
+            break;
+
+            case GET_ORGANISATION_UNIT: {
+                final Integer organisationalUnitID = (Integer) inputStream.readObject();
+                synchronized (organisationUnitDatabase) {
+                    final OrganisationUnit organisationUnit = organisationUnitDatabase.getOrganisationUnit(organisationalUnitID);
+                    outputStream.writeObject(organisationUnit);
+                }
+                outputStream.flush();
+            }
+
+            case GET_ORGANISATION_UNIT_SET: {
+                synchronized (organisationUnitDatabase) {
+                    outputStream.writeObject(organisationUnitDatabase.organisationUnitSet());
+                }
+                outputStream.flush();
+            }
+            break;
         }
     }
 
@@ -168,6 +225,8 @@ public class NetworkServer {
     public void start() throws IOException {
         // Connect to the database.
         usersDatabase = new JDBCUsersDataSource();
+        personsDatabase = new JDBCPersonsDataSource();
+        organisationUnitDatabase = new JDBCOrganisationUnitDataSource();
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             serverSocket.setSoTimeout(SOCKET_ACCEPT_TIMEOUT);

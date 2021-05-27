@@ -1,5 +1,6 @@
 package com.company.Database.OrganisationUnit;
 
+import com.company.Database.Persons.PersonsDataSource;
 import com.company.Model.OrganisationUnit;
 import com.company.Model.Person;
 
@@ -10,8 +11,8 @@ public class OrganisationUnitData {
     private DefaultListModel<OrganisationUnit> organisationUnitDefaultListModel;
     private OrganisationUnitDataSource organisationUnitDataSource;
 
-    public OrganisationUnitData() {
-        organisationUnitDataSource = new JDBCOrganisationUnitDataSource();
+    public OrganisationUnitData(OrganisationUnitDataSource dataSource) {
+        organisationUnitDataSource = dataSource;
         organisationUnitDefaultListModel = new DefaultListModel<OrganisationUnit>();
 
         for (OrganisationUnit organisationUnit : organisationUnitDataSource.organisationUnitSet()) {

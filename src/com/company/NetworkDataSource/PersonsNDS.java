@@ -1,8 +1,8 @@
 package com.company.NetworkDataSource;
 
 import com.company.Utilities.Command;
-import com.company.Database.Users.UsersDataSource;
-import com.company.Model.User;
+import com.company.Database.Persons.PersonsDataSource;
+import com.company.Model.Person;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UsersNDS implements UsersDataSource {
+public class PersonsNDS implements PersonsDataSource {
 
     private static final String HOSTNAME = "127.0.0.1";
     private static final int PORT = 10000;
@@ -21,8 +21,7 @@ public class UsersNDS implements UsersDataSource {
     private ObjectInputStream inputStream;
 
 
-
-    public UsersNDS() {
+    public PersonsNDS() {
         try {
             // Persist a single connection through the whole lifetime of the application.
             // We will re-use this same connection/socket, rather than repeatedly opening
@@ -41,13 +40,13 @@ public class UsersNDS implements UsersDataSource {
     }
 
     @Override
-    public void addUser(User user) {
+    public void addPerson(Person person) {
         try {
             // tell the server to expect a person's details
-            outputStream.writeObject(Command.ADD_USER);
+            outputStream.writeObject(Command.ADD_PERSON);
 
             // send the actual data
-            outputStream.writeObject(user);
+            outputStream.writeObject(person);
             outputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -55,75 +54,20 @@ public class UsersNDS implements UsersDataSource {
     }
 
     @Override
-    public User getUser(Integer userID) {
+    public Person getPerson(Integer personID) {
         try {
-            outputStream.writeObject(Command.GET_ID_USER);
-            outputStream.writeObject(userID);
+            outputStream.writeObject(Command.GET_PERSON);
+            outputStream.writeObject(personID);
             outputStream.flush();
 
-            User user = (User) inputStream.readObject();
-            return user;
+            Person person = (Person) inputStream.readObject();
+            return person;
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
         return null;
-    }
-
-    @Override
-    public Boolean checkUsernameAvailability(String username) {
-        try {
-            outputStream.writeObject(Command.CHECK_AVAILABILITY);
-            outputStream.writeObject(username);
-            outputStream.flush();
-
-            Boolean availability = (Boolean) inputStream.readObject();
-            return availability;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-
-        return null;
-    }
-
-    @Override
-    public User getUser(String username) {
-        try {
-            outputStream.writeObject(Command.GET_USERNAME_USER);
-            outputStream.writeObject(username);
-            outputStream.flush();
-
-            User user = (User) inputStream.readObject();
-            return user;
-
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    @Override
-    public void deleteUser(Integer userID) {
-        try {
-            outputStream.writeObject(Command.DELETE_USER);
-            outputStream.writeObject(userID);
-            outputStream.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
-
-    @Override
-    public void deleteUser(String username) {
-
     }
 
     @Override
@@ -132,11 +76,11 @@ public class UsersNDS implements UsersDataSource {
     }
 
     @Override
-    public Set<User> userSet() {
+    public Set<Person> personsSet() {
         try {
-            outputStream.writeObject(Command.GET_USER_SET);
+            outputStream.writeObject(Command.GET_PERSON_SET);
             outputStream.flush();
-            return (Set<User>) inputStream.readObject();
+            return (Set<Person>) inputStream.readObject();
         } catch (IOException | ClassNotFoundException | ClassCastException e) {
             e.printStackTrace();
             return new HashSet<>();

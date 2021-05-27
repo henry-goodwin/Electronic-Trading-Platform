@@ -1,5 +1,6 @@
 package com.company.Database.Persons;
 
+import com.company.Database.Users.UsersDataSource;
 import com.company.Model.Person;
 import com.company.Model.User;
 
@@ -13,9 +14,9 @@ public class PersonsData {
     private DefaultListModel<Person> personDefaultListModel;
     private PersonsDataSource personsDataSource;
 
-    public PersonsData() {
+    public PersonsData(PersonsDataSource dataSource) {
 
-        personsDataSource = new JDBCPersonsDataSource();
+        personsDataSource = dataSource;
 
         personDefaultListModel = new DefaultListModel<Person>();
 

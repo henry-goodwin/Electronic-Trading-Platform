@@ -4,6 +4,7 @@ import com.company.Database.OrganisationUnit.OrganisationUnitData;
 import com.company.Database.Persons.PersonsData;
 import com.company.Database.Users.UsersData;
 import com.company.GUI.AdminGUI.ManageUsersGUI.NewUserGUI;
+import com.company.NetworkDataSource.OrganisationUnitNDS;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,6 +46,6 @@ public class ManageOrgUnitsFrame extends JFrame {
     }
 
     private void newOrgUnitFrame () {
-        new NewOrgUnitFrame(new OrganisationUnitData());
+        new NewOrgUnitFrame(new OrganisationUnitData(new OrganisationUnitNDS()));
     }
 }
