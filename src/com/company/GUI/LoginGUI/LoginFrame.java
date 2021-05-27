@@ -3,6 +3,7 @@ package com.company.GUI.LoginGUI;
 import com.company.Database.DBConnector;
 import com.company.Database.Users.UsersData;
 import com.company.GUI.AdminGUI.AdminFrame;
+import com.company.GUI.TradingGUI.AssetsFrame;
 import com.company.Model.User;
 import com.company.Utilities.PasswordHasher;
 
@@ -81,6 +82,8 @@ public class LoginFrame extends JFrame {
 
                 } else if (user.getAccountType().equals("Standard")) {
                     // Present Standard Screen
+                    new AssetsFrame();
+                    LoginFrame.this.dispose();
                 }
             } else {
                 JOptionPane.showMessageDialog(getContentPane(), "Login Failed: Invalid Username/Password");

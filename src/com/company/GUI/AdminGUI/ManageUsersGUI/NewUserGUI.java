@@ -91,7 +91,7 @@ public class NewUserGUI extends JFrame {
         newUserPanel.add(new JLabel("Select users identity"), constraints);
 
         constraints.gridy = 9;
-        newUserPanel.add(identityList, constraints);
+        newUserPanel.add(new JScrollPane(identityList), constraints);
 
         constraints.gridy = 10;
         newUserPanel.add(addNewUserButton, constraints);

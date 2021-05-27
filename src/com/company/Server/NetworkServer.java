@@ -1,7 +1,10 @@
 package com.company.Server;
 
+import com.company.Database.Assets.AssetDataSource;
+import com.company.Database.Assets.JDBCAssetDataSource;
 import com.company.Database.OrganisationUnit.JDBCOrganisationUnitDataSource;
 import com.company.Database.OrganisationUnit.OrganisationUnitDataSource;
+import com.company.Model.Asset;
 import com.company.Model.OrganisationUnit;
 import com.company.Utilities.Command;
 import com.company.Database.Persons.JDBCPersonsDataSource;
@@ -39,6 +42,7 @@ public class NetworkServer {
     private UsersDataSource usersDatabase;
     private PersonsDataSource personsDatabase;
     private OrganisationUnitDataSource organisationUnitDatabase;
+    private AssetDataSource assetDatabase;
 
     /**
      * Handles the connection received from ServerSocket.
@@ -80,6 +84,7 @@ public class NetworkServer {
                 }
             }
         } catch (IOException | ClassCastException | ClassNotFoundException e) {
+            e.printStackTrace();
             System.out.println(String.format("Connection %s closed", socket.toString()));
         }
     }
@@ -110,6 +115,7 @@ public class NetworkServer {
                 }
             }
             break;
+
             case GET_ID_USER: {
                 final Integer userID = (Integer) inputStream.readObject();
                 synchronized (usersDatabase) {
@@ -119,9 +125,9 @@ public class NetworkServer {
                 outputStream.flush();
             }
             break;
+
             case GET_USERNAME_USER: {
                 final String username = (String) inputStream.readObject();
-//                final String username = inputStream.readUTF();
                 synchronized (usersDatabase) {
                     final User user = usersDatabase.getUser(username);
                     outputStream.writeObject(user);
@@ -148,9 +154,6 @@ public class NetworkServer {
             break;
 
             case GET_USER_SET: {
-                // no parameters sent by client
-
-                // send the client back the name set
                 synchronized (usersDatabase) {
                     outputStream.writeObject(usersDatabase.userSet());
                 }
@@ -175,6 +178,7 @@ public class NetworkServer {
                 outputStream.flush();
             }
             break;
+
             case GET_PERSON_SET: {
                 synchronized (personsDatabase) {
                     outputStream.writeObject(personsDatabase.personsSet());
@@ -207,6 +211,41 @@ public class NetworkServer {
                 outputStream.flush();
             }
             break;
+
+            case ADD_ASSET: {
+                final Asset asset = (Asset) inputStream.readObject();
+                synchronized (assetDatabase) {
+                    assetDatabase.addAsset(asset);
+                }
+            }
+            break;
+
+            case GET_ASSET: {
+                final Integer assetID = (Integer) inputStream.readObject();
+                synchronized (assetDatabase) {
+                    final Asset asset = assetDatabase.getAsset(assetID);
+                    outputStream.writeObject(asset);
+                }
+                outputStream.flush();
+            }
+            break;
+
+            case GET_ASSET_SET:{
+                synchronized (assetDatabase) {
+                    outputStream.writeObject(assetDatabase.assetSet());
+                }
+                outputStream.flush();
+            }
+            break;
+
+            case CHECK_NAME:{
+                final String name = (String) inputStream.readObject();
+                synchronized (assetDatabase) {
+                    final Boolean availability = assetDatabase.checkName(name);
+                    outputStream.writeObject(availability);
+                }
+                outputStream.flush();
+            }
         }
     }
 
@@ -227,6 +266,7 @@ public class NetworkServer {
         usersDatabase = new JDBCUsersDataSource();
         personsDatabase = new JDBCPersonsDataSource();
         organisationUnitDatabase = new JDBCOrganisationUnitDataSource();
+        assetDatabase = new JDBCAssetDataSource();
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             serverSocket.setSoTimeout(SOCKET_ACCEPT_TIMEOUT);
