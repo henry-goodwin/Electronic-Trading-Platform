@@ -18,11 +18,11 @@ public class UsersData {
      * application.
      *
      */
-    public UsersData() {
+    public UsersData(UsersDataSource dataSource) {
         listModel = new DefaultListModel<User>();
         usernameListModel = new DefaultListModel();
 
-        usersData = new JDBCUsersDataSource();
+        usersData = dataSource;
 
         for (User user : usersData.userSet()) {
             listModel.addElement(user);

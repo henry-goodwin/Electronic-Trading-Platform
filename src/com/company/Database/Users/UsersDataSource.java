@@ -22,7 +22,7 @@ public interface UsersDataSource {
     User getUser(Integer userID);
 
     /**
-     * Checks if a username is avaliable based on the username passed in
+     * Checks if a username is available based on the username passed in
      *
      *
      * @param username The username as a String to search for.
@@ -59,14 +59,6 @@ public interface UsersDataSource {
      * persisited.
      */
     void close();
-
-    /**
-     * Retrieves a set of userIDs from the data source that are used in
-     * the database.
-     *
-     * @return set of userIDs.
-     */
-    Set<Integer> userIDSet();
 
     /**
      * Retrieves a set of usernames from the data source that are used in

@@ -247,25 +247,6 @@ public class JDBCUsersDataSource implements UsersDataSource {
         }
     }
 
-    @Override
-    public Set<Integer> userIDSet() {
-        Set<Integer> userIDs = new TreeSet<Integer>();
-        ResultSet resultSet = null;
-
-        try {
-            resultSet = getUserIDList.executeQuery();
-
-            while (resultSet.next()) {
-                userIDs.add(resultSet.getInt("userID"));
-            }
-
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-
-        return userIDs;
-
-    }
 
     @Override
     public Set<User> userSet() {

@@ -2,6 +2,7 @@ package com.company;
 
 import com.company.Database.Users.UsersData;
 import com.company.GUI.LoginGUI.LoginFrame;
+import com.company.NetworkDataSource.UsersNDS;
 
 public class Main {
 
@@ -11,7 +12,7 @@ public class Main {
      * event-dispatching thread.
      */
     private static void createAndShowGUI() {
-        new LoginFrame(new UsersData());
+        new LoginFrame(new UsersData(new UsersNDS()));
     }
 
     public static void main(String[] args) {
