@@ -24,7 +24,7 @@ public class JDBCAssetDataSource implements AssetDataSource {
 
     private static final String GET_ASSET = "SELECT * FROM `cab302`.`Assets` WHERE assetID=?;";
 
-    private static final String GET_COUNT = "SELECT COUNT(*) FROM `cab302`.`Assets` WHERE name=?;\n";
+    private static final String GET_COUNT = "SELECT COUNT(*) FROM `cab302`.`Assets` WHERE name=?;";
 
     private Connection connection;
 

@@ -19,5 +19,11 @@ public enum Command {
     ADD_ASSET,
     GET_ASSET,
     GET_ASSET_SET,
-    CHECK_NAME
+    CHECK_NAME,
+    ADD_ORG_ASSET,
+    GET_ORG_ASSET,
+    GET_ORG_ASSET_SET,
+    GET_MY_ORG_ASSET_SET,
+    GET_ORG_ASSET_COUNT,
+    GET_ASSET_LIST
 }

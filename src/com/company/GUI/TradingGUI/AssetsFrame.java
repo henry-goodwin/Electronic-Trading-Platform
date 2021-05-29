@@ -1,8 +1,10 @@
 package com.company.GUI.TradingGUI;
 
 import com.company.Database.Assets.AssetData;
+import com.company.Database.OrgUnitAssets.OrgAssetData;
 import com.company.Database.Users.UsersData;
 import com.company.NetworkDataSource.AssetNDS;
+import com.company.NetworkDataSource.OrgAssetNDS;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,33 +15,32 @@ public class AssetsFrame extends JFrame {
     private JPanel manageAssetsPanel;
 
     private JTable assetsTable;
-    String headers[] = { "Name", "Quantity"};
-    String data[][] = { { "Chandra", "Hyderabad"},
-            { "Srikanth", "Vijayawada"},
-            { "Rajesh", "Banglore"},
-            { "Charan", "Mumbai"},
-            { "Kumar", "Pune"},
-            { "Venu", "Chennai"},
-            { "Gopal", "Vizag"} };
+    private OrgAssetTableModel orgAssetTableModel;
 
     private JButton addButton;
     private JButton editButton;
     private JButton removeButton;
 
+    private OrgAssetData orgAssetData;
 
-    public AssetsFrame() {
+    public AssetsFrame(OrgAssetData orgAssetData) {
         super("Manage Assets");
         setDefaultLookAndFeelDecorated(true);
         setLayout(new BorderLayout());
 
+        this.orgAssetData = orgAssetData;
+
+        orgAssetTableModel = new OrgAssetTableModel();
+        orgAssetTableModel.setData(this.orgAssetData.getAssetList(1));
+
         manageAssetsPanel = new JPanel();
         add(manageAssetsPanel, BorderLayout.CENTER);
 
-        assetsTable = new JTable(data, headers);
+        assetsTable = new JTable(orgAssetTableModel);
 
         addButton = new JButton("Add Asset");
         addButton.addActionListener(e -> {
-            new NewAssetFrame(new AssetData(new AssetNDS()));
+            new NewAssetFrame(new AssetData(new AssetNDS()), new OrgAssetData(new OrgAssetNDS(), 1));
         });
         editButton = new JButton("Edit Asset");
         removeButton = new JButton("Remove Asset");

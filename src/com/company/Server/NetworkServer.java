@@ -2,17 +2,16 @@ package com.company.Server;
 
 import com.company.Database.Assets.AssetDataSource;
 import com.company.Database.Assets.JDBCAssetDataSource;
+import com.company.Database.OrgUnitAssets.JDBCOrgAssetDataSource;
+import com.company.Database.OrgUnitAssets.OrgUnitAssetDataSource;
 import com.company.Database.OrganisationUnit.JDBCOrganisationUnitDataSource;
 import com.company.Database.OrganisationUnit.OrganisationUnitDataSource;
-import com.company.Model.Asset;
-import com.company.Model.OrganisationUnit;
+import com.company.Model.*;
 import com.company.Utilities.Command;
 import com.company.Database.Persons.JDBCPersonsDataSource;
 import com.company.Database.Persons.PersonsDataSource;
 import com.company.Database.Users.JDBCUsersDataSource;
 import com.company.Database.Users.UsersDataSource;
-import com.company.Model.Person;
-import com.company.Model.User;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -43,6 +42,7 @@ public class NetworkServer {
     private PersonsDataSource personsDatabase;
     private OrganisationUnitDataSource organisationUnitDatabase;
     private AssetDataSource assetDatabase;
+    private OrgUnitAssetDataSource orgAssetDatabase;
 
     /**
      * Handles the connection received from ServerSocket.
@@ -246,6 +246,59 @@ public class NetworkServer {
                 }
                 outputStream.flush();
             }
+            break;
+
+            case ADD_ORG_ASSET: {
+                final OrgAsset orgAsset = (OrgAsset) inputStream.readObject();
+                synchronized (orgAssetDatabase) {
+                    orgAssetDatabase.addAsset(orgAsset);
+                }
+            }
+            break;
+
+            case GET_ORG_ASSET: {
+                final Integer orgID = (Integer) inputStream.readObject();
+                final Integer assetID = (Integer) inputStream.readObject();
+
+                synchronized (orgAssetDatabase) {
+                    outputStream.writeObject(orgAssetDatabase.getOrgAsset(orgID, assetID));
+                }
+                outputStream.flush();
+            }
+            break;
+
+            case GET_MY_ORG_ASSET_SET: {
+
+                final Integer orgID = (Integer) inputStream.readObject();
+
+                synchronized (orgAssetDatabase) {
+                    outputStream.writeObject(orgAssetDatabase.myOrgAssetSet(orgID));
+                }
+
+                outputStream.flush();
+            }
+            break;
+
+            case GET_ORG_ASSET_COUNT: {
+                final Integer orgID = (Integer) inputStream.readObject();
+                final Integer assetID = (Integer) inputStream.readObject();
+
+                synchronized (orgAssetDatabase) {
+                    outputStream.writeObject(orgAssetDatabase.checkAsset(orgID, assetID));
+                }
+                outputStream.flush();
+            }
+            break;
+
+            case GET_ASSET_LIST: {
+                final Integer orgID = (Integer) inputStream.readObject();
+
+                synchronized (orgAssetDatabase) {
+                    outputStream.writeObject(orgAssetDatabase.getAssetList(orgID));
+                }
+                outputStream.flush();
+            }
+            break;
         }
     }
 
@@ -267,6 +320,7 @@ public class NetworkServer {
         personsDatabase = new JDBCPersonsDataSource();
         organisationUnitDatabase = new JDBCOrganisationUnitDataSource();
         assetDatabase = new JDBCAssetDataSource();
+        orgAssetDatabase = new JDBCOrgAssetDataSource();
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             serverSocket.setSoTimeout(SOCKET_ACCEPT_TIMEOUT);

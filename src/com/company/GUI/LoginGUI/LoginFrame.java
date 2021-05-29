@@ -1,10 +1,12 @@
 package com.company.GUI.LoginGUI;
 
 import com.company.Database.DBConnector;
+import com.company.Database.OrgUnitAssets.OrgAssetData;
 import com.company.Database.Users.UsersData;
 import com.company.GUI.AdminGUI.AdminFrame;
 import com.company.GUI.TradingGUI.AssetsFrame;
 import com.company.Model.User;
+import com.company.NetworkDataSource.OrgAssetNDS;
 import com.company.Utilities.PasswordHasher;
 
 import javax.swing.JOptionPane;
@@ -82,7 +84,8 @@ public class LoginFrame extends JFrame {
 
                 } else if (user.getAccountType().equals("Standard")) {
                     // Present Standard Screen
-                    new AssetsFrame();
+                    Integer orgID = 1;
+                    new AssetsFrame(new OrgAssetData(new OrgAssetNDS(), orgID));
                     LoginFrame.this.dispose();
                 }
             } else {
