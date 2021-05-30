@@ -23,6 +23,10 @@ public class OrgAssetData {
         }
     }
 
+    public OrgAssetData(OrgUnitAssetDataSource dataSource) {
+        orgUnitAssetDataSource = dataSource;
+    }
+
     /**
      * Saves the data in the database using a persistence
      * mechanism.
@@ -62,5 +66,9 @@ public class OrgAssetData {
 
     public ArrayList<Object[]> getAssetList(Integer orgID) {
         return orgUnitAssetDataSource.getAssetList(orgID);
+    }
+
+    public void updateQuantity(Integer orgID, Integer assetID ,Double quantity) {
+        orgUnitAssetDataSource.updateQuantity(orgID, assetID, quantity);
     }
 }

@@ -2,7 +2,8 @@ package com.company.GUI.TradingGUI;
 
 import com.company.Database.Assets.AssetData;
 import com.company.Database.OrgUnitAssets.OrgAssetData;
-import com.company.Database.Users.UsersData;
+import com.company.Model.Asset;
+import com.company.Model.OrgAsset;
 import com.company.NetworkDataSource.AssetNDS;
 import com.company.NetworkDataSource.OrgAssetNDS;
 
@@ -10,7 +11,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class AssetsFrame extends JFrame {
-
 
     private JPanel manageAssetsPanel;
 
@@ -20,6 +20,7 @@ public class AssetsFrame extends JFrame {
     private JButton addButton;
     private JButton editButton;
     private JButton removeButton;
+    private JButton refreshTableButton;
 
     private OrgAssetData orgAssetData;
 
@@ -37,12 +38,19 @@ public class AssetsFrame extends JFrame {
         add(manageAssetsPanel, BorderLayout.CENTER);
 
         assetsTable = new JTable(orgAssetTableModel);
+        assetsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+
+        refreshTableButton = new JButton("Reload Data");
+        refreshTableButton.addActionListener(e -> orgAssetTableModel.fireTableDataChanged());
 
         addButton = new JButton("Add Asset");
         addButton.addActionListener(e -> {
             new NewAssetFrame(new AssetData(new AssetNDS()), new OrgAssetData(new OrgAssetNDS(), 1));
         });
         editButton = new JButton("Edit Asset");
+        editButton.addActionListener(e -> editAsset());
+
         removeButton = new JButton("Remove Asset");
 
         setupLayout();
@@ -67,13 +75,27 @@ public class AssetsFrame extends JFrame {
 
         constraints.gridy = 1;
         constraints.weightx = 1;
-        manageAssetsPanel.add(addButton, constraints);
+        manageAssetsPanel.add(refreshTableButton, constraints);
 
         constraints.gridy = 2;
-        manageAssetsPanel.add(editButton, constraints);
+        constraints.weightx = 1;
+        manageAssetsPanel.add(addButton, constraints);
 
         constraints.gridy = 3;
+        manageAssetsPanel.add(editButton, constraints);
+
+        constraints.gridy = 4;
         manageAssetsPanel.add(removeButton, constraints);
+    }
+
+    private void editAsset() {
+
+        Asset asset = (Asset) orgAssetTableModel.getValueAt(assetsTable.getSelectedRow(), 0);
+        Double quantity = (Double) orgAssetTableModel.getValueAt(assetsTable.getSelectedRow(), 1);
+
+        String newQuantity = JOptionPane.showInputDialog(getContentPane(),"Enter new quantity");
+        orgAssetData.updateQuantity(1, asset.getAssetID() ,Double.parseDouble(newQuantity));
+
     }
 
 

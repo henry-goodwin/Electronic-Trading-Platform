@@ -34,20 +34,20 @@ public class OrgAssetTableModel extends AbstractTableModel {
 
         int values = orgAssetList.size();
 
-        String[] assetNames = new String[values];
-        String[] assetQuantities = new String[values];
+        Asset[] assetNames = new Asset[values];
+        Double[] assetQuantities = new Double[values];
 
         for (int i = 0; i < values; i++) {
-            assetNames[i] = String.valueOf((Asset) orgAssetList.get(i)[0]);
-            assetQuantities[i] = String.valueOf((Double) orgAssetList.get(i)[1]);
+            assetNames[i] = (Asset) orgAssetList.get(i)[0];
+            assetQuantities[i] = (Double) orgAssetList.get(i)[1];
         }
 
-        String name = assetNames[row];
-        String quantity = assetQuantities[row];
+        Asset asset = assetNames[row];
+        Double quantity = assetQuantities[row];
 
         switch (col) {
             case 0:
-                return name;
+                return asset;
             case 1:
                 return quantity;
         }

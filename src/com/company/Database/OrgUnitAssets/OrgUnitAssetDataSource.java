@@ -50,4 +50,6 @@ public interface OrgUnitAssetDataSource {
     Boolean checkAsset(Integer orgID, Integer assetID);
 
     ArrayList<Object[]> getAssetList(Integer orgID);
+
+    void updateQuantity(Integer orgID, Integer assetID ,Double quantity);
 }

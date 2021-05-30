@@ -13,16 +13,18 @@ import java.util.TreeSet;
 
 public class JDBCUsersDataSource implements UsersDataSource {
 
-    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `Users` (\n" +
-            "  `userID` int(11) NOT NULL AUTO_INCREMENT,\n" +
-            "  `accountType` varchar(255) NOT NULL,\n" +
-            "  `personID` int(11) DEFAULT NULL,\n" +
-            "  `username` varchar(255) NOT NULL,\n" +
-            "  `password` varchar(255) NOT NULL,\n" +
-            "  PRIMARY KEY (`userID`),\n" +
-            "  UNIQUE KEY `UserID_UNIQUE` (`userID`),\n" +
-            "  UNIQUE KEY `username_UNIQUE` (`username`)\n" +
-            ");\n";
+    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `Users` (" +
+            "  `userID` int(11) NOT NULL AUTO_INCREMENT," +
+            "  `accountType` varchar(255) NOT NULL," +
+            "  `personID` int(11) DEFAULT NULL," +
+            "  `username` varchar(255) NOT NULL," +
+            "  `password` varchar(255) NOT NULL," +
+            "  PRIMARY KEY (`userID`)," +
+            "  UNIQUE KEY `UserID_UNIQUE` (`userID`)," +
+            "  UNIQUE KEY `username_UNIQUE` (`username`)," +
+            "  KEY `personID_idx` (`personID`)," +
+            "  CONSTRAINT `personID` FOREIGN KEY (`personID`) REFERENCES `Persons` (`personID`) ON DELETE CASCADE ON UPDATE CASCADE" +
+            ");";
 
     private static final String INSERT_DEFAULT_ADMIN = "INSERT INTO `cab302`.`Users`\n" +
             "(\n" +

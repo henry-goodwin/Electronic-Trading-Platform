@@ -106,4 +106,29 @@ public class AssetNDS implements AssetDataSource {
             return new HashSet<>();
         }
     }
+
+    @Override
+    public void updateAssetName(Integer assetID, String name) {
+        try {
+            outputStream.writeObject(Command.UPDATE_ASSET);
+            outputStream.writeObject(assetID);
+            outputStream.writeObject(name);
+            outputStream.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteAsset(Integer assetID) {
+        try {
+            outputStream.writeObject(Command.DELETE_ASSET);
+            outputStream.writeObject(assetID);
+            outputStream.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

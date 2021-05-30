@@ -41,4 +41,8 @@ public interface AssetDataSource {
      * @return set of Assets.
      */
     Set<Asset> assetSet();
+
+    void updateAssetName(Integer assetID, String name);
+
+    void deleteAsset(Integer assetID);
 }

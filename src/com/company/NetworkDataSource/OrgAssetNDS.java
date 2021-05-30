@@ -134,4 +134,19 @@ public class OrgAssetNDS implements OrgUnitAssetDataSource {
             return new ArrayList<Object[]>();
         }
     }
+
+    @Override
+    public void updateQuantity(Integer orgID, Integer assetID, Double quantity) {
+        try {
+            outputStream.writeObject(Command.UPDATE_ORG_ASSET_QUANTITY);
+            outputStream.writeObject(orgID);
+            outputStream.writeObject(assetID);
+            outputStream.writeObject(quantity);
+            outputStream.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

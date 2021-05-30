@@ -220,6 +220,24 @@ public class NetworkServer {
             }
             break;
 
+            case UPDATE_ASSET: {
+
+                final Integer assetID = (Integer) inputStream.readObject();
+                final String name = (String) inputStream.readObject();
+
+                synchronized (assetDatabase) {
+                    assetDatabase.updateAssetName(assetID, name);
+                }
+            }
+            break;
+
+            case DELETE_ASSET: {
+                final Integer assetID = (Integer) inputStream.readObject();
+                synchronized (assetDatabase) {
+                    assetDatabase.deleteAsset(assetID);
+                }
+            }
+
             case GET_ASSET: {
                 final Integer assetID = (Integer) inputStream.readObject();
                 synchronized (assetDatabase) {
@@ -297,6 +315,17 @@ public class NetworkServer {
                     outputStream.writeObject(orgAssetDatabase.getAssetList(orgID));
                 }
                 outputStream.flush();
+            }
+            break;
+
+            case UPDATE_ORG_ASSET_QUANTITY: {
+                final Integer orgID = (Integer) inputStream.readObject();
+                final Integer assetID = (Integer) inputStream.readObject();
+                final Double quantity = (Double) inputStream.readObject();
+
+                synchronized (orgAssetDatabase) {
+                    orgAssetDatabase.updateQuantity(orgID, assetID, quantity);
+                }
             }
             break;
         }

@@ -26,15 +26,22 @@ public class JDBCAssetDataSource implements AssetDataSource {
 
     private static final String GET_COUNT = "SELECT COUNT(*) FROM `cab302`.`Assets` WHERE name=?;";
 
+    private static final String UPDATE_NAME = "UPDATE `cab302`.`Assets`" +
+            "SET" +
+            "`name` = ?" +
+            "WHERE `assetID` = ?;";
+
+    private static final String DELETE_ASSET = "DELETE FROM `cab302`.`Assets`" +
+            "WHERE assetID=?;";
+
     private Connection connection;
 
     private PreparedStatement addAsset;
-
     private PreparedStatement getAssetSet;
-
     private PreparedStatement getAsset;
-
     private PreparedStatement getCount;
+    private PreparedStatement updateName;
+    private PreparedStatement deleteAsset;
 
     public JDBCAssetDataSource() {
         connection = DBConnector.getInstance();
@@ -47,6 +54,8 @@ public class JDBCAssetDataSource implements AssetDataSource {
             getAsset = connection.prepareStatement(GET_ASSET);
             getAssetSet = connection.prepareStatement(GET_ASSET_SET);
             getCount = connection.prepareStatement(GET_COUNT);
+            updateName = connection.prepareStatement(UPDATE_NAME);
+            deleteAsset = connection.prepareStatement(DELETE_ASSET);
 
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -131,5 +140,30 @@ public class JDBCAssetDataSource implements AssetDataSource {
         }
 
         return assetSet;
+    }
+
+    @Override
+    public void updateAssetName(Integer assetID, String name) {
+        try {
+            updateName.setString(1, name);
+            updateName.setInt(2, assetID);
+            updateName.executeUpdate();
+
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteAsset(Integer assetID) {
+        try {
+
+            deleteAsset.setInt(1, assetID);
+            deleteAsset.executeUpdate();
+
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
     }
 }

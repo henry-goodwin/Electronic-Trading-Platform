@@ -1,10 +1,12 @@
 package com.company.GUI.AdminGUI;
 
+import com.company.Database.Assets.AssetData;
 import com.company.Database.OrganisationUnit.OrganisationUnitData;
 import com.company.Database.Users.UsersData;
 import com.company.GUI.AdminGUI.ManageOrganisationUnitGUI.ManageOrgUnitsFrame;
 import com.company.GUI.AdminGUI.ManageUsersGUI.ManageUsersFrame;
 import com.company.GUI.LoginGUI.LoginFrame;
+import com.company.NetworkDataSource.AssetNDS;
 import com.company.NetworkDataSource.OrganisationUnitNDS;
 import com.company.NetworkDataSource.UsersNDS;
 
@@ -16,6 +18,7 @@ public class AdminFrame extends JFrame {
     private JPanel adminPanel;
     private JButton manageOrganisationalUnitsButton;
     private JButton manageUsersButton;
+    private JButton manageAssetsButton;
 
     public AdminFrame() {
 
@@ -27,10 +30,12 @@ public class AdminFrame extends JFrame {
         adminPanel = new JPanel();
         manageOrganisationalUnitsButton = new JButton("Manage Organisational Units");
         manageUsersButton = new JButton("Manage Users");
+        manageAssetsButton = new JButton("Manage Assets");
         add(adminPanel, BorderLayout.CENTER);
 
         manageOrganisationalUnitsButton.addActionListener(e -> manageOrg());
         manageUsersButton.addActionListener(e -> manageUsers());
+        manageAssetsButton.addActionListener(e -> manageAssets());
         setupLayout();
         setSize(500,500);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -55,6 +60,10 @@ public class AdminFrame extends JFrame {
         constraints.gridx = 0;
         adminPanel.add(manageUsersButton, constraints);
 
+        constraints.gridy = 2;
+        constraints.gridx = 0;
+        adminPanel.add(manageAssetsButton, constraints);
+
     }
 
     private void manageOrg() {
@@ -65,6 +74,10 @@ public class AdminFrame extends JFrame {
 
         new ManageUsersFrame(new UsersData(new UsersNDS()));
 
+    }
+
+    private void manageAssets() {
+        new ManageAssetsFrame(new AssetData(new AssetNDS()));
     }
 
 }

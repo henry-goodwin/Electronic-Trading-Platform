@@ -58,4 +58,12 @@ public class AssetData {
     public Boolean nameAvailability(String name) {
         return assetDataSource.checkName(name);
     }
+
+    public void updateAssetName(Integer assetID, String name) {
+        assetDataSource.updateAssetName(assetID, name);
+    }
+
+    public void deleteAsset(Integer assetID) {
+        assetDataSource.deleteAsset(assetID);
+    }
 }

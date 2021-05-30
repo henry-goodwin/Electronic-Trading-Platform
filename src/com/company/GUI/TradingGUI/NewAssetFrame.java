@@ -19,7 +19,7 @@ public class NewAssetFrame extends JFrame {
     private JList namesList;
     private JTextField quantityField;
     private JButton addNewAssetButton;
-    private JButton newNameButton;
+//    private JButton newNameButton;
 
     private AssetData assetData;
     private DefaultListModel<Asset> listModel;
@@ -39,8 +39,6 @@ public class NewAssetFrame extends JFrame {
         quantityField = new JTextField();
         addNewAssetButton = new JButton("Add New Asset to Organisation");
         addNewAssetButton.addActionListener(e -> addAsset());
-        newNameButton = new JButton("Add");
-        newNameButton.addActionListener(e -> newName());
         newAssetsPanel = new JPanel();
         add(newAssetsPanel, BorderLayout.CENTER);
 
@@ -66,33 +64,30 @@ public class NewAssetFrame extends JFrame {
         newAssetsPanel.add(new JScrollPane(namesList), constraints);
 
         constraints.gridy = 1;
-        newAssetsPanel.add(newNameButton, constraints);
-
-        constraints.gridy = 2;
         newAssetsPanel.add(new JLabel("Quantity"), constraints);
 
-        constraints.gridy = 3;
+        constraints.gridy = 2;
         newAssetsPanel.add(quantityField, constraints);
 
-        constraints.gridy = 4;
+        constraints.gridy = 3;
         newAssetsPanel.add(addNewAssetButton, constraints);
     }
-
-    private void newName() {
-        String name = JOptionPane.showInputDialog(getContentPane(),"Asset Name");
-
-        // Check that name hasn't been used
-        if (assetData.nameAvailability(name)) {
-            assetData.addAsset(new Asset(name));
-
-            this.assetData = new AssetData(new AssetNDS());
-            listModel = (DefaultListModel<Asset>) assetData.getAssetModel();
-            namesList.setModel(listModel);
-
-        } else {
-            JOptionPane.showMessageDialog(getContentPane(), "Error: Asset Already exists");
-        }
-    }
+//
+//    private void newName() {
+//        String name = JOptionPane.showInputDialog(getContentPane(),"Asset Name");
+//
+//        // Check that name hasn't been used
+//        if (assetData.nameAvailability(name)) {
+//            assetData.addAsset(new Asset(name));
+//
+//            this.assetData = new AssetData(new AssetNDS());
+//            listModel = (DefaultListModel<Asset>) assetData.getAssetModel();
+//            namesList.setModel(listModel);
+//
+//        } else {
+//            JOptionPane.showMessageDialog(getContentPane(), "Error: Asset Already exists");
+//        }
+//    }
 
     private void addAsset() {
         if (namesList.isSelectionEmpty() || quantityField.getText().equals("")) {

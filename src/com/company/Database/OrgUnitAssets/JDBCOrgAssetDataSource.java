@@ -12,13 +12,19 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class JDBCOrgAssetDataSource implements  OrgUnitAssetDataSource{
+public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
 
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `OrganisationUnitAssets` (" +
-            "  `organisationUnitID` int(11) NOT NULL," +
-            "  `assetID` int(11) NOT NULL," +
-            "  `quantity` double DEFAULT NULL," +
-            "  PRIMARY KEY (`organisationUnitID`,`assetID`)" +
+            "`organisationUnitID` int(11) NOT NULL," +
+            "`assetID` int(11) NOT NULL," +
+            "`quantity` double DEFAULT NULL," +
+            "PRIMARY KEY (`organisationUnitID`,`assetID`)," +
+            "FOREIGN KEY (`assetID`)" +
+            "REFERENCES Assets (`assetID`)" +
+            "ON DELETE CASCADE," +
+            "FOREIGN KEY (`organisationUnitID`)" +
+            "REFERENCES OrganisationUnit (`organisationUnitID`)" +
+            "ON DELETE CASCADE" +
             ");";
 
     private static final String INSERT_ORG_ASSET = "INSERT INTO `cab302`.`OrganisationUnitAssets`" +
@@ -40,17 +46,19 @@ public class JDBCOrgAssetDataSource implements  OrgUnitAssetDataSource{
             "FROM `cab302`.`OrganisationUnitAssets`" +
             "WHERE (organisationUnitID,assetID) = (?,?);";
 
+    private static final String UPDATE_ASSET_QUANTITY = "UPDATE `cab302`.`OrganisationUnitAssets`" +
+            "SET" +
+            "`quantity` = ?" +
+            "WHERE `organisationUnitID` = ? AND `assetID` = ?;";
+
     private Connection connection;
 
     private PreparedStatement addOrgAsset;
-
     private PreparedStatement getAssetSet;
-
     private PreparedStatement getOrgAsset;
-
     private PreparedStatement getMyAssetSet;
-
     private PreparedStatement getAssetCount;
+    private PreparedStatement updateAssetQuantity;
 
     public JDBCOrgAssetDataSource() {
         connection = DBConnector.getInstance();
@@ -64,6 +72,7 @@ public class JDBCOrgAssetDataSource implements  OrgUnitAssetDataSource{
             getAssetSet = connection.prepareStatement(GET_ORG_ASSET_SET);
             getMyAssetSet = connection.prepareStatement(GET_MY_ORG_ASSET_SET);
             getAssetCount = connection.prepareStatement(GET_ASSET_COUNT);
+            updateAssetQuantity = connection.prepareStatement(UPDATE_ASSET_QUANTITY);
 
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -144,6 +153,7 @@ public class JDBCOrgAssetDataSource implements  OrgUnitAssetDataSource{
             resultSet = getMyAssetSet.executeQuery();
 
             while (resultSet.next()) {
+                // Check that asset exists
                 OrgAsset orgAsset = new OrgAsset(resultSet.getInt("organisationUnitID"), resultSet.getInt("assetID"), resultSet.getDouble("quantity"));
                 orgAssetSet.add(orgAsset);
             }
@@ -193,5 +203,18 @@ public class JDBCOrgAssetDataSource implements  OrgUnitAssetDataSource{
             exception.printStackTrace();
         }
         return assetList;
+    }
+
+    @Override
+    public void updateQuantity(Integer orgID, Integer assetID, Double quantity) {
+        try {
+            updateAssetQuantity.setDouble(1, quantity);
+            updateAssetQuantity.setInt(2, orgID);
+            updateAssetQuantity.setInt(3, assetID);
+            updateAssetQuantity.executeUpdate();
+
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 }
