@@ -2,8 +2,7 @@ package com.company.NetworkDataSource;
 
 import com.company.Database.OrganisationUnit.OrganisationUnitDataSource;
 import com.company.Model.OrganisationUnit;
-import com.company.Model.Person;
-import com.company.Utilities.Command;
+import com.company.Server.Command;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

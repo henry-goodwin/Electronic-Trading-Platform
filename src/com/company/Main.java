@@ -17,13 +17,6 @@ public class Main {
      */
     private static void createAndShowGUI() {
 
-        // Create all Data's to generate SQL Tables
-        new AssetData(new AssetNDS());
-        new PersonsData(new PersonsNDS());
-        new UsersData(new UsersNDS());
-        new OrganisationUnitData(new OrganisationUnitNDS());
-        new OrgAssetData(new OrgAssetNDS());
-
         new LoginFrame(new UsersData(new UsersNDS()));
     }
 

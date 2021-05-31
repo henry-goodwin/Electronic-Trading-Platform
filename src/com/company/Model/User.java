@@ -6,7 +6,7 @@ public class User implements Comparable<User>, Serializable {
 
     private Integer userID;
     private String accountType;
-    private Person person;
+    private Integer personID;
     private String username;
     private String passwordHash;
 
@@ -16,14 +16,14 @@ public class User implements Comparable<User>, Serializable {
      * Constructor to set values for the Person's details.
      * @param employeeID
      * @param accountType
-     * @param person
+     * @param personID
      * @param username
      * @param passwordHash
      */
-    public User(Integer employeeID, String accountType, Person person, String username, String passwordHash) {
+    public User(Integer employeeID, String accountType, Integer personID, String username, String passwordHash) {
         this.userID = employeeID;
         this.accountType= accountType;
-        this.person = person;
+        this.personID = personID;
         this.username= username;
         this.passwordHash = passwordHash;
     }
@@ -31,13 +31,13 @@ public class User implements Comparable<User>, Serializable {
     /**
      * Constructor to set values for the Person's details.
      * @param accountType
-     * @param person
+     * @param personID
      * @param username
      * @param passwordHash
      */
-    public User(String accountType, Person person, String username, String passwordHash) {
+    public User(String accountType, Integer personID, String username, String passwordHash) {
         this.accountType= accountType;
-        this.person = person;
+        this.personID = personID;
         this.username= username;
         this.passwordHash = passwordHash;
     }
@@ -45,7 +45,7 @@ public class User implements Comparable<User>, Serializable {
     /**
      * @return the employeeID
      */
-    public Integer getEmployeeID() {return this.userID;}
+    public Integer getUserID() {return this.userID;}
 
     /**
      * @param employeeID the employeeID to set
@@ -65,12 +65,12 @@ public class User implements Comparable<User>, Serializable {
     /**
      * @return the person
      */
-    public Person getPerson() {return this.person;}
+    public Integer getPersonID() {return this.personID;}
 
     /**
-     * @param person the person to set
+     * @param personID the personID to set
      */
-    public void setPerson(Person person) {this.person = person;}
+    public void setPersonID(Integer personID) {this.personID = personID;}
 
     /**
      * @return the person

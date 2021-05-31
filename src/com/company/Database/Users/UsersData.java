@@ -90,4 +90,6 @@ public class UsersData {
         return listModel;
     }
 
+    public Boolean login(String username, String hashedPassword) { return usersData.login(username, hashedPassword); }
+
 }

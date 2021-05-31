@@ -1,5 +1,6 @@
 package com.company.Database.OrgUnitAssets;
 
+import com.company.Client;
 import com.company.Model.OrgAsset;
 
 import javax.swing.*;
@@ -13,19 +14,19 @@ public class OrgAssetData {
     private TableModel tableModel;
     private Integer orgID;
 
-    public OrgAssetData(OrgUnitAssetDataSource dataSource, Integer orgID) {
+    public OrgAssetData(OrgUnitAssetDataSource dataSource) {
         orgUnitAssetDataSource = dataSource;
         orgAssetDefaultListModel = new DefaultListModel<OrgAsset>();
-        this.orgID = orgID;
+        this.orgID = Client.getLoggedInOrgID();
 
         for (OrgAsset orgAsset: orgUnitAssetDataSource.myOrgAssetSet(orgID)) {
             orgAssetDefaultListModel.addElement(orgAsset);
         }
     }
 
-    public OrgAssetData(OrgUnitAssetDataSource dataSource) {
-        orgUnitAssetDataSource = dataSource;
-    }
+//    public OrgAssetData(OrgUnitAssetDataSource dataSource) {
+//        orgUnitAssetDataSource = dataSource;
+//    }
 
     /**
      * Saves the data in the database using a persistence

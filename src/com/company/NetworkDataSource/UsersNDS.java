@@ -1,6 +1,6 @@
 package com.company.NetworkDataSource;
 
-import com.company.Utilities.Command;
+import com.company.Server.Command;
 import com.company.Database.Users.UsersDataSource;
 import com.company.Model.User;
 
@@ -141,5 +141,24 @@ public class UsersNDS implements UsersDataSource {
             e.printStackTrace();
             return new HashSet<>();
         }
+    }
+
+    @Override
+    public boolean login(String username, String hashedPassword) {
+        try {
+            outputStream.writeObject(Command.LOGIN);
+            outputStream.writeObject(username);
+            outputStream.writeObject(hashedPassword);
+            outputStream.flush();
+
+            return (Boolean) inputStream.readObject();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

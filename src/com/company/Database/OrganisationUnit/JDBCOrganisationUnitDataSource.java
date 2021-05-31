@@ -66,7 +66,6 @@ public class JDBCOrganisationUnitDataSource implements OrganisationUnitDataSourc
 
     @Override
     public OrganisationUnit getOrganisationUnit(Integer organisationUnitID) {
-        OrganisationUnit organisationUnit = new OrganisationUnit();
         ResultSet resultSet = null;
 
         try {
@@ -75,9 +74,7 @@ public class JDBCOrganisationUnitDataSource implements OrganisationUnitDataSourc
 
             if (resultSet.next()) {
 
-                organisationUnit.setID(resultSet.getInt("organisationUnitID"));
-                organisationUnit.setName(resultSet.getString("name"));
-                organisationUnit.setCredits(resultSet.getDouble("credits"));
+                return new OrganisationUnit(resultSet.getInt("organisationUnitID"), resultSet.getString("name"), resultSet.getDouble("credits"));
 
             }
 
@@ -85,7 +82,7 @@ public class JDBCOrganisationUnitDataSource implements OrganisationUnitDataSourc
             exception.printStackTrace();
         }
 
-        return organisationUnit;
+        return null;
     }
 
     @Override

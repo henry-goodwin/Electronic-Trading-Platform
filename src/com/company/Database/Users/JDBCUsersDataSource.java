@@ -20,10 +20,9 @@ public class JDBCUsersDataSource implements UsersDataSource {
             "  `username` varchar(255) NOT NULL," +
             "  `password` varchar(255) NOT NULL," +
             "  PRIMARY KEY (`userID`)," +
-            "  UNIQUE KEY `UserID_UNIQUE` (`userID`)," +
-            "  UNIQUE KEY `username_UNIQUE` (`username`)," +
-            "  KEY `personID_idx` (`personID`)," +
-            "  CONSTRAINT `personID` FOREIGN KEY (`personID`) REFERENCES `Persons` (`personID`) ON DELETE CASCADE ON UPDATE CASCADE" +
+            "  FOREIGN KEY (`personID`)" +
+            "  REFERENCES Persons (`personID`)" +
+            "  ON DELETE CASCADE" +
             ");";
 
     private static final String INSERT_DEFAULT_ADMIN = "INSERT INTO `cab302`.`Users`\n" +
@@ -122,7 +121,7 @@ public class JDBCUsersDataSource implements UsersDataSource {
     public void addUser(User user) {
         try {
             addUser.setString(1, user.getAccountType());
-            addUser.setInt(2, user.getPerson().getPersonID());
+            addUser.setInt(2, user.getPersonID());
             addUser.setString(3, user.getUsername());
             addUser.setString(4, user.getPasswordHash());
 
@@ -150,8 +149,8 @@ public class JDBCUsersDataSource implements UsersDataSource {
 
                 // Find and Set Persons Data
                 PersonsDataSource personsData = new JDBCPersonsDataSource();
-                Person person = personsData.getPerson(resultSet.getInt("personID"));
-                user.setPerson(person);
+                Integer personID = resultSet.getInt("personID");
+                user.setPersonID(personID);
 
                 user.setUsername(resultSet.getString("username"));
                 user.setPasswordHash(resultSet.getString("password"));
@@ -181,8 +180,8 @@ public class JDBCUsersDataSource implements UsersDataSource {
 
                 // Find and Set Persons Data
                 PersonsDataSource personsData = new JDBCPersonsDataSource();
-                Person person = personsData.getPerson(resultSet.getInt("personID"));
-                user.setPerson(person);
+                Integer personID = resultSet.getInt("personID");
+                user.setPersonID(personID);
 
                 user.setUsername(resultSet.getString("username"));
                 user.setPasswordHash(resultSet.getString("password"));
@@ -267,8 +266,8 @@ public class JDBCUsersDataSource implements UsersDataSource {
 
                 // Find and Set Persons Data
                 PersonsDataSource personsData = new JDBCPersonsDataSource();
-                Person person = personsData.getPerson(resultSet.getInt("personID"));
-                user.setPerson(person);
+                Integer personID = resultSet.getInt("personID");
+                user.setPersonID(personID);
             }
 
         } catch (SQLException exception) {
@@ -276,5 +275,16 @@ public class JDBCUsersDataSource implements UsersDataSource {
         }
 
         return users;
+    }
+
+    @Override
+    public boolean login(String username, String hashedPassword) {
+        // Check if username exists
+        if (!checkUsernameAvailability(username)) {
+            User user = getUser(username);
+            return user.getPasswordHash().equals(hashedPassword);
+        }
+
+        return false;
     }
 }

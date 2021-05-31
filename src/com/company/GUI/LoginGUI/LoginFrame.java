@@ -1,12 +1,17 @@
 package com.company.GUI.LoginGUI;
 
-import com.company.Database.DBConnector;
+import com.company.Client;
 import com.company.Database.OrgUnitAssets.OrgAssetData;
+import com.company.Database.OrganisationUnit.OrganisationUnitData;
+import com.company.Database.Persons.PersonsData;
 import com.company.Database.Users.UsersData;
 import com.company.GUI.AdminGUI.AdminFrame;
 import com.company.GUI.TradingGUI.AssetsFrame;
 import com.company.Model.User;
 import com.company.NetworkDataSource.OrgAssetNDS;
+import com.company.NetworkDataSource.OrganisationUnitNDS;
+import com.company.NetworkDataSource.PersonsNDS;
+import com.company.Server.Command;
 import com.company.Utilities.PasswordHasher;
 
 import javax.swing.JOptionPane;
@@ -15,6 +20,10 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 /**
  * Frame that logs in users to the trading platform
@@ -27,7 +36,7 @@ public class LoginFrame extends JFrame {
     private JPasswordField passwordField;
     private JButton loginButton;
 
-    UsersData usersData;
+    private UsersData usersData;
 
     /**
      * Create login frame gui
@@ -69,33 +78,27 @@ public class LoginFrame extends JFrame {
         // Reset the password
         passwordField.setText("");
 
-        if (usersData.get(username) != null) {
+        if(usersData.login(username, hashPassword)) {
+            User loggedInUser = usersData.get(username);
+            Client.setUserID(loggedInUser.getUserID());
+            Client.setPersonID(loggedInUser.getPersonID());
+            // Check if user is admin
+            if (loggedInUser.getAccountType().equals("Admin")) {
+                // Present Admin Screen
+                new AdminFrame();
 
-            User user = usersData.get(username);
-
-            if (user.getPasswordHash().equals(hashPassword)){
-                //Login the user
-
-                // Check if user is admin
-                if (user.getAccountType().equals("Admin")) {
-                    // Present Admin Screen
-                    new AdminFrame();
-                    LoginFrame.this.dispose();
-
-                } else if (user.getAccountType().equals("Standard")) {
-                    // Present Standard Screen
-                    Integer orgID = 1;
-                    new AssetsFrame(new OrgAssetData(new OrgAssetNDS(), orgID));
-                    LoginFrame.this.dispose();
-                }
-            } else {
-                JOptionPane.showMessageDialog(getContentPane(), "Login Failed: Invalid Username/Password");
-
+            } else if (loggedInUser.getAccountType().equals("Standard")) {
+                // Present Standard Screen
+                Client.setOrgID(1);
+                // Need to find out what orgID user belongs to
+                new AssetsFrame(new OrgAssetData(new OrgAssetNDS()), new OrganisationUnitData(new OrganisationUnitNDS()), new PersonsData(new PersonsNDS()));
             }
+
+            LoginFrame.this.dispose();
+
         } else {
             JOptionPane.showMessageDialog(getContentPane(), "Login Failed: Invalid Username/Password");
         }
-
         // Login and open GUI
     }
 
@@ -116,7 +119,6 @@ public class LoginFrame extends JFrame {
         GridBagConstraints constraints = new GridBagConstraints();
 
         constraints.gridwidth = 1;
-
 
         // Add Username Label
 //        constraints.gridx = 0;

@@ -1,4 +1,4 @@
-package com.company.Utilities;
+package com.company.Server;
 
 /**
  * These are the commands which will be sent across the network connection.
@@ -28,5 +28,6 @@ public enum Command {
     GET_MY_ORG_ASSET_SET,
     GET_ORG_ASSET_COUNT,
     GET_ASSET_LIST,
-    UPDATE_ORG_ASSET_QUANTITY
+    UPDATE_ORG_ASSET_QUANTITY,
+    LOGIN
 }

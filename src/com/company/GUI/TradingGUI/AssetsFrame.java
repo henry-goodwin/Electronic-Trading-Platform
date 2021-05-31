@@ -1,7 +1,10 @@
 package com.company.GUI.TradingGUI;
 
+import com.company.Client;
 import com.company.Database.Assets.AssetData;
 import com.company.Database.OrgUnitAssets.OrgAssetData;
+import com.company.Database.OrganisationUnit.OrganisationUnitData;
+import com.company.Database.Persons.PersonsData;
 import com.company.Model.Asset;
 import com.company.Model.OrgAsset;
 import com.company.NetworkDataSource.AssetNDS;
@@ -23,16 +26,26 @@ public class AssetsFrame extends JFrame {
     private JButton refreshTableButton;
 
     private OrgAssetData orgAssetData;
+    private OrganisationUnitData organisationUnitData;
+    private PersonsData personsData;
 
-    public AssetsFrame(OrgAssetData orgAssetData) {
+    public AssetsFrame(OrgAssetData orgAssetData, OrganisationUnitData organisationUnitData, PersonsData personsData) {
         super("Manage Assets");
         setDefaultLookAndFeelDecorated(true);
         setLayout(new BorderLayout());
 
         this.orgAssetData = orgAssetData;
+        this.organisationUnitData = organisationUnitData;
+        this.personsData = personsData;
 
         orgAssetTableModel = new OrgAssetTableModel();
         orgAssetTableModel.setData(this.orgAssetData.getAssetList(1));
+
+        String orgName = organisationUnitData.get(Client.getLoggedInOrgID()).getName();
+        String fullName = personsData.get(Client.getLoggedInPersonID()).toString();
+
+        String welcomeString = "Name: " + fullName + " || Organisational Unit: " + orgName;
+        add(new JLabel(welcomeString), BorderLayout.NORTH);
 
         manageAssetsPanel = new JPanel();
         add(manageAssetsPanel, BorderLayout.CENTER);
@@ -46,7 +59,7 @@ public class AssetsFrame extends JFrame {
 
         addButton = new JButton("Add Asset");
         addButton.addActionListener(e -> {
-            new NewAssetFrame(new AssetData(new AssetNDS()), new OrgAssetData(new OrgAssetNDS(), 1));
+            new NewAssetFrame(new AssetData(new AssetNDS()), new OrgAssetData(new OrgAssetNDS()));
         });
         editButton = new JButton("Edit Asset");
         editButton.addActionListener(e -> editAsset());

@@ -68,4 +68,6 @@ public interface UsersDataSource {
      */
     Set<User> userSet();
 
+    boolean login(String username, String hashedPassword);
+
 }

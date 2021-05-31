@@ -1,6 +1,6 @@
 package com.company.NetworkDataSource;
 
-import com.company.Utilities.Command;
+import com.company.Server.Command;
 import com.company.Database.Persons.PersonsDataSource;
 import com.company.Model.Person;
 

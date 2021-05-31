@@ -118,7 +118,7 @@ public class NewUserGUI extends JFrame {
                     // Username is available, add user
 
                     Person person = (Person) identityList.getSelectedValue();
-                    User user = new User((String) accountTypeComboBox.getSelectedItem(), person, username, hashedPassword);
+                    User user = new User((String) accountTypeComboBox.getSelectedItem(), person.getPersonID(), username, hashedPassword);
                     usersData.addUser(user);
                     JOptionPane.showMessageDialog(getContentPane(), "Successfully added new user :)");
                     NewUserGUI.this.dispose();

@@ -31,7 +31,7 @@ public class OrganisationUnit implements Comparable<OrganisationUnit>, Serializa
     public void  setID(Integer organisationUnitID) { this.organisationUnitID = organisationUnitID; }
 
     public String getName() { return  this.organisationUnitName; }
-    public void  setName(String name) { this.organisationUnitName = organisationUnitName; }
+    public void  setName(String name) { this.organisationUnitName = name; }
 
     public Double getCredits() { return this.organisationUnitCredits; }
     public void  setCredits(Double organisationUnitCredits) { this.organisationUnitCredits = organisationUnitCredits ;}

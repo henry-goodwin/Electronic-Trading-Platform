@@ -7,7 +7,6 @@ import com.company.Database.OrgUnitAssets.OrgUnitAssetDataSource;
 import com.company.Database.OrganisationUnit.JDBCOrganisationUnitDataSource;
 import com.company.Database.OrganisationUnit.OrganisationUnitDataSource;
 import com.company.Model.*;
-import com.company.Utilities.Command;
 import com.company.Database.Persons.JDBCPersonsDataSource;
 import com.company.Database.Persons.PersonsDataSource;
 import com.company.Database.Users.JDBCUsersDataSource;
@@ -328,6 +327,17 @@ public class NetworkServer {
                 }
             }
             break;
+
+            case LOGIN:{
+                final String username = (String) inputStream.readObject();
+                final String hashedPassword = (String) inputStream.readObject();
+
+                synchronized (usersDatabase) {
+                    outputStream.writeObject(usersDatabase.login(username, hashedPassword));
+                }
+                outputStream.flush();
+            }
+            break;
         }
     }
 
@@ -345,10 +355,12 @@ public class NetworkServer {
      */
     public void start() throws IOException {
         // Connect to the database.
-        usersDatabase = new JDBCUsersDataSource();
-        personsDatabase = new JDBCPersonsDataSource();
-        organisationUnitDatabase = new JDBCOrganisationUnitDataSource();
+        // CREATE ALL DATABASE TABLES
+        // Create all Data's to generate SQL Tables
         assetDatabase = new JDBCAssetDataSource();
+        personsDatabase = new JDBCPersonsDataSource();
+        usersDatabase = new JDBCUsersDataSource();
+        organisationUnitDatabase = new JDBCOrganisationUnitDataSource();
         orgAssetDatabase = new JDBCOrgAssetDataSource();
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
