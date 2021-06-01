@@ -16,9 +16,7 @@ import com.company.NetworkDataSource.UsersNDS;
 import javax.swing.*;
 import java.awt.*;
 
-public class AssetsFrame extends JFrame {
-
-    private JPanel manageAssetsPanel;
+public class AssetsPanel extends JPanel {
 
     private JTable assetsTable;
     private OrgAssetTableModel orgAssetTableModel;
@@ -33,23 +31,8 @@ public class AssetsFrame extends JFrame {
     private OrganisationUnitData organisationUnitData;
     private PersonsData personsData;
 
-    private JMenuBar adminMenuBar;
-    private JMenu userMenu;
-    private JMenuItem logoutButton;
 
-    public AssetsFrame(OrgAssetData orgAssetData, OrganisationUnitData organisationUnitData, PersonsData personsData) {
-        super("Manage Assets");
-        setDefaultLookAndFeelDecorated(true);
-        setLayout(new BorderLayout());
-
-        adminMenuBar = new JMenuBar();
-        userMenu = new JMenu("Account");
-        logoutButton = new JMenuItem("Logout");
-        logoutButton.addActionListener(e -> logout());
-        adminMenuBar.add(userMenu);
-        userMenu.add(logoutButton);
-
-        add(adminMenuBar, BorderLayout.PAGE_START);
+    public AssetsPanel(OrgAssetData orgAssetData, OrganisationUnitData organisationUnitData, PersonsData personsData) {
 
         this.orgAssetData = orgAssetData;
         this.organisationUnitData = organisationUnitData;
@@ -64,12 +47,8 @@ public class AssetsFrame extends JFrame {
         String welcomeString = "Name: " + fullName + " || Organisational Unit: " + orgName;
         nameLabel = new JLabel(welcomeString);
 
-        manageAssetsPanel = new JPanel();
-        add(manageAssetsPanel, BorderLayout.CENTER);
-
         assetsTable = new JTable(orgAssetTableModel);
         assetsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
 
         refreshTableButton = new JButton("Reload Data");
         refreshTableButton.addActionListener(e -> orgAssetTableModel.fireTableDataChanged());
@@ -84,15 +63,10 @@ public class AssetsFrame extends JFrame {
         removeButton = new JButton("Remove Asset");
 
         setupLayout();
-        setSize(500,500);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setLocationByPlatform(true);
-        setVisible(true);
-
     }
 
     private void setupLayout() {
-        manageAssetsPanel.setLayout(new GridBagLayout());
+        setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
 
         constraints.fill = GridBagConstraints.BOTH;
@@ -100,35 +74,25 @@ public class AssetsFrame extends JFrame {
 
         constraints.gridy = 0;
         constraints.weighty = 1;
-        manageAssetsPanel.add(nameLabel, constraints);
+        add(nameLabel, constraints);
 
         constraints.gridy = 1;
         constraints.weighty = 1;
-        manageAssetsPanel.add(new JScrollPane(assetsTable), constraints);
+        add(new JScrollPane(assetsTable), constraints);
 
         constraints.gridy = 2;
         constraints.weightx = 1;
-        manageAssetsPanel.add(refreshTableButton, constraints);
+        add(refreshTableButton, constraints);
 
         constraints.gridy = 3;
         constraints.weightx = 1;
-        manageAssetsPanel.add(addButton, constraints);
+        add(addButton, constraints);
 
         constraints.gridy = 4;
-        manageAssetsPanel.add(editButton, constraints);
+        add(editButton, constraints);
 
         constraints.gridy = 5;
-        manageAssetsPanel.add(removeButton, constraints);
-    }
-
-    private void logout() {
-        Client.logout();
-
-        for(Frame frame: getFrames()) {
-            frame.dispose();
-        }
-
-        new LoginFrame(new UsersData(new UsersNDS()));
+        add(removeButton, constraints);
     }
 
     private void editAsset() {
@@ -136,7 +100,8 @@ public class AssetsFrame extends JFrame {
         Asset asset = (Asset) orgAssetTableModel.getValueAt(assetsTable.getSelectedRow(), 0);
         Double quantity = (Double) orgAssetTableModel.getValueAt(assetsTable.getSelectedRow(), 1);
 
-        String newQuantity = JOptionPane.showInputDialog(getContentPane(),"Enter new quantity");
+        JFrame superFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        String newQuantity = JOptionPane.showInputDialog(superFrame.getContentPane(),"Enter new quantity");
         orgAssetData.updateQuantity(1, asset.getAssetID() ,Double.parseDouble(newQuantity));
 
     }

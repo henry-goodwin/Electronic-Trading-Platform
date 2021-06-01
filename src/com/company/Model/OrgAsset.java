@@ -22,6 +22,14 @@ public class OrgAsset implements Comparable<OrgAsset>, Serializable {
         this.quantity = quantity;
     }
 
+    public String toString() {
+
+        AssetData assetData = new AssetData(new AssetNDS());
+        String assetName = assetData.get(assetID).getName();
+
+        return assetName;
+    }
+
     public Integer getOrganisationUnitID() {return organisationUnitID;}
 
     public OrganisationUnit getOrganisationUnit() {
