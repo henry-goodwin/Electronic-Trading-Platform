@@ -17,10 +17,10 @@ public class JDBCOrganisationUnitDataSource implements OrganisationUnitDataSourc
             ");";
 
     private static final String INSERT_ORGANISATION_UNIT = "INSERT INTO `cab302`.`OrganisationUnit`" +
-            "(`name`,\n" +
-            "`credits`)\n" +
-            "VALUES\n" +
-            "(?,?);\n";
+            "(`name`," +
+            "`credits`)" +
+            "VALUES" +
+            "(?,?);";
 
     private static final String GET_ORGANISATION_UNITS = "SELECT * FROM `cab302`.`OrganisationUnit`;";
 

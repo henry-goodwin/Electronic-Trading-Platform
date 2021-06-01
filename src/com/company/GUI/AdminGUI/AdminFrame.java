@@ -1,5 +1,6 @@
 package com.company.GUI.AdminGUI;
 
+import com.company.Client;
 import com.company.Database.Assets.AssetData;
 import com.company.Database.OrganisationUnit.OrganisationUnitData;
 import com.company.Database.Users.UsersData;
@@ -20,12 +21,25 @@ public class AdminFrame extends JFrame {
     private JButton manageUsersButton;
     private JButton manageAssetsButton;
 
+    private JMenuBar adminMenuBar;
+    private JMenu userMenu;
+    private JMenuItem logoutButton;
+
     public AdminFrame() {
 
         super("Admin Control Panel");
 
         setDefaultLookAndFeelDecorated(true);
         setLayout(new BorderLayout());
+
+        adminMenuBar = new JMenuBar();
+        userMenu = new JMenu("Account");
+        logoutButton = new JMenuItem("Logout");
+        logoutButton.addActionListener(e -> logout());
+        adminMenuBar.add(userMenu);
+        userMenu.add(logoutButton);
+
+        add(adminMenuBar, BorderLayout.PAGE_START);
 
         adminPanel = new JPanel();
         manageOrganisationalUnitsButton = new JButton("Manage Organisational Units");
@@ -64,6 +78,16 @@ public class AdminFrame extends JFrame {
         constraints.gridx = 0;
         adminPanel.add(manageAssetsButton, constraints);
 
+    }
+
+    private void logout() {
+        Client.logout();
+
+        for(Frame frame: getFrames()) {
+            frame.dispose();
+        }
+
+        new LoginFrame(new UsersData(new UsersNDS()));
     }
 
     private void manageOrg() {
