@@ -3,7 +3,6 @@ package com.company.Database.Users;
 import com.company.Database.DBConnector;
 import com.company.Database.Persons.JDBCPersonsDataSource;
 import com.company.Database.Persons.PersonsDataSource;
-import com.company.Model.Person;
 import com.company.Model.User;
 import com.company.Utilities.PasswordHasher;
 
@@ -44,6 +43,11 @@ public class JDBCUsersDataSource implements UsersDataSource {
             "?,\n" +
             "?);\n";
 
+    private static final String CHANGE_PASSWORD = "UPDATE `cab302`.`Users`" +
+            "SET"+
+            " `password` = ?" +
+            " WHERE `userID` = ?";
+
     private static final String GET_USERID = "SELECT `userID` FROM `cab302`.`Users`;";
 
     private static final String GET_USERS = "SELECT * FROM `cab302`.`Users`;";
@@ -63,6 +67,8 @@ public class JDBCUsersDataSource implements UsersDataSource {
     private PreparedStatement addDefaultAdmin;
 
     private PreparedStatement addUser;
+
+    private PreparedStatement changePassword;
 
     private PreparedStatement getUsersList;
 
@@ -87,6 +93,7 @@ public class JDBCUsersDataSource implements UsersDataSource {
 
             addDefaultAdmin = connection.prepareStatement(INSERT_DEFAULT_ADMIN);
             addUser = connection.prepareStatement(INSERT_USER);
+            changePassword = connection.prepareStatement(CHANGE_PASSWORD);
             getUsersList = connection.prepareStatement(GET_USERS);
             getUserIDList = connection.prepareStatement(GET_USERID);
             getUserFromID = connection.prepareStatement(GET_USER_FROM_USERID);
@@ -131,6 +138,18 @@ public class JDBCUsersDataSource implements UsersDataSource {
             exception.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void changePassword(String newPassword, Integer userID){
+        try {
+            changePassword.setString(1, newPassword);
+            changePassword.setInt(2, userID);
+            changePassword.executeUpdate();
+
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 
     @Override

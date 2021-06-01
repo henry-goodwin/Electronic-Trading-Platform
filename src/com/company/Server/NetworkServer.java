@@ -338,6 +338,17 @@ public class NetworkServer {
                 outputStream.flush();
             }
             break;
+
+            case CHANGE_PASSWORD: {
+
+                final String newPassword = (String) inputStream.readObject();
+                final Integer userID = (Integer) inputStream.readObject();
+
+                synchronized (usersDatabase) {
+                   usersDatabase.changePassword(newPassword, userID);
+                }
+            }
+            break;
         }
     }
 

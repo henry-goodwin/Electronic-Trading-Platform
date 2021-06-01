@@ -72,6 +72,18 @@ public class UsersNDS implements UsersDataSource {
     }
 
     @Override
+    public void changePassword(String newPassword, Integer userID) {
+        try{
+            outputStream.writeObject(Command.CHANGE_PASSWORD);
+            outputStream.writeObject(newPassword);
+            outputStream.writeObject(userID);
+            outputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public Boolean checkUsernameAvailability(String username) {
         try {
             outputStream.writeObject(Command.CHECK_AVAILABILITY);

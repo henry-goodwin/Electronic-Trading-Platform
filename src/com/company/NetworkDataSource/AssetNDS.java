@@ -113,7 +113,6 @@ public class AssetNDS implements AssetDataSource {
             outputStream.writeObject(assetID);
             outputStream.writeObject(name);
             outputStream.flush();
-
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,6 +1,5 @@
 package com.company.Database.Users;
 
-import com.company.Model.Person;
 import com.company.Model.User;
 
 import javax.swing.*;
@@ -43,7 +42,16 @@ public class UsersData {
         }
     }
 
+    /**
+     * Changes the user's password
+     *
+     * @param newPassword the new password that the user wants
+     * @param userID the ID of the user that wants to change their password
+     * */
 
+    public void changePassword(String newPassword, Integer userID){
+        usersData.changePassword(newPassword,  userID);
+    };
     /**
      * Based on the username of the User in the database, delete the User.
      *
@@ -79,6 +87,7 @@ public class UsersData {
      * @return the boolean of username availability.
      */
     public Boolean checkUsernameAvailability(String username) { return usersData.checkUsernameAvailability(username); }
+
 
 
     /**

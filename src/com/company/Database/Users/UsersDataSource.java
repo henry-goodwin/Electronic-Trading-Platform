@@ -13,6 +13,15 @@ public interface UsersDataSource {
     void addUser(User user);
 
     /**
+     * Changes the user's password
+     *
+     * @param newPassword the new password that the user wants
+     * @param userID the ID of the user that wants to change their password
+     * */
+
+
+    void changePassword(String newPassword, Integer userID);
+    /**
      * Extracts all the details of a User from the database based on the
      * userID passed in.
      *

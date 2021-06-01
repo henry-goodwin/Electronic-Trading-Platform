@@ -6,12 +6,16 @@ import com.company.Database.OrgUnitAssets.OrgAssetData;
 import com.company.Database.OrganisationUnit.OrganisationUnitData;
 import com.company.Database.Persons.PersonsData;
 import com.company.Database.Users.UsersData;
+import com.company.GUI.AdminGUI.ManageUsersGUI.ManageUsersFrame;
 import com.company.GUI.LoginGUI.LoginFrame;
+import com.company.GUI.UserGUI.ChangePasswordFrame;
 import com.company.Model.Asset;
 import com.company.Model.OrgAsset;
+import com.company.Model.User;
 import com.company.NetworkDataSource.AssetNDS;
 import com.company.NetworkDataSource.OrgAssetNDS;
 import com.company.NetworkDataSource.UsersNDS;
+import com.company.Utilities.PasswordHasher;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,17 +40,26 @@ public class AssetsFrame extends JFrame {
     private JMenuBar adminMenuBar;
     private JMenu userMenu;
     private JMenuItem logoutButton;
+    private JMenuItem passChangeButton;
+    private UsersData usersData;
+    private String username;
 
-    public AssetsFrame(OrgAssetData orgAssetData, OrganisationUnitData organisationUnitData, PersonsData personsData) {
+    public AssetsFrame(OrgAssetData orgAssetData, OrganisationUnitData organisationUnitData, PersonsData personsData, UsersData usersData, String username) {
         super("Manage Assets");
+        this.username = username;
         setDefaultLookAndFeelDecorated(true);
         setLayout(new BorderLayout());
 
         adminMenuBar = new JMenuBar();
         userMenu = new JMenu("Account");
+
+        passChangeButton = new JMenuItem("Change Password");
+        passChangeButton.addActionListener(e ->checkPassword(usersData, username));
+        adminMenuBar.add(userMenu);
+        userMenu.add(passChangeButton);
+
         logoutButton = new JMenuItem("Logout");
         logoutButton.addActionListener(e -> logout());
-        adminMenuBar.add(userMenu);
         userMenu.add(logoutButton);
 
         add(adminMenuBar, BorderLayout.PAGE_START);
@@ -141,5 +154,34 @@ public class AssetsFrame extends JFrame {
 
     }
 
+    private void passwordChange(String oldPassword) {
+
+        new ChangePasswordFrame(usersData,username,oldPassword);
+
+    }
+    private void checkPassword(UsersData usersData, String username) {
+
+        this.usersData = usersData;
+        this.username=username;
+        JPasswordField passField = new JPasswordField();
+        String hashPassword =null;
+        int option = JOptionPane.showConfirmDialog(null, passField, "Enter Password", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        //if yes is pressed
+        if (option == JOptionPane.OK_OPTION) {
+            // Check password matches
+            hashPassword = PasswordHasher.hashString(String.valueOf(passField.getPassword()));
+            if (usersData.login(username,hashPassword)) {
+                passwordChange(hashPassword);
+            } else {
+                JOptionPane.showMessageDialog(getContentPane(), "Error: Incorrect Password");
+            }
+        }
+        // if cancel is pressed then password won't be changed
+       else if (option == JOptionPane.OK_CANCEL_OPTION) {
+            JOptionPane.showMessageDialog(getContentPane(),"Password will not be changed");
+        }
+
+
+    }
 
 }
