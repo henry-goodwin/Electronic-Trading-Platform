@@ -1,4 +1,4 @@
-package com.company.GUI.TradingGUI.Sell;
+package com.company.GUI.TradingGUI.SellGUI;
 
 import com.company.Database.Bids.BidData;
 import com.company.Database.OrgUnitAssets.OrgAssetData;
@@ -27,9 +27,10 @@ public class SellPanel extends JPanel {
 
         constraints.fill = GridBagConstraints.BOTH;
         constraints.anchor = GridBagConstraints.PAGE_START;
-
+        constraints.insets = new Insets(10,10,10,10);
         constraints.gridy = 0;
         constraints.weighty = 1;
+        constraints.weightx = 1;
         add(sellAssetBtn, constraints);
     }
 

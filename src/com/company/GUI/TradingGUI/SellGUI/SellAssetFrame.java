@@ -1,15 +1,13 @@
-package com.company.GUI.TradingGUI.Sell;
+package com.company.GUI.TradingGUI.SellGUI;
 
 import com.company.Client;
 import com.company.Database.Bids.BidData;
 import com.company.Database.OrgUnitAssets.OrgAssetData;
-import com.company.Model.Asset;
 import com.company.Model.Bid;
 import com.company.Model.OrgAsset;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.Date;
 
 public class SellAssetFrame extends JFrame {
 
@@ -53,29 +51,36 @@ public class SellAssetFrame extends JFrame {
 
         constraints.fill = GridBagConstraints.BOTH;
         constraints.anchor = GridBagConstraints.PAGE_START;
+        constraints.insets = new Insets(10,10,10,10);
 
         constraints.gridy = 0;
         constraints.weighty = 1;
+        constraints.weightx = 1;
         sellPanel.add(new JScrollPane(assetsJList), constraints);
 
         constraints.gridy = 1;
         constraints.weighty = 1;
+        constraints.weightx = 1;
         sellPanel.add(new JLabel("Quantity"), constraints);
 
         constraints.gridy = 2;
         constraints.weighty = 1;
+        constraints.weightx = 1;
         sellPanel.add(quantityField, constraints);
 
         constraints.gridy = 3;
         constraints.weighty = 1;
+        constraints.weightx = 1;
         sellPanel.add(new JLabel("Price"), constraints);
 
         constraints.gridy = 4;
         constraints.weighty = 1;
+        constraints.weightx = 1;
         sellPanel.add(priceField, constraints);
 
         constraints.gridy = 5;
         constraints.weighty = 1;
+        constraints.weightx = 1;
         sellPanel.add(placeSellOrder, constraints);
 
     }

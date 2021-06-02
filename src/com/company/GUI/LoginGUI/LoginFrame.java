@@ -91,7 +91,7 @@ public class LoginFrame extends JFrame {
                 // Present Standard Screen
                 Client.setOrgID(1);
                 // Need to find out what orgID user belongs to
-                new TradingFrame();
+                new TradingFrame(new OrganisationUnitData(new OrganisationUnitNDS()), new PersonsData(new PersonsNDS()));
             }
 
             LoginFrame.this.dispose();

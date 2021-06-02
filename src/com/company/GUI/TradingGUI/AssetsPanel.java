@@ -25,27 +25,16 @@ public class AssetsPanel extends JPanel {
     private JButton editButton;
     private JButton removeButton;
     private JButton refreshTableButton;
-    private JLabel nameLabel;
 
     private OrgAssetData orgAssetData;
-    private OrganisationUnitData organisationUnitData;
-    private PersonsData personsData;
 
 
-    public AssetsPanel(OrgAssetData orgAssetData, OrganisationUnitData organisationUnitData, PersonsData personsData) {
+    public AssetsPanel(OrgAssetData orgAssetData) {
 
         this.orgAssetData = orgAssetData;
-        this.organisationUnitData = organisationUnitData;
-        this.personsData = personsData;
 
         orgAssetTableModel = new OrgAssetTableModel();
         orgAssetTableModel.setData(this.orgAssetData.getAssetList(1));
-
-        String orgName = organisationUnitData.get(Client.getLoggedInOrgID()).getName();
-        String fullName = personsData.get(Client.getLoggedInPersonID()).toString();
-
-        String welcomeString = "Name: " + fullName + " || Organisational Unit: " + orgName;
-        nameLabel = new JLabel(welcomeString);
 
         assetsTable = new JTable(orgAssetTableModel);
         assetsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -74,24 +63,20 @@ public class AssetsPanel extends JPanel {
 
         constraints.gridy = 0;
         constraints.weighty = 1;
-        add(nameLabel, constraints);
-
-        constraints.gridy = 1;
-        constraints.weighty = 1;
         add(new JScrollPane(assetsTable), constraints);
 
-        constraints.gridy = 2;
+        constraints.gridy = 1;
         constraints.weightx = 1;
         add(refreshTableButton, constraints);
 
-        constraints.gridy = 3;
+        constraints.gridy = 2;
         constraints.weightx = 1;
         add(addButton, constraints);
 
-        constraints.gridy = 4;
+        constraints.gridy = 3;
         add(editButton, constraints);
 
-        constraints.gridy = 5;
+        constraints.gridy = 4;
         add(removeButton, constraints);
     }
 

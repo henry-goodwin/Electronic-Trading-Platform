@@ -6,7 +6,9 @@ import com.company.Database.OrganisationUnit.OrganisationUnitData;
 import com.company.Database.Persons.PersonsData;
 import com.company.Database.Users.UsersData;
 import com.company.GUI.LoginGUI.LoginFrame;
-import com.company.GUI.TradingGUI.Sell.SellPanel;
+import com.company.GUI.TradingGUI.BuyGUI.BuyPanel;
+import com.company.GUI.TradingGUI.SellGUI.SellPanel;
+import com.company.Model.OrganisationUnit;
 import com.company.NetworkDataSource.OrgAssetNDS;
 import com.company.NetworkDataSource.OrganisationUnitNDS;
 import com.company.NetworkDataSource.PersonsNDS;
@@ -22,10 +24,17 @@ public class TradingFrame extends JFrame {
     private JMenuBar adminMenuBar;
     private JMenu userMenu;
     private JMenuItem logoutButton;
+    private JLabel nameLabel;
 
-    public TradingFrame() {
+    private OrganisationUnitData organisationUnitData;
+    private PersonsData personsData;
+
+    public TradingFrame(OrganisationUnitData organisationUnitData, PersonsData personsData) {
 
         super("Trading Platform");
+
+        this.organisationUnitData = organisationUnitData;
+        this.personsData = personsData;
 
         adminMenuBar = new JMenuBar();
         userMenu = new JMenu("Account");
@@ -36,10 +45,21 @@ public class TradingFrame extends JFrame {
 
         add(adminMenuBar, BorderLayout.PAGE_START);
 
+        OrganisationUnit organisationUnit = organisationUnitData.get(Client.getLoggedInOrgID());
+        String orgName = organisationUnit.getName();
+        String fullName = personsData.get(Client.getLoggedInPersonID()).toString();
+        String credits = String.valueOf(organisationUnit.getCredits());
+
+        JPanel tradingPanel = new JPanel();
+        tradingPanel.setLayout(new BorderLayout());
+        String welcomeString = "Name: " + fullName + " || Organisational Unit: " + orgName + " || Credits: " + credits;
+        nameLabel = new JLabel(welcomeString);
+        tradingPanel.add(nameLabel, BorderLayout.PAGE_START);
+
         tabbedPane = new JTabbedPane();
         tabbedPane.setForeground(Color.BLACK);
 
-        JPanel assetsPanel = new AssetsPanel(new OrgAssetData(new OrgAssetNDS()), new OrganisationUnitData(new OrganisationUnitNDS()), new PersonsData(new PersonsNDS()));
+        JPanel assetsPanel = new AssetsPanel(new OrgAssetData(new OrgAssetNDS()));
         tabbedPane.add("Organisational Assets", assetsPanel);
 
         JPanel buyPanel = new BuyPanel();
@@ -48,7 +68,8 @@ public class TradingFrame extends JFrame {
         JPanel sellPanel = new SellPanel();
         tabbedPane.add("Sell Asset", sellPanel);
 
-        add(tabbedPane, BorderLayout.CENTER);
+        tradingPanel.add(tabbedPane, BorderLayout.CENTER);
+        add(tradingPanel, BorderLayout.CENTER);
 
         setSize(1000,1000);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
