@@ -24,16 +24,14 @@ public class ChangePasswordFrame extends JFrame {
         private JComboBox accountTypeComboBox;
         private JList identityList;
         private JButton changePasswordButton;
-        private String username;
         private String oldPassword;
 
-        public ChangePasswordFrame(UsersData usersData, String username, String oldPassword) {
+        public ChangePasswordFrame(UsersData usersData, String oldPassword) {
             super("Change Password");
             setDefaultLookAndFeelDecorated(true);
             setLayout(new BorderLayout());
 
             this.usersData = usersData;
-            this.username = username;
             this.oldPassword = oldPassword;
 
             passwordField = new JPasswordField();
@@ -83,7 +81,7 @@ public class ChangePasswordFrame extends JFrame {
                 // Perform Checks on passwords
                 String hashedPassword = PasswordHasher.hashString(String.valueOf(passwordField.getPassword()));
                 String hashedConfirmPassword = PasswordHasher.hashString(String.valueOf(confirmPasswordField.getPassword()));
-                //If the new password is the same as it wasz, then the user is prompted to use a new passsword
+                //If the new password is the same as it was, then the user is prompted to use a new password
                 if (hashedPassword.equals(oldPassword)) {
                     JOptionPane.showMessageDialog(getContentPane(), "Error: Please ensure new password is not the same as old password");
                     passwordField.setText("");

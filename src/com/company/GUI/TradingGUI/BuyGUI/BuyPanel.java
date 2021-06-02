@@ -1,9 +1,13 @@
 package com.company.GUI.TradingGUI.BuyGUI;
 
+import com.company.Client;
 import com.company.Database.Assets.AssetData;
 import com.company.Database.Bids.BidData;
+import com.company.Database.OrganisationUnit.OrganisationUnitData;
+import com.company.GUI.TradingGUI.BidTableModel;
 import com.company.NetworkDataSource.AssetNDS;
 import com.company.NetworkDataSource.BidNDS;
+import com.company.NetworkDataSource.OrganisationUnitNDS;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,8 +15,21 @@ import java.awt.*;
 public class BuyPanel extends JPanel {
 
     private JButton buyAssetButton;
+    private JTable buyOrdersTable;
+    private BidTableModel buyTableModel;
 
-    public BuyPanel() {
+    private BidData bidData;
+
+
+    public BuyPanel(BidData bidData) {
+
+        this.bidData = bidData;
+
+        buyTableModel = new BidTableModel();
+        buyTableModel.setData(this.bidData.getBidList(Client.getLoggedInOrgID(), true));
+
+        buyOrdersTable = new JTable(buyTableModel);
+        buyOrdersTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         buyAssetButton = new JButton("New Buy Order");
         buyAssetButton.addActionListener(e -> buyAsset());
@@ -28,11 +45,16 @@ public class BuyPanel extends JPanel {
         constraints.fill = GridBagConstraints.BOTH;
         constraints.anchor = GridBagConstraints.PAGE_START;
         constraints.insets = new Insets(10,10,10,10);
+
         constraints.gridy = 0;
+        constraints.weighty = 1;
+        add(new JScrollPane(buyOrdersTable), constraints);
+
+        constraints.gridy = 1;
         constraints.weighty = 1;
         constraints.weightx = 1;
         add(buyAssetButton, constraints);
     }
 
-    private static void buyAsset() { new BuyAssetFrame(new AssetData(new AssetNDS()), new BidData(new BidNDS())); }
+    private static void buyAsset() { new BuyAssetFrame(new AssetData(new AssetNDS()), new BidData(new BidNDS()), new OrganisationUnitData(new OrganisationUnitNDS())); }
 }

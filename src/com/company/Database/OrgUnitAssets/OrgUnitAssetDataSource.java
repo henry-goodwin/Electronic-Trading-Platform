@@ -52,4 +52,6 @@ public interface OrgUnitAssetDataSource {
     ArrayList<Object[]> getAssetList(Integer orgID);
 
     void updateQuantity(Integer orgID, Integer assetID ,Double quantity);
+
+    void updateOrgAsset(OrgAsset orgAsset);
 }

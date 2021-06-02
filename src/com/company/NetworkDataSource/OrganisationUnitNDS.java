@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -84,6 +85,30 @@ public class OrganisationUnitNDS implements OrganisationUnitDataSource {
         } catch (IOException | ClassNotFoundException | ClassCastException e) {
             e.printStackTrace();
             return new HashSet<>();
+        }
+    }
+
+    @Override
+    public void updateOrgUnit(OrganisationUnit organisationUnit) {
+        try {
+            outputStream.writeObject(Command.UPDATE_ORG_UNIT);
+            outputStream.writeObject(organisationUnit);
+            outputStream.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public ArrayList<Object[]> getList() {
+        try {
+            outputStream.writeObject(Command.GET_ORG_LIST);
+            outputStream.flush();
+            return (ArrayList<Object[]>) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException | ClassCastException e) {
+            e.printStackTrace();
+            return new ArrayList<Object[]>();
         }
     }
 }

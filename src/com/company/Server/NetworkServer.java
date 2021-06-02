@@ -6,6 +6,8 @@ import com.company.Database.Bids.BidDataSource;
 import com.company.Database.Bids.JDBCBidDataSource;
 import com.company.Database.OrgUnitAssets.JDBCOrgAssetDataSource;
 import com.company.Database.OrgUnitAssets.OrgUnitAssetDataSource;
+import com.company.Database.OrgUnitEmployees.JDBCOrgUnitEmployeeDataSource;
+import com.company.Database.OrgUnitEmployees.OrgUnitEmployeeDataSource;
 import com.company.Database.OrganisationUnit.JDBCOrganisationUnitDataSource;
 import com.company.Database.OrganisationUnit.OrganisationUnitDataSource;
 import com.company.Model.*;
@@ -45,6 +47,7 @@ public class NetworkServer {
     private AssetDataSource assetDatabase;
     private OrgUnitAssetDataSource orgAssetDatabase;
     private BidDataSource bidDatabase;
+    private OrgUnitEmployeeDataSource unitEmployeeDatabase;
 
     /**
      * Handles the connection received from ServerSocket.
@@ -205,6 +208,7 @@ public class NetworkServer {
                 }
                 outputStream.flush();
             }
+            break;
 
             case GET_ORGANISATION_UNIT_SET: {
                 synchronized (organisationUnitDatabase) {
@@ -381,6 +385,70 @@ public class NetworkServer {
                 }
                 outputStream.flush();
             }
+            break;
+
+            case GET_BID_LIST: {
+                final Integer orgID = (Integer) inputStream.readObject();
+                final Boolean buyType = (Boolean) inputStream.readObject();
+
+                synchronized (bidDatabase) {
+                    outputStream.writeObject(bidDatabase.getBidList(orgID, buyType));
+                }
+                outputStream.flush();
+            }
+            break;
+
+            case CHECK_TRADES: {
+                synchronized (bidDatabase) {
+                    bidDatabase.checkTrades();
+                }
+            }
+            break;
+
+            case UPDATE_ORG_UNIT: {
+                final OrganisationUnit organisationUnit = (OrganisationUnit) inputStream.readObject();
+
+                synchronized (organisationUnitDatabase) {
+                    organisationUnitDatabase.updateOrgUnit(organisationUnit);
+                }
+            }
+            break;
+
+            case UPDATE_ORG_ASSET: {
+                final OrgAsset orgAsset = (OrgAsset) inputStream.readObject();
+
+                synchronized (orgAssetDatabase) {
+                    orgAssetDatabase.updateOrgAsset(orgAsset);
+                }
+            }
+            break;
+
+            case GET_ORG_LIST: {
+                synchronized (organisationUnitDatabase) {
+                    outputStream.writeObject(organisationUnitDatabase.getList());
+                }
+                outputStream.flush();
+            }
+            break;
+
+            case ADD_EMPLOYEE: {
+                final UnitEmployee unitEmployee = (UnitEmployee) inputStream.readObject();
+
+                synchronized (unitEmployeeDatabase) {
+                    unitEmployeeDatabase.addEmployee(unitEmployee);
+                }
+            }
+            break;
+
+            case GET_EMPLOYEE: {
+                final Integer userID = (Integer) inputStream.readObject();
+
+                synchronized (unitEmployeeDatabase) {
+                    outputStream.writeObject(unitEmployeeDatabase.getEmployee(userID));
+                }
+                outputStream.flush();
+            }
+            break;
         }
     }
 
@@ -406,6 +474,7 @@ public class NetworkServer {
         organisationUnitDatabase = new JDBCOrganisationUnitDataSource();
         orgAssetDatabase = new JDBCOrgAssetDataSource();
         bidDatabase = new JDBCBidDataSource();
+        unitEmployeeDatabase = new JDBCOrgUnitEmployeeDataSource();
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             serverSocket.setSoTimeout(SOCKET_ACCEPT_TIMEOUT);

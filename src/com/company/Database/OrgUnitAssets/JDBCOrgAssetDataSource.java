@@ -51,6 +51,10 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
             "`quantity` = ?" +
             "WHERE `organisationUnitID` = ? AND `assetID` = ?;";
 
+    private static final String UPDATE_ASSET = "UPDATE `cab302`.`OrganisationUnitAssets`" +
+            "SET `quantity` = ?" +
+            "WHERE `organisationUnitID` = ? AND `assetID` = ?;";
+
     private Connection connection;
 
     private PreparedStatement addOrgAsset;
@@ -59,6 +63,7 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
     private PreparedStatement getMyAssetSet;
     private PreparedStatement getAssetCount;
     private PreparedStatement updateAssetQuantity;
+    private PreparedStatement updateAsset;
 
     public JDBCOrgAssetDataSource() {
         connection = DBConnector.getInstance();
@@ -73,6 +78,7 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
             getMyAssetSet = connection.prepareStatement(GET_MY_ORG_ASSET_SET);
             getAssetCount = connection.prepareStatement(GET_ASSET_COUNT);
             updateAssetQuantity = connection.prepareStatement(UPDATE_ASSET_QUANTITY);
+            updateAsset = connection.prepareStatement(UPDATE_ASSET);
 
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -194,8 +200,8 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
 
             while (resultSet.next()) {
                 // Find Asset
-                AssetData assetData = new AssetData(new AssetNDS());
-                Asset asset = assetData.get(resultSet.getInt("assetID"));
+//                AssetData assetData = new AssetData(new AssetNDS());
+                OrgAsset asset = getOrgAsset(orgID, resultSet.getInt("assetID"));
                 Object[] temp = new Object[] {asset, resultSet.getDouble("quantity")};
                 assetList.add(temp);
             }
@@ -212,6 +218,19 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
             updateAssetQuantity.setInt(2, orgID);
             updateAssetQuantity.setInt(3, assetID);
             updateAssetQuantity.executeUpdate();
+
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateOrgAsset(OrgAsset orgAsset) {
+        try {
+            updateAsset.setDouble(1, orgAsset.getQuantity());
+            updateAsset.setInt(2, orgAsset.getOrganisationUnitID());
+            updateAsset.setInt(3, orgAsset.getAssetID());
+            updateAsset.executeUpdate();
 
         } catch (SQLException exception) {
             exception.printStackTrace();

@@ -1,6 +1,7 @@
 package com.company.GUI.TradingGUI;
 
 import com.company.Model.Asset;
+import com.company.Model.OrgAsset;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -34,15 +35,15 @@ public class OrgAssetTableModel extends AbstractTableModel {
 
         int values = orgAssetList.size();
 
-        Asset[] assetNames = new Asset[values];
+        OrgAsset[] assetNames = new OrgAsset[values];
         Double[] assetQuantities = new Double[values];
 
         for (int i = 0; i < values; i++) {
-            assetNames[i] = (Asset) orgAssetList.get(i)[0];
+            assetNames[i] = (OrgAsset) orgAssetList.get(i)[0];
             assetQuantities[i] = (Double) orgAssetList.get(i)[1];
         }
 
-        Asset asset = assetNames[row];
+        OrgAsset asset = assetNames[row];
         Double quantity = assetQuantities[row];
 
         switch (col) {

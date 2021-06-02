@@ -284,9 +284,9 @@ public class JDBCUsersDataSource implements UsersDataSource {
                 user.setAccountType(resultSet.getString("accountType"));
 
                 // Find and Set Persons Data
-                PersonsDataSource personsData = new JDBCPersonsDataSource();
                 Integer personID = resultSet.getInt("personID");
                 user.setPersonID(personID);
+                users.add(user);
             }
 
         } catch (SQLException exception) {
@@ -310,11 +310,9 @@ public class JDBCUsersDataSource implements UsersDataSource {
     @Override
     public boolean checkPassword(Integer userID, String hashedPassword) {
         // Check if username exists
-//        if (!checkUsernameAvailability(username)) {
+
             User user = getUser(userID);
             return user.getPasswordHash().equals(hashedPassword);
-//        }
-//
-//        return false;
+
     }
 }

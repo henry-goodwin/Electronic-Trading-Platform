@@ -1,6 +1,7 @@
 package com.company.GUI.TradingGUI;
 
 import com.company.Client;
+import com.company.Database.Bids.BidData;
 import com.company.Database.OrgUnitAssets.OrgAssetData;
 import com.company.Database.OrganisationUnit.OrganisationUnitData;
 import com.company.Database.Persons.PersonsData;
@@ -10,10 +11,7 @@ import com.company.GUI.TradingGUI.BuyGUI.BuyPanel;
 import com.company.GUI.TradingGUI.SellGUI.SellPanel;
 import com.company.GUI.UserGUI.ChangePasswordFrame;
 import com.company.Model.OrganisationUnit;
-import com.company.NetworkDataSource.OrgAssetNDS;
-import com.company.NetworkDataSource.OrganisationUnitNDS;
-import com.company.NetworkDataSource.PersonsNDS;
-import com.company.NetworkDataSource.UsersNDS;
+import com.company.NetworkDataSource.*;
 import com.company.Utilities.PasswordHasher;
 
 import javax.swing.*;
@@ -29,7 +27,6 @@ public class TradingFrame extends JFrame {
     private JLabel nameLabel;
     private JMenuItem passChangeButton;
     private UsersData usersData;
-    private String username;
 
     private OrganisationUnitData organisationUnitData;
     private PersonsData personsData;
@@ -74,10 +71,10 @@ public class TradingFrame extends JFrame {
         JPanel assetsPanel = new AssetsPanel(new OrgAssetData(new OrgAssetNDS()));
         tabbedPane.add("Organisational Assets", assetsPanel);
 
-        JPanel buyPanel = new BuyPanel();
+        JPanel buyPanel = new BuyPanel(new BidData(new BidNDS()));
         tabbedPane.add("Buy Asset", buyPanel);
 
-        JPanel sellPanel = new SellPanel();
+        JPanel sellPanel = new SellPanel(new BidData(new BidNDS()));
         tabbedPane.add("Sell Asset", sellPanel);
 
         tradingPanel.add(tabbedPane, BorderLayout.CENTER);
@@ -101,7 +98,7 @@ public class TradingFrame extends JFrame {
 
     private void passwordChange(String oldPassword) {
 
-        new ChangePasswordFrame(usersData,username,oldPassword);
+        new ChangePasswordFrame(usersData,oldPassword);
 
     }
     private void checkPassword(UsersData usersData) {

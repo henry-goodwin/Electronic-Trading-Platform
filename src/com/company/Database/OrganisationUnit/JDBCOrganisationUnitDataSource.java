@@ -1,9 +1,11 @@
 package com.company.Database.OrganisationUnit;
 
 import com.company.Database.DBConnector;
+import com.company.Model.OrgAsset;
 import com.company.Model.OrganisationUnit;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -26,13 +28,20 @@ public class JDBCOrganisationUnitDataSource implements OrganisationUnitDataSourc
 
     private static final String GET_ORGANISATION_UNIT = "SELECT * FROM `cab302`.`OrganisationUnit` WHERE organisationUnitID=?;";
 
+    private static final String UPDATE_ORGANISATION_UNIT = "UPDATE `cab302`.`OrganisationUnit`" +
+            "SET `credits` = ?" +
+            "WHERE `organisationUnitID` = ?;";
+
+    private static final String GET_LIST = "SELECT *" +
+            "FROM `cab302`.`OrganisationUnit`;";
+
     private Connection connection;
 
     private PreparedStatement addOrganisationUnit;
-
     private PreparedStatement getOrganisationUnits;
-
     private PreparedStatement getOrganisationUnit;
+    private PreparedStatement updateOrganisationUnit;
+    private PreparedStatement getList;
 
     public JDBCOrganisationUnitDataSource() {
         connection = DBConnector.getInstance();
@@ -44,6 +53,8 @@ public class JDBCOrganisationUnitDataSource implements OrganisationUnitDataSourc
             addOrganisationUnit = connection.prepareStatement(INSERT_ORGANISATION_UNIT);
             getOrganisationUnit = connection.prepareStatement(GET_ORGANISATION_UNIT);
             getOrganisationUnits = connection.prepareStatement(GET_ORGANISATION_UNITS);
+            updateOrganisationUnit = connection.prepareStatement(UPDATE_ORGANISATION_UNIT);
+            getList = connection.prepareStatement(GET_LIST);
 
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -111,5 +122,39 @@ public class JDBCOrganisationUnitDataSource implements OrganisationUnitDataSourc
         }
 
         return organisationUnits;
+    }
+
+    @Override
+    public void updateOrgUnit(OrganisationUnit organisationUnit) {
+        try {
+            updateOrganisationUnit.setDouble(1, organisationUnit.getCredits());
+            updateOrganisationUnit.setInt(2, organisationUnit.getID());
+            updateOrganisationUnit.executeUpdate();
+
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public ArrayList<Object[]> getList() {
+        ArrayList<Object[]> assetList = new ArrayList<>();
+        ResultSet resultSet = null;
+
+        try {
+
+            resultSet = getList.executeQuery();
+
+            while (resultSet.next()) {
+                // Find Asset
+                OrganisationUnit organisationUnit = new OrganisationUnit(resultSet.getInt("organisationUnitID"), resultSet.getString("name"), resultSet.getDouble("credits"));
+                Object[] temp = new Object[] {organisationUnit, organisationUnit.getCredits()};
+                assetList.add(temp);
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return assetList;
     }
 }

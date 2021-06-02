@@ -2,16 +2,16 @@ package com.company.GUI.LoginGUI;
 
 import com.company.Client;
 import com.company.Database.OrgUnitAssets.OrgAssetData;
+import com.company.Database.OrgUnitEmployees.OrgUnitEmployeeDataSource;
+import com.company.Database.OrgUnitEmployees.OrgUnitEmployeesData;
 import com.company.Database.OrganisationUnit.OrganisationUnitData;
 import com.company.Database.Persons.PersonsData;
 import com.company.Database.Users.UsersData;
 import com.company.GUI.AdminGUI.AdminFrame;
 import com.company.GUI.TradingGUI.TradingFrame;
+import com.company.Model.UnitEmployee;
 import com.company.Model.User;
-import com.company.NetworkDataSource.OrgAssetNDS;
-import com.company.NetworkDataSource.OrganisationUnitNDS;
-import com.company.NetworkDataSource.PersonsNDS;
-import com.company.NetworkDataSource.UsersNDS;
+import com.company.NetworkDataSource.*;
 import com.company.Server.Command;
 import com.company.Utilities.PasswordHasher;
 
@@ -90,7 +90,10 @@ public class LoginFrame extends JFrame {
 
             } else if (loggedInUser.getAccountType().equals("Standard")) {
                 // Present Standard Screen
-                Client.setOrgID(1);
+                OrgUnitEmployeesData orgUnitEmployeesData = new OrgUnitEmployeesData(new UnitEmployeeNDS());
+                UnitEmployee unitEmployee = orgUnitEmployeesData.get(loggedInUser.getUserID());
+                Client.setOrgID(unitEmployee.getOrgID());
+
                 // Need to find out what orgID user belongs to
                 new TradingFrame(new OrganisationUnitData(new OrganisationUnitNDS()), new PersonsData(new PersonsNDS()), new UsersData(new UsersNDS()));
             }

@@ -49,6 +49,9 @@ public class OrgAsset implements Comparable<OrgAsset>, Serializable {
     public void setQuantity(Double quantity) {
         this.quantity = quantity;
     }
+    public void addQuantity(Double quantity) {this.quantity += quantity;}
+    public void removeQuantity(Double quantity) {this.quantity -= quantity;}
+
 
     public Double getQuantity() {
         return this.quantity;

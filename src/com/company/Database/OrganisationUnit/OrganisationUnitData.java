@@ -5,6 +5,7 @@ import com.company.Model.OrganisationUnit;
 import com.company.Model.Person;
 
 import javax.swing.*;
+import java.util.ArrayList;
 
 public class OrganisationUnitData {
 
@@ -18,7 +19,6 @@ public class OrganisationUnitData {
         for (OrganisationUnit organisationUnit : organisationUnitDataSource.organisationUnitSet()) {
             organisationUnitDefaultListModel.addElement(organisationUnit);
         }
-
     }
 
     /**
@@ -53,6 +53,14 @@ public class OrganisationUnitData {
      */
     public void addOrganisationUnit(OrganisationUnit organisationUnit) {
         organisationUnitDataSource.addOrganisationUnit(organisationUnit);
+    }
+
+    public void updateUnit(OrganisationUnit organisationUnit) {
+        organisationUnitDataSource.updateOrgUnit(organisationUnit);
+    }
+
+    public ArrayList<Object[]> getList() {
+        return organisationUnitDataSource.getList();
     }
 
 }

@@ -72,22 +72,7 @@ public class NewAssetFrame extends JFrame {
         constraints.gridy = 3;
         newAssetsPanel.add(addNewAssetButton, constraints);
     }
-//
-//    private void newName() {
-//        String name = JOptionPane.showInputDialog(getContentPane(),"Asset Name");
-//
-//        // Check that name hasn't been used
-//        if (assetData.nameAvailability(name)) {
-//            assetData.addAsset(new Asset(name));
-//
-//            this.assetData = new AssetData(new AssetNDS());
-//            listModel = (DefaultListModel<Asset>) assetData.getAssetModel();
-//            namesList.setModel(listModel);
-//
-//        } else {
-//            JOptionPane.showMessageDialog(getContentPane(), "Error: Asset Already exists");
-//        }
-//    }
+
 
     private void addAsset() {
         if (namesList.isSelectionEmpty() || quantityField.getText().equals("")) {

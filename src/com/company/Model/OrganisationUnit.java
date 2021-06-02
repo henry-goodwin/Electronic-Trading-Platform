@@ -35,6 +35,9 @@ public class OrganisationUnit implements Comparable<OrganisationUnit>, Serializa
 
     public Double getCredits() { return this.organisationUnitCredits; }
     public void  setCredits(Double organisationUnitCredits) { this.organisationUnitCredits = organisationUnitCredits ;}
+    public void addCredits(Double credits) { this.organisationUnitCredits += credits; }
+    public void removeCredits(Double credits) { this.organisationUnitCredits -= credits; }
+
 
     @Override
     public int compareTo(OrganisationUnit other) {

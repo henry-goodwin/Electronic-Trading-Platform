@@ -148,4 +148,16 @@ public class OrgAssetNDS implements OrgUnitAssetDataSource {
         }
 
     }
+
+    @Override
+    public void updateOrgAsset(OrgAsset orgAsset) {
+        try {
+            outputStream.writeObject(Command.UPDATE_ORG_ASSET);
+            outputStream.writeObject(orgAsset);
+            outputStream.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

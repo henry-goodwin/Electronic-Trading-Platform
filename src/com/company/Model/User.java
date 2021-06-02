@@ -42,6 +42,8 @@ public class User implements Comparable<User>, Serializable {
         this.passwordHash = passwordHash;
     }
 
+    public String toString() { return username; }
+
     /**
      * @return the employeeID
      */

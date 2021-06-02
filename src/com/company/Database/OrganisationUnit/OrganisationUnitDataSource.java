@@ -3,6 +3,7 @@ package com.company.Database.OrganisationUnit;
 import com.company.Model.OrganisationUnit;
 import com.company.Model.Person;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 public interface OrganisationUnitDataSource {
@@ -36,5 +37,10 @@ public interface OrganisationUnitDataSource {
      * @return set of OrganisationUnits.
      */
     Set<OrganisationUnit> organisationUnitSet();
+
+    void updateOrgUnit(OrganisationUnit organisationUnit);
+
+    ArrayList<Object[]> getList();
+
 
 }

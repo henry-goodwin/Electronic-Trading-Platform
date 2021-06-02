@@ -6,6 +6,7 @@ import com.company.Database.OrgUnitAssets.OrgAssetData;
 import com.company.Database.Users.UsersData;
 import com.company.GUI.UserGUI.ChangePasswordFrame;
 import com.company.Model.Asset;
+import com.company.Model.OrgAsset;
 import com.company.NetworkDataSource.AssetNDS;
 import com.company.NetworkDataSource.OrgAssetNDS;
 import com.company.Utilities.PasswordHasher;
@@ -31,7 +32,7 @@ public class AssetsPanel extends JPanel {
         this.orgAssetData = orgAssetData;
 
         orgAssetTableModel = new OrgAssetTableModel();
-        orgAssetTableModel.setData(this.orgAssetData.getAssetList(1));
+        orgAssetTableModel.setData(this.orgAssetData.getAssetList(Client.getLoggedInOrgID()));
 
         assetsTable = new JTable(orgAssetTableModel);
         assetsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -79,7 +80,7 @@ public class AssetsPanel extends JPanel {
 
     private void editAsset() {
 
-        Asset asset = (Asset) orgAssetTableModel.getValueAt(assetsTable.getSelectedRow(), 0);
+        OrgAsset asset = (OrgAsset) orgAssetTableModel.getValueAt(assetsTable.getSelectedRow(), 0);
         Double quantity = (Double) orgAssetTableModel.getValueAt(assetsTable.getSelectedRow(), 1);
 
         JFrame superFrame = (JFrame) SwingUtilities.getWindowAncestor(this);

@@ -1,16 +1,15 @@
 package com.company.NetworkDataSource;
 
-import com.company.Database.Bids.BidDataSource;
-import com.company.Model.Bid;
+import com.company.Database.OrgUnitEmployees.OrgUnitEmployeeDataSource;
+import com.company.Model.UnitEmployee;
 import com.company.Server.Command;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 
-public class BidNDS implements BidDataSource {
+public class UnitEmployeeNDS implements OrgUnitEmployeeDataSource {
 
     private static final String HOSTNAME = "127.0.0.1";
     private static final int PORT = 10000;
@@ -20,7 +19,7 @@ public class BidNDS implements BidDataSource {
     private ObjectInputStream inputStream;
 
 
-    public BidNDS() {
+    public UnitEmployeeNDS() {
         try {
             // Persist a single connection through the whole lifetime of the application.
             // We will re-use this same connection/socket, rather than repeatedly opening
@@ -39,64 +38,39 @@ public class BidNDS implements BidDataSource {
     }
 
     @Override
-    public void addBid(Bid bid) {
+    public void addEmployee(UnitEmployee unitEmployee) {
         try {
-            outputStream.writeObject(Command.ADD_BID);
-            outputStream.writeObject(bid);
+            outputStream.writeObject(Command.ADD_EMPLOYEE);
+            outputStream.writeObject(unitEmployee);
             outputStream.flush();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     @Override
-    public Bid getBid(Integer bidID) {
+    public UnitEmployee getEmployee(Integer userID) {
         try {
-            outputStream.writeObject(Command.GET_BID);
-            outputStream.writeObject(bidID);
+            outputStream.writeObject(Command.GET_EMPLOYEE);
+            outputStream.writeObject(userID);
             outputStream.flush();
 
-            return ((Bid) inputStream.readObject());
+            UnitEmployee unitEmployee = (UnitEmployee) inputStream.readObject();
+            return unitEmployee;
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
     @Override
     public void close() {
 
-    }
-
-    @Override
-    public ArrayList<Object[]> getBidList(Integer orgID, boolean buyType) {
-        try {
-            outputStream.writeObject(Command.GET_BID_LIST);
-            outputStream.writeObject(orgID);
-            outputStream.writeObject(buyType);
-            outputStream.flush();
-
-            return (ArrayList<Object[]>) inputStream.readObject();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-
-    }
-
-    @Override
-    public void checkTrades() {
-        try {
-            outputStream.writeObject(Command.CHECK_TRADES);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
