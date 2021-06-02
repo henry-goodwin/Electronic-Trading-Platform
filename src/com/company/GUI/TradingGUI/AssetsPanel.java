@@ -20,9 +20,7 @@ import com.company.Utilities.PasswordHasher;
 import javax.swing.*;
 import java.awt.*;
 
-public class AssetsFrame extends JFrame {
-
-    private JPanel manageAssetsPanel;
+public class AssetsPanel extends JPanel {
 
     private JTable assetsTable;
     private OrgAssetTableModel orgAssetTableModel;
@@ -31,58 +29,19 @@ public class AssetsFrame extends JFrame {
     private JButton editButton;
     private JButton removeButton;
     private JButton refreshTableButton;
-    private JLabel nameLabel;
 
     private OrgAssetData orgAssetData;
-    private OrganisationUnitData organisationUnitData;
-    private PersonsData personsData;
 
-    private JMenuBar adminMenuBar;
-    private JMenu userMenu;
-    private JMenuItem logoutButton;
-    private JMenuItem passChangeButton;
-    private UsersData usersData;
-    private String username;
 
-    public AssetsFrame(OrgAssetData orgAssetData, OrganisationUnitData organisationUnitData, PersonsData personsData, UsersData usersData, String username) {
-        super("Manage Assets");
-        this.username = username;
-        setDefaultLookAndFeelDecorated(true);
-        setLayout(new BorderLayout());
-
-        adminMenuBar = new JMenuBar();
-        userMenu = new JMenu("Account");
-
-        passChangeButton = new JMenuItem("Change Password");
-        passChangeButton.addActionListener(e ->checkPassword(usersData, username));
-        adminMenuBar.add(userMenu);
-        userMenu.add(passChangeButton);
-
-        logoutButton = new JMenuItem("Logout");
-        logoutButton.addActionListener(e -> logout());
-        userMenu.add(logoutButton);
-
-        add(adminMenuBar, BorderLayout.PAGE_START);
+    public AssetsPanel(OrgAssetData orgAssetData) {
 
         this.orgAssetData = orgAssetData;
-        this.organisationUnitData = organisationUnitData;
-        this.personsData = personsData;
 
         orgAssetTableModel = new OrgAssetTableModel();
         orgAssetTableModel.setData(this.orgAssetData.getAssetList(1));
 
-        String orgName = organisationUnitData.get(Client.getLoggedInOrgID()).getName();
-        String fullName = personsData.get(Client.getLoggedInPersonID()).toString();
-
-        String welcomeString = "Name: " + fullName + " || Organisational Unit: " + orgName;
-        nameLabel = new JLabel(welcomeString);
-
-        manageAssetsPanel = new JPanel();
-        add(manageAssetsPanel, BorderLayout.CENTER);
-
         assetsTable = new JTable(orgAssetTableModel);
         assetsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
 
         refreshTableButton = new JButton("Reload Data");
         refreshTableButton.addActionListener(e -> orgAssetTableModel.fireTableDataChanged());
@@ -97,15 +56,10 @@ public class AssetsFrame extends JFrame {
         removeButton = new JButton("Remove Asset");
 
         setupLayout();
-        setSize(500,500);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setLocationByPlatform(true);
-        setVisible(true);
-
     }
 
     private void setupLayout() {
-        manageAssetsPanel.setLayout(new GridBagLayout());
+        setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
 
         constraints.fill = GridBagConstraints.BOTH;
@@ -113,35 +67,21 @@ public class AssetsFrame extends JFrame {
 
         constraints.gridy = 0;
         constraints.weighty = 1;
-        manageAssetsPanel.add(nameLabel, constraints);
+        add(new JScrollPane(assetsTable), constraints);
 
         constraints.gridy = 1;
-        constraints.weighty = 1;
-        manageAssetsPanel.add(new JScrollPane(assetsTable), constraints);
+        constraints.weightx = 1;
+        add(refreshTableButton, constraints);
 
         constraints.gridy = 2;
         constraints.weightx = 1;
-        manageAssetsPanel.add(refreshTableButton, constraints);
+        add(addButton, constraints);
 
         constraints.gridy = 3;
-        constraints.weightx = 1;
-        manageAssetsPanel.add(addButton, constraints);
+        add(editButton, constraints);
 
         constraints.gridy = 4;
-        manageAssetsPanel.add(editButton, constraints);
-
-        constraints.gridy = 5;
-        manageAssetsPanel.add(removeButton, constraints);
-    }
-
-    private void logout() {
-        Client.logout();
-
-        for(Frame frame: getFrames()) {
-            frame.dispose();
-        }
-
-        new LoginFrame(new UsersData(new UsersNDS()));
+        add(removeButton, constraints);
     }
 
     private void editAsset() {
@@ -149,7 +89,8 @@ public class AssetsFrame extends JFrame {
         Asset asset = (Asset) orgAssetTableModel.getValueAt(assetsTable.getSelectedRow(), 0);
         Double quantity = (Double) orgAssetTableModel.getValueAt(assetsTable.getSelectedRow(), 1);
 
-        String newQuantity = JOptionPane.showInputDialog(getContentPane(),"Enter new quantity");
+        JFrame superFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        String newQuantity = JOptionPane.showInputDialog(superFrame.getContentPane(),"Enter new quantity");
         orgAssetData.updateQuantity(1, asset.getAssetID() ,Double.parseDouble(newQuantity));
 
     }

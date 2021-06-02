@@ -30,5 +30,7 @@ public enum Command {
     GET_ASSET_LIST,
     UPDATE_ORG_ASSET_QUANTITY,
     LOGIN,
+    ADD_BID,
+    GET_BID,
     CHANGE_PASSWORD
 }

@@ -6,7 +6,7 @@ import com.company.Database.OrganisationUnit.OrganisationUnitData;
 import com.company.Database.Persons.PersonsData;
 import com.company.Database.Users.UsersData;
 import com.company.GUI.AdminGUI.AdminFrame;
-import com.company.GUI.TradingGUI.AssetsFrame;
+import com.company.GUI.TradingGUI.TradingFrame;
 import com.company.Model.User;
 import com.company.NetworkDataSource.OrgAssetNDS;
 import com.company.NetworkDataSource.OrganisationUnitNDS;
@@ -91,7 +91,7 @@ public class LoginFrame extends JFrame {
                 // Present Standard Screen
                 Client.setOrgID(1);
                 // Need to find out what orgID user belongs to
-                new AssetsFrame(new OrgAssetData(new OrgAssetNDS()), new OrganisationUnitData(new OrganisationUnitNDS()), new PersonsData(new PersonsNDS()), usersData, username);
+                new TradingFrame(new OrganisationUnitData(new OrganisationUnitNDS()), new PersonsData(new PersonsNDS()));
             }
 
             LoginFrame.this.dispose();

@@ -24,10 +24,6 @@ public class OrgAssetData {
         }
     }
 
-//    public OrgAssetData(OrgUnitAssetDataSource dataSource) {
-//        orgUnitAssetDataSource = dataSource;
-//    }
-
     /**
      * Saves the data in the database using a persistence
      * mechanism.

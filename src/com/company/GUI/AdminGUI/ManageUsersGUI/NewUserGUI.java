@@ -50,7 +50,6 @@ public class NewUserGUI extends JFrame {
         addNewUserButton.addActionListener(e -> addNewUser());
 
         setSize(500,500);
-//        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);
         setVisible(true);
     }

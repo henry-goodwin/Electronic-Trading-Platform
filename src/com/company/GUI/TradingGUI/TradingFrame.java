@@ -1,0 +1,90 @@
+package com.company.GUI.TradingGUI;
+
+import com.company.Client;
+import com.company.Database.OrgUnitAssets.OrgAssetData;
+import com.company.Database.OrganisationUnit.OrganisationUnitData;
+import com.company.Database.Persons.PersonsData;
+import com.company.Database.Users.UsersData;
+import com.company.GUI.LoginGUI.LoginFrame;
+import com.company.GUI.TradingGUI.BuyGUI.BuyPanel;
+import com.company.GUI.TradingGUI.SellGUI.SellPanel;
+import com.company.Model.OrganisationUnit;
+import com.company.NetworkDataSource.OrgAssetNDS;
+import com.company.NetworkDataSource.OrganisationUnitNDS;
+import com.company.NetworkDataSource.PersonsNDS;
+import com.company.NetworkDataSource.UsersNDS;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class TradingFrame extends JFrame {
+
+    private JTabbedPane tabbedPane;
+
+    private JMenuBar adminMenuBar;
+    private JMenu userMenu;
+    private JMenuItem logoutButton;
+    private JLabel nameLabel;
+
+    private OrganisationUnitData organisationUnitData;
+    private PersonsData personsData;
+
+    public TradingFrame(OrganisationUnitData organisationUnitData, PersonsData personsData) {
+
+        super("Trading Platform");
+
+        this.organisationUnitData = organisationUnitData;
+        this.personsData = personsData;
+
+        adminMenuBar = new JMenuBar();
+        userMenu = new JMenu("Account");
+        logoutButton = new JMenuItem("Logout");
+        logoutButton.addActionListener(e -> logout());
+        adminMenuBar.add(userMenu);
+        userMenu.add(logoutButton);
+
+        add(adminMenuBar, BorderLayout.PAGE_START);
+
+        OrganisationUnit organisationUnit = organisationUnitData.get(Client.getLoggedInOrgID());
+        String orgName = organisationUnit.getName();
+        String fullName = personsData.get(Client.getLoggedInPersonID()).toString();
+        String credits = String.valueOf(organisationUnit.getCredits());
+
+        JPanel tradingPanel = new JPanel();
+        tradingPanel.setLayout(new BorderLayout());
+        String welcomeString = "Name: " + fullName + " || Organisational Unit: " + orgName + " || Credits: " + credits;
+        nameLabel = new JLabel(welcomeString);
+        tradingPanel.add(nameLabel, BorderLayout.PAGE_START);
+
+        tabbedPane = new JTabbedPane();
+        tabbedPane.setForeground(Color.BLACK);
+
+        JPanel assetsPanel = new AssetsPanel(new OrgAssetData(new OrgAssetNDS()));
+        tabbedPane.add("Organisational Assets", assetsPanel);
+
+        JPanel buyPanel = new BuyPanel();
+        tabbedPane.add("Buy Asset", buyPanel);
+
+        JPanel sellPanel = new SellPanel();
+        tabbedPane.add("Sell Asset", sellPanel);
+
+        tradingPanel.add(tabbedPane, BorderLayout.CENTER);
+        add(tradingPanel, BorderLayout.CENTER);
+
+        setSize(1000,1000);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setLocationByPlatform(true);
+        setVisible(true);
+    }
+
+    private void logout() {
+        Client.logout();
+
+        for(Frame frame: getFrames()) {
+            frame.dispose();
+        }
+
+        new LoginFrame(new UsersData(new UsersNDS()));
+    }
+
+}

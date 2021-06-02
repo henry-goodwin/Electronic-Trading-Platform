@@ -2,6 +2,8 @@ package com.company.Server;
 
 import com.company.Database.Assets.AssetDataSource;
 import com.company.Database.Assets.JDBCAssetDataSource;
+import com.company.Database.Bids.BidDataSource;
+import com.company.Database.Bids.JDBCBidDataSource;
 import com.company.Database.OrgUnitAssets.JDBCOrgAssetDataSource;
 import com.company.Database.OrgUnitAssets.OrgUnitAssetDataSource;
 import com.company.Database.OrganisationUnit.JDBCOrganisationUnitDataSource;
@@ -42,6 +44,7 @@ public class NetworkServer {
     private OrganisationUnitDataSource organisationUnitDatabase;
     private AssetDataSource assetDatabase;
     private OrgUnitAssetDataSource orgAssetDatabase;
+    private BidDataSource bidDatabase;
 
     /**
      * Handles the connection received from ServerSocket.
@@ -339,6 +342,25 @@ public class NetworkServer {
             }
             break;
 
+            case ADD_BID:{
+                final Bid bid = (Bid) inputStream.readObject();
+
+                synchronized (bidDatabase) {
+                    bidDatabase.addBid(bid);
+                }
+            }
+            break;
+
+            case GET_BID:{
+                final Integer bidID = (Integer) inputStream.readObject();
+                synchronized (bidDatabase) {
+                    final Bid bid = bidDatabase.getBid(bidID);
+                    outputStream.writeObject(bid);
+                }
+                outputStream.flush();
+            }
+            break;
+
             case CHANGE_PASSWORD: {
 
                 final String newPassword = (String) inputStream.readObject();
@@ -373,6 +395,7 @@ public class NetworkServer {
         usersDatabase = new JDBCUsersDataSource();
         organisationUnitDatabase = new JDBCOrganisationUnitDataSource();
         orgAssetDatabase = new JDBCOrgAssetDataSource();
+        bidDatabase = new JDBCBidDataSource();
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             serverSocket.setSoTimeout(SOCKET_ACCEPT_TIMEOUT);

@@ -44,6 +44,7 @@ public class JDBCAssetDataSource implements AssetDataSource {
     private PreparedStatement deleteAsset;
 
     public JDBCAssetDataSource() {
+
         connection = DBConnector.getInstance();
 
         try {
