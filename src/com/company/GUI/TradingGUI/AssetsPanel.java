@@ -3,18 +3,11 @@ package com.company.GUI.TradingGUI;
 import com.company.Client;
 import com.company.Database.Assets.AssetData;
 import com.company.Database.OrgUnitAssets.OrgAssetData;
-import com.company.Database.OrganisationUnit.OrganisationUnitData;
-import com.company.Database.Persons.PersonsData;
 import com.company.Database.Users.UsersData;
-import com.company.GUI.AdminGUI.ManageUsersGUI.ManageUsersFrame;
-import com.company.GUI.LoginGUI.LoginFrame;
 import com.company.GUI.UserGUI.ChangePasswordFrame;
 import com.company.Model.Asset;
-import com.company.Model.OrgAsset;
-import com.company.Model.User;
 import com.company.NetworkDataSource.AssetNDS;
 import com.company.NetworkDataSource.OrgAssetNDS;
-import com.company.NetworkDataSource.UsersNDS;
 import com.company.Utilities.PasswordHasher;
 
 import javax.swing.*;
@@ -92,36 +85,6 @@ public class AssetsPanel extends JPanel {
         JFrame superFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         String newQuantity = JOptionPane.showInputDialog(superFrame.getContentPane(),"Enter new quantity");
         orgAssetData.updateQuantity(1, asset.getAssetID() ,Double.parseDouble(newQuantity));
-
-    }
-
-    private void passwordChange(String oldPassword) {
-
-        new ChangePasswordFrame(usersData,username,oldPassword);
-
-    }
-    private void checkPassword(UsersData usersData, String username) {
-
-        this.usersData = usersData;
-        this.username=username;
-        JPasswordField passField = new JPasswordField();
-        String hashPassword =null;
-        int option = JOptionPane.showConfirmDialog(null, passField, "Enter Password", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        //if yes is pressed
-        if (option == JOptionPane.OK_OPTION) {
-            // Check password matches
-            hashPassword = PasswordHasher.hashString(String.valueOf(passField.getPassword()));
-            if (usersData.login(username,hashPassword)) {
-                passwordChange(hashPassword);
-            } else {
-                JOptionPane.showMessageDialog(getContentPane(), "Error: Incorrect Password");
-            }
-        }
-        // if cancel is pressed then password won't be changed
-       else if (option == JOptionPane.OK_CANCEL_OPTION) {
-            JOptionPane.showMessageDialog(getContentPane(),"Password will not be changed");
-        }
-
 
     }
 

@@ -79,4 +79,6 @@ public interface UsersDataSource {
 
     boolean login(String username, String hashedPassword);
 
+    boolean checkPassword(Integer userID, String hashedPassword);
+
 }

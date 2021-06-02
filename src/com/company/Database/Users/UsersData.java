@@ -101,4 +101,6 @@ public class UsersData {
 
     public Boolean login(String username, String hashedPassword) { return usersData.login(username, hashedPassword); }
 
+    public Boolean checkPassword(Integer userID, String hashedPassword) { return usersData.checkPassword(userID, hashedPassword); }
+
 }

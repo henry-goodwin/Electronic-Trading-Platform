@@ -371,6 +371,16 @@ public class NetworkServer {
                 }
             }
             break;
+
+            case CHECK_PASSWORD: {
+                final Integer userID = (Integer) inputStream.readObject();
+                final String hashedPassword = (String) inputStream.readObject();
+
+                synchronized (usersDatabase) {
+                    outputStream.writeObject(usersDatabase.checkPassword(userID, hashedPassword));
+                }
+                outputStream.flush();
+            }
         }
     }
 

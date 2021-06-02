@@ -173,4 +173,23 @@ public class UsersNDS implements UsersDataSource {
 
         return false;
     }
+
+    @Override
+    public boolean checkPassword(Integer userID, String hashedPassword) {
+        try {
+            outputStream.writeObject(Command.CHECK_PASSWORD);
+            outputStream.writeObject(userID);
+            outputStream.writeObject(hashedPassword);
+            outputStream.flush();
+
+            return (Boolean) inputStream.readObject();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }

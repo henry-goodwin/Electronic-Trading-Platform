@@ -32,5 +32,6 @@ public enum Command {
     LOGIN,
     ADD_BID,
     GET_BID,
-    CHANGE_PASSWORD
+    CHANGE_PASSWORD,
+    CHECK_PASSWORD
 }

@@ -8,11 +8,13 @@ import com.company.Database.Users.UsersData;
 import com.company.GUI.LoginGUI.LoginFrame;
 import com.company.GUI.TradingGUI.BuyGUI.BuyPanel;
 import com.company.GUI.TradingGUI.SellGUI.SellPanel;
+import com.company.GUI.UserGUI.ChangePasswordFrame;
 import com.company.Model.OrganisationUnit;
 import com.company.NetworkDataSource.OrgAssetNDS;
 import com.company.NetworkDataSource.OrganisationUnitNDS;
 import com.company.NetworkDataSource.PersonsNDS;
 import com.company.NetworkDataSource.UsersNDS;
+import com.company.Utilities.PasswordHasher;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,19 +27,29 @@ public class TradingFrame extends JFrame {
     private JMenu userMenu;
     private JMenuItem logoutButton;
     private JLabel nameLabel;
+    private JMenuItem passChangeButton;
+    private UsersData usersData;
+    private String username;
 
     private OrganisationUnitData organisationUnitData;
     private PersonsData personsData;
 
-    public TradingFrame(OrganisationUnitData organisationUnitData, PersonsData personsData) {
+    public TradingFrame(OrganisationUnitData organisationUnitData, PersonsData personsData, UsersData usersData) {
 
         super("Trading Platform");
 
         this.organisationUnitData = organisationUnitData;
         this.personsData = personsData;
 
+
         adminMenuBar = new JMenuBar();
         userMenu = new JMenu("Account");
+
+        passChangeButton = new JMenuItem("Change Password");
+        passChangeButton.addActionListener(e ->checkPassword(usersData));
+        adminMenuBar.add(userMenu);
+        userMenu.add(passChangeButton);
+
         logoutButton = new JMenuItem("Logout");
         logoutButton.addActionListener(e -> logout());
         adminMenuBar.add(userMenu);
@@ -85,6 +97,33 @@ public class TradingFrame extends JFrame {
         }
 
         new LoginFrame(new UsersData(new UsersNDS()));
+    }
+
+    private void passwordChange(String oldPassword) {
+
+        new ChangePasswordFrame(usersData,username,oldPassword);
+
+    }
+    private void checkPassword(UsersData usersData) {
+
+        this.usersData = usersData;
+        JPasswordField passField = new JPasswordField();
+        String hashPassword =null;
+        int option = JOptionPane.showConfirmDialog(null, passField, "Enter Password", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        //if yes is pressed
+        if (option == JOptionPane.OK_OPTION) {
+            // Check password matches
+            hashPassword = PasswordHasher.hashString(String.valueOf(passField.getPassword()));
+            if (usersData.checkPassword(Client.getLoggedInUserID(), hashPassword)) {
+                passwordChange(hashPassword);
+            } else {
+                JOptionPane.showMessageDialog(getContentPane(), "Error: Incorrect Password");
+            }
+        }
+        // if cancel is pressed then password won't be changed
+        else if (option == JOptionPane.OK_CANCEL_OPTION) {
+            JOptionPane.showMessageDialog(getContentPane(),"Password will not be changed");
+        }
     }
 
 }

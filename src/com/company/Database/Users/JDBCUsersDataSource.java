@@ -306,4 +306,15 @@ public class JDBCUsersDataSource implements UsersDataSource {
 
         return false;
     }
+
+    @Override
+    public boolean checkPassword(Integer userID, String hashedPassword) {
+        // Check if username exists
+//        if (!checkUsernameAvailability(username)) {
+            User user = getUser(userID);
+            return user.getPasswordHash().equals(hashedPassword);
+//        }
+//
+//        return false;
+    }
 }
