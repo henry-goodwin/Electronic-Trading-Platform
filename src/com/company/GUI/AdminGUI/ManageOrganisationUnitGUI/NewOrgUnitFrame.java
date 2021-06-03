@@ -64,14 +64,19 @@ public class NewOrgUnitFrame extends JFrame {
     }
 
     private void addNewUnit() {
-        // Will need to add REGEX CHECK TO SEE IF IT IS A NUMBER
+        //get the entered data
         String name = unitNameField.getText();
-        Double credits = Double.parseDouble(creditsField.getText());
-
-        if (name.equals("")) {
+        String rawCredits = creditsField.getText();
+        //regex to check only numeric characters
+        if(!rawCredits.matches("[0-9]+")){
+            JOptionPane.showMessageDialog(getContentPane(), "Error: Please enter a valid number");
+        } //check to see if name valid
+        else if (name.equals("")) {
             JOptionPane.showMessageDialog(getContentPane(), "Error: Please ensure all fields are valid");
 
         } else {
+            //both are valid so enter data
+            Double credits = Double.parseDouble(rawCredits);
             organisationUnitData.addOrganisationUnit(new OrganisationUnit(name, credits));
             JOptionPane.showMessageDialog(getContentPane(), "Successfully added new organisation unit :)");
             NewOrgUnitFrame.this.dispose();

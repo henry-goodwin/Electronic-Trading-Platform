@@ -67,14 +67,17 @@ public class NewPersonGUI extends JFrame {
 
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
-
+        //check if names have numbers of 
         if (firstName.equals("") || lastName.equals("")) {
             JOptionPane.showMessageDialog(getContentPane(), "Error: Please ensure all fields are valid");
-        } else {
+        }else{
+        if (firstName.matches("(^[a-zA-Z]+$)") && lastName.matches("(^[a-zA-Z]+$)")){
             personsData.addUser(new Person(firstName, lastName));
             JOptionPane.showMessageDialog(getContentPane(), "Successfully added new person :)");
             NewPersonGUI.this.dispose();
-        }
+        } else{
+            JOptionPane.showMessageDialog(getContentPane(), "Error: Please ensure name have no numbers or symbols");
+            }}
     }
 
 }
