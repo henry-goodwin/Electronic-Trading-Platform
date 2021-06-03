@@ -63,36 +63,58 @@ public class NewUserGUI extends JFrame {
         constraints.anchor = GridBagConstraints.PAGE_START;
 
         constraints.gridy = 0;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
         newUserPanel.add(new JLabel("Username"), constraints);
 
         constraints.gridy = 1;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
         newUserPanel.add(usernameField, constraints);
 
         constraints.gridy = 2;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
         newUserPanel.add(new JLabel("Password"), constraints);
 
         constraints.gridy = 3;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
         newUserPanel.add(passwordField, constraints);
 
         constraints.gridy = 4;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
         newUserPanel.add(new JLabel("Confirm Password"), constraints);
 
         constraints.gridy = 5;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
         newUserPanel.add(confirmPasswordField, constraints);
 
         constraints.gridy = 6;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
         newUserPanel.add(new JLabel("Account Type"), constraints);
 
         constraints.gridy = 7;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
         newUserPanel.add(accountTypeComboBox, constraints);
 
         constraints.gridy = 8;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
         newUserPanel.add(new JLabel("Select users identity"), constraints);
 
         constraints.gridy = 9;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
         newUserPanel.add(new JScrollPane(identityList), constraints);
 
         constraints.gridy = 10;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
         newUserPanel.add(addNewUserButton, constraints);
     }
 
