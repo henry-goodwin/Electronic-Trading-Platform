@@ -5,6 +5,7 @@ import com.company.Database.OrganisationUnit.OrganisationUnitData;
 import com.company.Database.Users.UsersData;
 import com.company.GUI.AdminGUI.OrgUnitTableModel;
 import com.company.GUI.TradingGUI.OrgAssetTableModel;
+import com.company.Model.Asset;
 import com.company.Model.OrganisationUnit;
 import com.company.NetworkDataSource.OrganisationUnitNDS;
 import com.company.NetworkDataSource.UnitEmployeeNDS;
@@ -94,19 +95,24 @@ public class ManageOrgUnitsFrame extends JFrame {
 
     private void editCredits() {
 
-        Double credits = Double.valueOf(JOptionPane.showInputDialog(getContentPane(),"Enter New Credit Amount"));
+        String rawCredits = (JOptionPane.showInputDialog(getContentPane(),"Enter New Credit Amount"));
 
-        if (credits >= 0) {
-            OrganisationUnit organisationUnit = (OrganisationUnit) orgUnitTableModel.getValueAt(orgUnitsTable.getSelectedRow(), 0);
-            organisationUnit.setCredits(credits);
-            organisationUnitData.updateUnit(organisationUnit);
-            JOptionPane.showMessageDialog(getContentPane(), "Successfully updated credits :)");
+        if(!rawCredits.matches("[0-9]+")){
+            JOptionPane.showMessageDialog(getContentPane(), "Error: Please enter a valid number");
+        }else {
+            Double credits = Double.valueOf(rawCredits);
+            if (credits >= 0) {
+                OrganisationUnit organisationUnit = (OrganisationUnit) orgUnitTableModel.getValueAt(orgUnitsTable.getSelectedRow(), 0);
+                organisationUnit.setCredits(credits);
+                organisationUnitData.updateUnit(organisationUnit);
+                JOptionPane.showMessageDialog(getContentPane(), "Successfully updated credits :)");
+                updateTable();
 
-        } else {
-            JOptionPane.showMessageDialog(getContentPane(), "Error: Please enter a number greater than 0");
+            } else {
+                JOptionPane.showMessageDialog(getContentPane(), "Error: Please enter a number greater than 0");
 
+            }
         }
-
     }
 
     private void addUser() {
@@ -116,5 +122,10 @@ public class ManageOrgUnitsFrame extends JFrame {
 
     private void newOrgUnitFrame () {
         new NewOrgUnitFrame(new OrganisationUnitData(new OrganisationUnitNDS()));
+    }
+
+    private void updateTable(){
+        orgUnitTableModel.setData(this.organisationUnitData.getList());
+
     }
 }
