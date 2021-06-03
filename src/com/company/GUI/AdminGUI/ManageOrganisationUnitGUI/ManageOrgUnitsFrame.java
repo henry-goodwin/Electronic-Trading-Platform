@@ -101,17 +101,16 @@ public class ManageOrgUnitsFrame extends JFrame {
             JOptionPane.showMessageDialog(getContentPane(), "Error: Please enter a valid number");
         }else {
             Double credits = Double.valueOf(rawCredits);
-            if (credits >= 0) {
                 OrganisationUnit organisationUnit = (OrganisationUnit) orgUnitTableModel.getValueAt(orgUnitsTable.getSelectedRow(), 0);
-                organisationUnit.setCredits(credits);
-                organisationUnitData.updateUnit(organisationUnit);
-                JOptionPane.showMessageDialog(getContentPane(), "Successfully updated credits :)");
-                updateTable();
+                try {
+                    organisationUnit.setCredits(credits);
+                    organisationUnitData.updateUnit(organisationUnit);
+                    JOptionPane.showMessageDialog(getContentPane(), "Successfully updated credits :)");
+                    updateTable();
 
-            } else {
-                JOptionPane.showMessageDialog(getContentPane(), "Error: Please enter a number greater than 0");
-
-            }
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(getContentPane(), e.getMessage());
+                }
         }
     }
 

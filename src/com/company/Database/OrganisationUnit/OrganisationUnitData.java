@@ -1,8 +1,6 @@
 package com.company.Database.OrganisationUnit;
 
-import com.company.Database.Persons.PersonsDataSource;
 import com.company.Model.OrganisationUnit;
-import com.company.Model.Person;
 
 import javax.swing.*;
 import java.util.ArrayList;

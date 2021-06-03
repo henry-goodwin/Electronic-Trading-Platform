@@ -233,11 +233,22 @@ public class JDBCBidDataSource implements BidDataSource {
                     // Update org units credits
                     // Get Buy Org Unit
                     OrganisationUnit buyOrganisationUnit = organisationUnitData.get(buyBid.getOrgID());
-                    buyOrganisationUnit.removeCredits(purchasedAmount * buyBid.getPrice());
+
+                    try {
+                        buyOrganisationUnit.removeCredits(purchasedAmount * buyBid.getPrice());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
 
                     // Get Sell Org Unit
                     OrganisationUnit sellOrganisationUnit = organisationUnitData.get(sellBid.getOrgID());
-                    sellOrganisationUnit.addCredits(purchasedAmount * sellBid.getPrice());
+                    try {
+                        sellOrganisationUnit.addCredits(purchasedAmount * sellBid.getPrice());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
 
                     OrgAsset buyOrgAsset = orgAssetData.get(buyBid.getOrgID(), buyBid.getAssetID());
                     buyOrgAsset.addQuantity(purchasedAmount);
