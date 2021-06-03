@@ -50,7 +50,7 @@ public class JDBCUsersDataSource implements UsersDataSource {
 
     private static final String GET_USERID = "SELECT `userID` FROM `cab302`.`Users`;";
 
-    private static final String GET_USERS = "SELECT * FROM `cab302`.`Users`;";
+    private static final String GET_USERS = "SELECT * FROM `cab302`.`Users` WHERE accountType != 'admin';";
 
     private static final String GET_USER_FROM_USERID = "SELECT * FROM `cab302`.`Users` WHERE userID=?;";
 
