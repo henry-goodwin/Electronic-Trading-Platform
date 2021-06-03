@@ -46,7 +46,11 @@ public class ManageOrgUnitsFrame extends JFrame {
         add(menuBar, BorderLayout.PAGE_START);
 
         orgUnitTableModel = new OrgUnitTableModel();
-        orgUnitTableModel.setData(this.organisationUnitData.getList());
+        try {
+            orgUnitTableModel.setData(this.organisationUnitData.getList());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         orgUnitsTable = new JTable(orgUnitTableModel);
         orgUnitsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -124,7 +128,11 @@ public class ManageOrgUnitsFrame extends JFrame {
     }
 
     private void updateTable(){
-        orgUnitTableModel.setData(this.organisationUnitData.getList());
+        try {
+            orgUnitTableModel.setData(this.organisationUnitData.getList());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }

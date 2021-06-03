@@ -15,28 +15,6 @@ public class OrganisationUnit implements Comparable<OrganisationUnit>, Serializa
     public OrganisationUnit() {}
 
     /**
-     * Creates new Organisational Unit with unitID, Name & Credits
-     * @param organisationUnitID
-     * @param organisationUnitName
-     * @param organisationUnitCredits
-     */
-    public OrganisationUnit(Integer organisationUnitID, String organisationUnitName, Double organisationUnitCredits) {
-        this.organisationUnitID = organisationUnitID;
-        this.organisationUnitName = organisationUnitName;
-        this.organisationUnitCredits = organisationUnitCredits;
-    }
-
-    /**
-     * Creates new Organisational Unit with name & credits
-     * @param organisationUnitName
-     * @param organisationUnitCredits
-     */
-    public OrganisationUnit(String organisationUnitName, Double organisationUnitCredits) {
-        this.organisationUnitName = organisationUnitName;
-        this.organisationUnitCredits = organisationUnitCredits;
-    }
-
-    /**
      * Creates new Organisational Unit with credits
      * @param organisationUnitID
      */
@@ -59,8 +37,12 @@ public class OrganisationUnit implements Comparable<OrganisationUnit>, Serializa
     /**
      * Sets Organisational Unit ID
      * @param organisationUnitID the ID to set
+     * @throws Exception throws exception if unitID is invalid
      */
-    public void  setID(Integer organisationUnitID) {
+    public void setID(Integer organisationUnitID) throws Exception {
+        if(organisationUnitID == null || organisationUnitID < 0) {
+            throw new Exception("Error: Invalid Organisation ID");
+        }
         this.organisationUnitID = organisationUnitID;
     }
 
@@ -73,8 +55,17 @@ public class OrganisationUnit implements Comparable<OrganisationUnit>, Serializa
     /**
      * Sets organisational units name
      * @param name the name to set
+     * @throws Exception throws exception if name is invalid
      */
-    public void  setName(String name) { this.organisationUnitName = name; }
+    public void setName(String name) throws Exception {
+
+        if (name.equals("") || name.equals(null)) {
+            throw new Exception("Error: Invalid Name");
+        }
+
+        this.organisationUnitName = name;
+
+    }
 
     /**
      * Gets organisational units credits
@@ -88,11 +79,12 @@ public class OrganisationUnit implements Comparable<OrganisationUnit>, Serializa
      * @throws Exception throws exception if credit quantity is less than 0
      */
     public void  setCredits(Double organisationUnitCredits) throws Exception {
-        if(organisationUnitCredits < 0) {
+        if(organisationUnitCredits < 0 || organisationUnitCredits == null) {
             throw new Exception("Error, please ensure credits are greater than 0");
-        } else {
-            this.organisationUnitCredits = organisationUnitCredits;
         }
+
+        this.organisationUnitCredits = organisationUnitCredits;
+
     }
 
     /**

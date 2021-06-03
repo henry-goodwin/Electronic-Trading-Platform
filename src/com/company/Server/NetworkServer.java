@@ -20,6 +20,9 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NetworkServer {
@@ -40,7 +43,6 @@ public class NetworkServer {
     /**
      * The connection to the database where everything is stored.
      */
-//    private AddressBookDataSource database;
     private UsersDataSource usersDatabase;
     private PersonsDataSource personsDatabase;
     private OrganisationUnitDataSource organisationUnitDatabase;
@@ -195,7 +197,11 @@ public class NetworkServer {
             case ADD_ORGANISATION_UNIT: {
                 final OrganisationUnit organisationUnit = (OrganisationUnit) inputStream.readObject();
                 synchronized (organisationUnitDatabase) {
-                    organisationUnitDatabase.addOrganisationUnit(organisationUnit);
+                    try {
+                        organisationUnitDatabase.addOrganisationUnit(organisationUnit);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             break;
@@ -203,16 +209,14 @@ public class NetworkServer {
             case GET_ORGANISATION_UNIT: {
                 final Integer organisationalUnitID = (Integer) inputStream.readObject();
                 synchronized (organisationUnitDatabase) {
-                    final OrganisationUnit organisationUnit = organisationUnitDatabase.getOrganisationUnit(organisationalUnitID);
-                    outputStream.writeObject(organisationUnit);
-                }
-                outputStream.flush();
-            }
-            break;
-
-            case GET_ORGANISATION_UNIT_SET: {
-                synchronized (organisationUnitDatabase) {
-                    outputStream.writeObject(organisationUnitDatabase.organisationUnitSet());
+                    final OrganisationUnit organisationUnit;
+                    try {
+                        organisationUnit = organisationUnitDatabase.getOrganisationUnit(organisationalUnitID);
+                        outputStream.writeObject(organisationUnit);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(null);
+                    }
                 }
                 outputStream.flush();
             }
@@ -409,7 +413,11 @@ public class NetworkServer {
                 final OrganisationUnit organisationUnit = (OrganisationUnit) inputStream.readObject();
 
                 synchronized (organisationUnitDatabase) {
-                    organisationUnitDatabase.updateOrgUnit(organisationUnit);
+                    try {
+                        organisationUnitDatabase.updateOrgUnit(organisationUnit);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             break;
@@ -425,7 +433,12 @@ public class NetworkServer {
 
             case GET_ORG_LIST: {
                 synchronized (organisationUnitDatabase) {
-                    outputStream.writeObject(organisationUnitDatabase.getList());
+                    try {
+                        outputStream.writeObject(organisationUnitDatabase.getList());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(new ArrayList<>());
+                    }
                 }
                 outputStream.flush();
             }

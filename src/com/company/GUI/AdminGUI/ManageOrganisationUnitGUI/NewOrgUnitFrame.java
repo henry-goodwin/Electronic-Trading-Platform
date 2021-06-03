@@ -72,7 +72,16 @@ public class NewOrgUnitFrame extends JFrame {
             JOptionPane.showMessageDialog(getContentPane(), "Error: Please ensure all fields are valid");
 
         } else {
-            organisationUnitData.addOrganisationUnit(new OrganisationUnit(name, credits));
+            try {
+                OrganisationUnit organisationUnit = new OrganisationUnit();
+                organisationUnit.setName(name);
+                organisationUnit.setCredits(credits);
+
+                organisationUnitData.addOrganisationUnit(organisationUnit);
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(getContentPane(), "Error: Please ensure credits are greater than 0");
+            }
             JOptionPane.showMessageDialog(getContentPane(), "Successfully added new organisation unit :)");
             NewOrgUnitFrame.this.dispose();
         }

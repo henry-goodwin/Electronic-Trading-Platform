@@ -54,7 +54,12 @@ public class TradingFrame extends JFrame {
 
         add(adminMenuBar, BorderLayout.PAGE_START);
 
-        OrganisationUnit organisationUnit = organisationUnitData.get(Client.getLoggedInOrgID());
+        OrganisationUnit organisationUnit = null;
+        try {
+            organisationUnit = organisationUnitData.get(Client.getLoggedInOrgID());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         String orgName = organisationUnit.getName();
         String fullName = personsData.get(Client.getLoggedInPersonID()).toString();
         String credits = String.valueOf(organisationUnit.getCredits());

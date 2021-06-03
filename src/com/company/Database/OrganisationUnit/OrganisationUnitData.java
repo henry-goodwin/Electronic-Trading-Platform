@@ -13,10 +13,6 @@ public class OrganisationUnitData {
     public OrganisationUnitData(OrganisationUnitDataSource dataSource) {
         organisationUnitDataSource = dataSource;
         organisationUnitDefaultListModel = new DefaultListModel<OrganisationUnit>();
-
-        for (OrganisationUnit organisationUnit : organisationUnitDataSource.organisationUnitSet()) {
-            organisationUnitDefaultListModel.addElement(organisationUnit);
-        }
     }
 
     /**
@@ -32,33 +28,48 @@ public class OrganisationUnitData {
      *
      * @param key the id to retrieve.
      * @return the OrganisationUnit object related to the id.
+     * @throws Exception throws exception if get fails
      */
-    public OrganisationUnit get(Object key) {
-        return organisationUnitDataSource.getOrganisationUnit((Integer) key);
+    public OrganisationUnit get(Object key) throws Exception {
+        try {
+            return organisationUnitDataSource.getOrganisationUnit((Integer) key);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Failed to get unit");
+        }
     }
-
-    /**
-     * Accessor for the list model.
-     *
-     * @return the listModel to display.
-     */
-    public ListModel<OrganisationUnit> getOrganisationUnitModel() { return  organisationUnitDefaultListModel; }
 
     /**
      * Adds a OrganisationUnit to the database.
      *
      * @param organisationUnit OrganisationUnit to add to the database.
+     * @throws Exception throws exception if add fails
      */
-    public void addOrganisationUnit(OrganisationUnit organisationUnit) {
-        organisationUnitDataSource.addOrganisationUnit(organisationUnit);
+    public void addOrganisationUnit(OrganisationUnit organisationUnit) throws Exception {
+        try {
+            organisationUnitDataSource.addOrganisationUnit(organisationUnit);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Failed to add organisational unit");
+        }
     }
 
-    public void updateUnit(OrganisationUnit organisationUnit) {
-        organisationUnitDataSource.updateOrgUnit(organisationUnit);
+    public void updateUnit(OrganisationUnit organisationUnit) throws Exception {
+        try {
+            organisationUnitDataSource.updateOrgUnit(organisationUnit);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Update failed");
+        }
     }
 
-    public ArrayList<Object[]> getList() {
-        return organisationUnitDataSource.getList();
+    public ArrayList<Object[]> getList() throws Exception {
+        try {
+            return organisationUnitDataSource.getList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Failed to get list");
+        }
     }
 
 }

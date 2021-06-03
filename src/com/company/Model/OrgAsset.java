@@ -35,7 +35,11 @@ public class OrgAsset implements Comparable<OrgAsset>, Serializable {
     public OrganisationUnit getOrganisationUnit() {
         // Create Connection to database & get OrganisationUnit
         OrganisationUnitData organisationUnitData = new OrganisationUnitData(new OrganisationUnitNDS());
-        return organisationUnitData.get(organisationUnitID);
+        try {
+            return organisationUnitData.get(organisationUnitID);
+        } catch (Exception e) {
+            return new OrganisationUnit();
+        }
     }
 
     public Integer getAssetID() { return assetID; }

@@ -52,7 +52,11 @@ public class BuyAssetFrame extends JFrame implements KeyListener, ActionListener
         placeBuyOrderBtn = new JButton("Place Buy Order");
         placeBuyOrderBtn.addActionListener(e -> buyAsset());
 
-        credits = organisationUnitData.get(Client.getLoggedInOrgID()).getCredits();
+        try {
+            credits = organisationUnitData.get(Client.getLoggedInOrgID()).getCredits();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         creditsLabel = new JLabel("Credits Available: " + credits);
 
         buyPanel = new JPanel();

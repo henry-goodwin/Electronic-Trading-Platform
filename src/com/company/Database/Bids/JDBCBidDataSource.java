@@ -9,7 +9,6 @@ import com.company.Model.Bid;
 import com.company.Model.OrgAsset;
 import com.company.Model.OrganisationUnit;
 import com.company.NetworkDataSource.AssetNDS;
-import com.company.NetworkDataSource.BidNDS;
 import com.company.NetworkDataSource.OrgAssetNDS;
 import com.company.NetworkDataSource.OrganisationUnitNDS;
 
@@ -232,7 +231,12 @@ public class JDBCBidDataSource implements BidDataSource {
 
                     // Update org units credits
                     // Get Buy Org Unit
-                    OrganisationUnit buyOrganisationUnit = organisationUnitData.get(buyBid.getOrgID());
+                    OrganisationUnit buyOrganisationUnit = null;
+                    try {
+                        buyOrganisationUnit = organisationUnitData.get(buyBid.getOrgID());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     try {
                         buyOrganisationUnit.removeCredits(purchasedAmount * buyBid.getPrice());
@@ -242,7 +246,12 @@ public class JDBCBidDataSource implements BidDataSource {
                     }
 
                     // Get Sell Org Unit
-                    OrganisationUnit sellOrganisationUnit = organisationUnitData.get(sellBid.getOrgID());
+                    OrganisationUnit sellOrganisationUnit = null;
+                    try {
+                        sellOrganisationUnit = organisationUnitData.get(sellBid.getOrgID());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     try {
                         sellOrganisationUnit.addCredits(purchasedAmount * sellBid.getPrice());
                     } catch (Exception e) {
@@ -346,6 +355,8 @@ public class JDBCBidDataSource implements BidDataSource {
 
         } catch (SQLException exception) {
             exception.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
