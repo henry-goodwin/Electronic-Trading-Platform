@@ -79,16 +79,24 @@ public class ManageAssetsFrame extends JFrame {
         String name = JOptionPane.showInputDialog(getContentPane(),"Asset Name");
 
         // Check that name hasn't been used
-        if (assetData.nameAvailability(name)) {
-            assetData.addAsset(new Asset(name));
+        try {
+            if (assetData.nameAvailability(name)) {
+                try {
+                    assetData.addAsset(new Asset(name));
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(getContentPane(), e.getMessage());
+                }
 
-            this.assetData = new AssetData(new AssetNDS());
-            listModel = (DefaultListModel<Asset>) assetData.getAssetModel();
-            assetsList.setModel(listModel);
-            updateList();
+                this.assetData = new AssetData(new AssetNDS());
+                listModel = (DefaultListModel<Asset>) assetData.getAssetModel();
+                assetsList.setModel(listModel);
+                updateList();
 
-        } else {
-            JOptionPane.showMessageDialog(getContentPane(), "Error: Asset Already exists");
+            } else {
+                JOptionPane.showMessageDialog(getContentPane(), "Error: Asset Already exists");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(getContentPane(), e.getMessage());
         }
     }
 
@@ -99,8 +107,13 @@ public class ManageAssetsFrame extends JFrame {
         } else {
             String newName = JOptionPane.showInputDialog(getContentPane(),"Enter new asset name");
             Asset selectedAsset = (Asset) assetsList.getSelectedValue();
-            assetData.updateAssetName(selectedAsset.getAssetID(), newName);
-            updateList();
+            try {
+                assetData.updateAssetName(selectedAsset.getAssetID(), newName);
+                updateList();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(getContentPane(), e.getMessage());
+            }
+
         }
 
     }
@@ -111,14 +124,24 @@ public class ManageAssetsFrame extends JFrame {
         } else {
 
             Asset selectedAsset = (Asset) assetsList.getSelectedValue();
-            assetData.deleteAsset(selectedAsset.getAssetID());
-            updateList();
+            try {
+                assetData.deleteAsset(selectedAsset.getAssetID());
+                updateList();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(getContentPane(), e.getMessage());
+            }
+
         }
     }
 
     private void updateList() {
-        this.assetData = new AssetData(new AssetNDS());
-        listModel = (DefaultListModel<Asset>) assetData.getAssetModel();
-        assetsList.setModel(listModel);
+        try {
+            this.assetData = new AssetData(new AssetNDS());
+            listModel = (DefaultListModel<Asset>) assetData.getAssetModel();
+            assetsList.setModel(listModel);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(getContentPane(), e.getMessage());
+        }
     }
 }

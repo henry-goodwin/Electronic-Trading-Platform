@@ -11,7 +11,11 @@ public class AssetData {
     private DefaultListModel<Asset> assetDefaultListModel;
     private AssetDataSource assetDataSource;
 
-    public AssetData(AssetDataSource dataSource) {
+    /**
+     * Constructor that initializes variables
+     * @param dataSource
+     */
+    public AssetData(AssetDataSource dataSource) throws Exception {
         assetDataSource = dataSource;
         assetDefaultListModel = new DefaultListModel<Asset>();
 
@@ -35,7 +39,7 @@ public class AssetData {
      * @param key the id to retrieve.
      * @return the Asset object related to the id.
      */
-    public Asset get(Object key) {
+    public Asset get(Object key) throws Exception {
         return assetDataSource.getAsset((Integer) key);
     }
 
@@ -51,19 +55,19 @@ public class AssetData {
      *
      * @param asset Asset to add to the database.
      */
-    public void addAsset(Asset asset) {
+    public void addAsset(Asset asset) throws Exception {
         assetDataSource.addAsset(asset);
     }
 
-    public Boolean nameAvailability(String name) {
+    public Boolean nameAvailability(String name) throws Exception {
         return assetDataSource.checkName(name);
     }
 
-    public void updateAssetName(Integer assetID, String name) {
+    public void updateAssetName(Integer assetID, String name) throws Exception {
         assetDataSource.updateAssetName(assetID, name);
     }
 
-    public void deleteAsset(Integer assetID) {
+    public void deleteAsset(Integer assetID) throws Exception {
         assetDataSource.deleteAsset(assetID);
     }
 }

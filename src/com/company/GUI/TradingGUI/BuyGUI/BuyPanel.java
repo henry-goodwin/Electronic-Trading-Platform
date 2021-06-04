@@ -56,5 +56,10 @@ public class BuyPanel extends JPanel {
         add(buyAssetButton, constraints);
     }
 
-    private static void buyAsset() { new BuyAssetFrame(new AssetData(new AssetNDS()), new BidData(new BidNDS()), new OrganisationUnitData(new OrganisationUnitNDS())); }
+    private static void buyAsset() {
+        try {
+            new BuyAssetFrame(new AssetData(new AssetNDS()), new BidData(new BidNDS()), new OrganisationUnitData(new OrganisationUnitNDS()));
+        } catch (Exception e) {
+        }
+    }
 }

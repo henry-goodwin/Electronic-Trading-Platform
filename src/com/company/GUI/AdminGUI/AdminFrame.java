@@ -110,7 +110,11 @@ public class AdminFrame extends JFrame {
     }
 
     private void manageAssets() {
-        new ManageAssetsFrame(new AssetData(new AssetNDS()));
+        try {
+            new ManageAssetsFrame(new AssetData(new AssetNDS()));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(getContentPane(), e.getMessage());
+        }
     }
 
 }

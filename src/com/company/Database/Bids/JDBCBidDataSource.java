@@ -156,36 +156,42 @@ public class JDBCBidDataSource implements BidDataSource {
         ArrayList<Object[]> assetList = new ArrayList<>();
         ResultSet resultSet = null;
 
-        AssetData assetData = new AssetData(new AssetNDS());
-
+        AssetData assetData = null;
         try {
-            getBidList.setInt(1, orgID);
-            getBidList.setBoolean(2, buyType);
-            getBidList.setString(3, "open");
+            assetData = new AssetData(new AssetNDS());
+            try {
+                getBidList.setInt(1, orgID);
+                getBidList.setBoolean(2, buyType);
+                getBidList.setString(3, "open");
 
-            resultSet = getBidList.executeQuery();
+                resultSet = getBidList.executeQuery();
 
-            while (resultSet.next()) {
-                // Find Asset
-                Bid bid = new Bid();
-                bid.setBidID(resultSet.getInt("bidID"));
-                bid.setAssetID(resultSet.getInt("assetID"));
-                bid.setOrgID(resultSet.getInt("organisationUnitID"));
-                bid.setStatus(resultSet.getString("status"));
-                bid.setBuyType(resultSet.getBoolean("buyType"));
-                bid.setPrice(resultSet.getDouble("price"));
-                bid.setActiveQuantity(resultSet.getDouble("activeQuantity"));
-                bid.setInactiveQuantity(resultSet.getDouble("inactiveQuantity"));
-                bid.setDate(resultSet.getDate("date"));
+                while (resultSet.next()) {
+                    // Find Asset
+                    Bid bid = new Bid();
+                    bid.setBidID(resultSet.getInt("bidID"));
+                    bid.setAssetID(resultSet.getInt("assetID"));
+                    bid.setOrgID(resultSet.getInt("organisationUnitID"));
+                    bid.setStatus(resultSet.getString("status"));
+                    bid.setBuyType(resultSet.getBoolean("buyType"));
+                    bid.setPrice(resultSet.getDouble("price"));
+                    bid.setActiveQuantity(resultSet.getDouble("activeQuantity"));
+                    bid.setInactiveQuantity(resultSet.getDouble("inactiveQuantity"));
+                    bid.setDate(resultSet.getDate("date"));
 
-                Asset asset = assetData.get(resultSet.getInt("assetID"));
+                    Asset asset = assetData.get(resultSet.getInt("assetID"));
 
-                Object[] temp = new Object[] {bid ,asset, bid.getStatus(), bid.getPrice(), bid.getActiveQuantity(), bid.getInactiveQuantity(), bid.getDate()};
-                assetList.add(temp);
+                    Object[] temp = new Object[] {bid ,asset, bid.getStatus(), bid.getPrice(), bid.getActiveQuantity(), bid.getInactiveQuantity(), bid.getDate()};
+                    assetList.add(temp);
+                }
+            } catch (SQLException exception) {
+                exception.printStackTrace();
             }
-        } catch (SQLException exception) {
-            exception.printStackTrace();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         return assetList;
     }
 

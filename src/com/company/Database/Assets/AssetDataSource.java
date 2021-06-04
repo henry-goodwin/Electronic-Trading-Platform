@@ -11,7 +11,7 @@ public interface AssetDataSource {
      *
      * @param asset Asset to add
      */
-    void addAsset(Asset asset);
+    void addAsset(Asset asset) throws Exception;
 
     /**
      * Extracts all the details of a Asset from the database based on the
@@ -20,10 +20,10 @@ public interface AssetDataSource {
      * @param assetID The assetID as a Integer to search for.
      * @return all details in a Asset object for the assetID
      */
-    Asset getAsset(Integer assetID);
+    Asset getAsset(Integer assetID) throws Exception;
 
 
-    Boolean checkName(String string);
+    Boolean checkName(String string) throws Exception;
 
 
     /**
@@ -40,9 +40,9 @@ public interface AssetDataSource {
      *
      * @return set of Assets.
      */
-    Set<Asset> assetSet();
+    Set<Asset> assetSet() throws Exception;
 
-    void updateAssetName(Integer assetID, String name);
+    void updateAssetName(Integer assetID, String name) throws Exception;
 
-    void deleteAsset(Integer assetID);
+    void deleteAsset(Integer assetID) throws Exception;
 }

@@ -299,8 +299,15 @@ public class NetworkServer {
             case ADD_ASSET: {
                 final Asset asset = (Asset) inputStream.readObject();
                 synchronized (assetDatabase) {
-                    assetDatabase.addAsset(asset);
+                    try {
+                        assetDatabase.addAsset(asset);
+                        outputStream.writeObject(true); // Write true if add user is successful
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
+                outputStream.flush();
             }
             break;
 
@@ -310,23 +317,46 @@ public class NetworkServer {
                 final String name = (String) inputStream.readObject();
 
                 synchronized (assetDatabase) {
-                    assetDatabase.updateAssetName(assetID, name);
+                    try {
+                        assetDatabase.updateAssetName(assetID, name);
+                        outputStream.writeObject(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
+                outputStream.flush();
             }
             break;
 
             case DELETE_ASSET: {
                 final Integer assetID = (Integer) inputStream.readObject();
                 synchronized (assetDatabase) {
-                    assetDatabase.deleteAsset(assetID);
+                    try {
+                        assetDatabase.deleteAsset(assetID);
+                        outputStream.writeObject(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
+                outputStream.flush();
             }
 
             case GET_ASSET: {
                 final Integer assetID = (Integer) inputStream.readObject();
                 synchronized (assetDatabase) {
-                    final Asset asset = assetDatabase.getAsset(assetID);
-                    outputStream.writeObject(asset);
+                    final Asset asset;
+                    try {
+                        asset = assetDatabase.getAsset(assetID);
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(asset);
+
+                    } catch (Exception e) {
+                        outputStream.writeObject(false);
+                        e.printStackTrace();
+                    }
+
                 }
                 outputStream.flush();
             }
@@ -334,7 +364,14 @@ public class NetworkServer {
 
             case GET_ASSET_SET:{
                 synchronized (assetDatabase) {
-                    outputStream.writeObject(assetDatabase.assetSet());
+                    try {
+                        Set<Asset> assetSet = assetDatabase.assetSet();
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(assetSet);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
                 outputStream.flush();
             }
@@ -343,8 +380,16 @@ public class NetworkServer {
             case CHECK_NAME:{
                 final String name = (String) inputStream.readObject();
                 synchronized (assetDatabase) {
-                    final Boolean availability = assetDatabase.checkName(name);
-                    outputStream.writeObject(availability);
+                    final Boolean availability;
+                    try {
+                        availability = assetDatabase.checkName(name);
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(availability);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
                 outputStream.flush();
             }

@@ -42,7 +42,11 @@ public class AssetsPanel extends JPanel {
 
         addButton = new JButton("Add Asset");
         addButton.addActionListener(e -> {
-            new NewAssetFrame(new AssetData(new AssetNDS()), new OrgAssetData(new OrgAssetNDS()));
+            try {
+                new NewAssetFrame(new AssetData(new AssetNDS()), new OrgAssetData(new OrgAssetNDS()));
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
         });
         editButton = new JButton("Edit Asset");
         editButton.addActionListener(e -> editAsset());

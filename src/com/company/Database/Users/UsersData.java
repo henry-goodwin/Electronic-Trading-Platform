@@ -145,6 +145,13 @@ public class UsersData {
         }
     }
 
+    /**
+     * Checks if password matches password for user with ID
+     * @param userID userID to check password
+     * @param hashedPassword hashed password to check
+     * @return Return true if password match, return false if passwords do not match
+     * @throws TestingException Throw exception if fails
+     */
     public Boolean checkPassword(Integer userID, String hashedPassword) throws TestingException {
         try {
             return usersData.checkPassword(userID, hashedPassword);

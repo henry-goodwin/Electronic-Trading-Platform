@@ -18,5 +18,8 @@ com.company.GUI.UserGUI
 com.company.Model
 com.company.NetworkDataSource
 com.company.Server
+com.company.Testing
 com.company.Testing.OrgUnitTest
+com.company.Testing.PersonsTest
+com.company.Testing.UsersTest
 com.company.Utilities

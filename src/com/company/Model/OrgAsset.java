@@ -24,10 +24,15 @@ public class OrgAsset implements Comparable<OrgAsset>, Serializable {
 
     public String toString() {
 
-        AssetData assetData = new AssetData(new AssetNDS());
-        String assetName = assetData.get(assetID).getName();
-
-        return assetName;
+        AssetData assetData = null;
+        try {
+            assetData = new AssetData(new AssetNDS());
+            String assetName = assetData.get(assetID).getName();
+            return assetName;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     public Integer getOrganisationUnitID() {return organisationUnitID;}
@@ -44,7 +49,7 @@ public class OrgAsset implements Comparable<OrgAsset>, Serializable {
 
     public Integer getAssetID() { return assetID; }
 
-    public Asset getAsset() {
+    public Asset getAsset() throws Exception {
         // Create Connection to database & get Asset
         AssetData assetData = new AssetData(new AssetNDS());
         return assetData.get(assetID);

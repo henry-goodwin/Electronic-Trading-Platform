@@ -13,6 +13,7 @@ import java.util.Set;
 
 public class AssetNDS implements AssetDataSource {
 
+    // Database configuration
     private static final String HOSTNAME = "127.0.0.1";
     private static final int PORT = 10000;
 
@@ -21,6 +22,9 @@ public class AssetNDS implements AssetDataSource {
     private ObjectInputStream inputStream;
 
 
+    /**
+     * Construct network data source
+     */
     public AssetNDS() {
         try {
             // Persist a single connection through the whole lifetime of the application.
@@ -39,8 +43,13 @@ public class AssetNDS implements AssetDataSource {
         }
     }
 
+    /**
+     * Sends asset to the server so that it can be added to the database
+     * @param asset Asset to add
+     * @throws Exception Throws exception if fails
+     */
     @Override
-    public void addAsset(Asset asset) {
+    public void addAsset(Asset asset) throws Exception {
         try {
             // tell the server to expect a person's details
             outputStream.writeObject(Command.ADD_ASSET);
@@ -48,44 +57,60 @@ public class AssetNDS implements AssetDataSource {
             // send the actual data
             outputStream.writeObject(asset);
             outputStream.flush();
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to add asset, please try again");
+
         } catch (IOException e) {
             e.printStackTrace();
+            throw new Exception("Failed to add asset, please try again");
         }
     }
 
+    /**
+     * Gets asset from the server
+     * @param assetID The assetID as a Integer to search for.
+     * @return Asset with the assetID
+     * @throws Exception throws exception if fails
+     */
     @Override
-    public Asset getAsset(Integer assetID) {
+    public Asset getAsset(Integer assetID) throws Exception {
         try {
             outputStream.writeObject(Command.GET_ASSET);
             outputStream.writeObject(assetID);
             outputStream.flush();
+
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to get asset, please try again");
 
             Asset asset = (Asset) inputStream.readObject();
             return asset;
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            throw new Exception("Failed to get person, please try again");
         }
-
-        return null;
     }
 
+    /**
+     * Sends name to server to see if it exists in the database
+     * @param string asset name to search for
+     * @return Return true if asset exists, return false if asset does not exist
+     * @throws Exception Throw exception if fails
+     */
     @Override
-    public Boolean checkName(String string) {
+    public Boolean checkName(String string) throws Exception {
         try {
             outputStream.writeObject(Command.CHECK_NAME);
             outputStream.writeObject(string);
             outputStream.flush();
-
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to check name");
             return (Boolean) inputStream.readObject();
 
         } catch (IOException e) {
             e.printStackTrace();
+            throw new Exception("Failed to check name");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            throw new Exception("Failed to check name");
         }
-
-        return false;
     }
 
     @Override
@@ -93,40 +118,62 @@ public class AssetNDS implements AssetDataSource {
 
     }
 
+    /**
+     * Get asset set from the server
+     * @return Set of all assets in database
+     * @throws Exception
+     */
     @Override
-    public Set<Asset> assetSet() {
+    public Set<Asset> assetSet() throws Exception {
         try {
             outputStream.writeObject(Command.GET_ASSET_SET);
             outputStream.flush();
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to get set, please try again");
             Set<Asset> set = (Set<Asset>) inputStream.readObject();
             return set;
         } catch (IOException | ClassNotFoundException | ClassCastException e) {
             e.printStackTrace();
-            return new HashSet<>();
+            throw new Exception("Failed to get set, please try again");
         }
     }
 
+    /**
+     * Sends new assetName to server to update asset name in database
+     * @param assetID assetID to update
+     * @param name name to update
+     * @throws Exception
+     */
     @Override
-    public void updateAssetName(Integer assetID, String name) {
+    public void updateAssetName(Integer assetID, String name) throws Exception {
         try {
             outputStream.writeObject(Command.UPDATE_ASSET);
             outputStream.writeObject(assetID);
             outputStream.writeObject(name);
             outputStream.flush();
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to update asset, please try again");
         } catch (IOException e) {
             e.printStackTrace();
+            throw new Exception("Failed to update asset, please try again");
         }
     }
 
+    /**
+     * Send assetID to the server so that it can be deleted from the database
+     * @param assetID AssetID to delete
+     * @throws Exception
+     */
     @Override
-    public void deleteAsset(Integer assetID) {
+    public void deleteAsset(Integer assetID) throws Exception {
         try {
             outputStream.writeObject(Command.DELETE_ASSET);
             outputStream.writeObject(assetID);
             outputStream.flush();
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to delete asset, please try again");
 
         } catch (IOException e) {
             e.printStackTrace();
+            throw new Exception("Failed to delete asset, please try again");
+
         }
     }
 }
