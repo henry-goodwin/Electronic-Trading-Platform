@@ -6,14 +6,14 @@ import java.util.ArrayList;
 
 public interface BidDataSource {
 
-    void addBid(Bid bid);
+    void addBid(Bid bid) throws Exception;
 
-    Bid getBid(Integer bidID);
+    Bid getBid(Integer bidID) throws Exception;
 
     void close();
 
-    ArrayList<Object[]> getBidList(Integer orgID, boolean buyType);
+    ArrayList<Object[]> getBidList(Integer orgID, boolean buyType) throws Exception;
 
-    void checkTrades();
+    void checkTrades() throws Exception;
 
 }

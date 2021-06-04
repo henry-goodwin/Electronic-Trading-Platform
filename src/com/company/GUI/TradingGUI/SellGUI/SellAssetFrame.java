@@ -118,10 +118,15 @@ public class SellAssetFrame extends JFrame implements KeyListener, ActionListene
                 JOptionPane.showMessageDialog(getContentPane(), "Error: Your do not have enough units to sell");
 
             } else {
-                Bid bid = new Bid(asset.getAssetID(), Client.getLoggedInOrgID(), "open", false, price, quantity);
-                bidData.addBid(bid);
-                JOptionPane.showMessageDialog(getContentPane(), "Successfully added new sell bid :)");
-                SellAssetFrame.this.dispose();
+                Bid bid = null;
+                try {
+                    bid = new Bid(asset.getAssetID(), Client.getLoggedInOrgID(), "open", false, price, quantity);
+                    bidData.addBid(bid);
+                    JOptionPane.showMessageDialog(getContentPane(), "Successfully added new sell bid :)");
+                    SellAssetFrame.this.dispose();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(getContentPane(), e.getMessage());
+                }
             }
         }
 

@@ -480,7 +480,13 @@ public class NetworkServer {
                 final Bid bid = (Bid) inputStream.readObject();
 
                 synchronized (bidDatabase) {
-                    bidDatabase.addBid(bid);
+                    try {
+                        bidDatabase.addBid(bid);
+                        outputStream.writeObject(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
             }
             break;
@@ -488,8 +494,15 @@ public class NetworkServer {
             case GET_BID:{
                 final Integer bidID = (Integer) inputStream.readObject();
                 synchronized (bidDatabase) {
-                    final Bid bid = bidDatabase.getBid(bidID);
-                    outputStream.writeObject(bid);
+                    final Bid bid;
+                    try {
+                        bid = bidDatabase.getBid(bidID);
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(bid);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
                 outputStream.flush();
             }
@@ -537,7 +550,14 @@ public class NetworkServer {
                 final Boolean buyType = (Boolean) inputStream.readObject();
 
                 synchronized (bidDatabase) {
-                    outputStream.writeObject(bidDatabase.getBidList(orgID, buyType));
+                    try {
+                        ArrayList<Object[]> bidList = bidDatabase.getBidList(orgID, buyType);
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(bidList);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
                 outputStream.flush();
             }
@@ -545,7 +565,13 @@ public class NetworkServer {
 
             case CHECK_TRADES: {
                 synchronized (bidDatabase) {
-                    bidDatabase.checkTrades();
+                    try {
+                        bidDatabase.checkTrades();
+                        outputStream.writeObject(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
             }
             break;

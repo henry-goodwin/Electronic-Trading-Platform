@@ -26,7 +26,11 @@ public class BuyPanel extends JPanel {
         this.bidData = bidData;
 
         buyTableModel = new BidTableModel();
-        buyTableModel.setData(this.bidData.getBidList(Client.getLoggedInOrgID(), true));
+        try {
+            buyTableModel.setData(this.bidData.getBidList(Client.getLoggedInOrgID(), true));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         buyOrdersTable = new JTable(buyTableModel);
         buyOrdersTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

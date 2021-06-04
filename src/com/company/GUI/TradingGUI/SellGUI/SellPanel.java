@@ -25,7 +25,11 @@ public class SellPanel extends JPanel {
         this.bidData = bidData;
 
         bidTableModel = new BidTableModel();
-        bidTableModel.setData(this.bidData.getBidList(Client.getLoggedInOrgID(), false));
+        try {
+            bidTableModel.setData(this.bidData.getBidList(Client.getLoggedInOrgID(), false));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         sellOrdersTable = new JTable(bidTableModel);
         sellOrdersTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -35,7 +39,11 @@ public class SellPanel extends JPanel {
 
         checkTrades = new JButton("Check trades");
         checkTrades.addActionListener(e -> {
-            bidData.checkTrades();
+            try {
+                bidData.checkTrades();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
         });
 
         setupLayout();

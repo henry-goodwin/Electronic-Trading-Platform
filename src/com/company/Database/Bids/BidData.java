@@ -20,15 +20,15 @@ public class BidData {
         bidDataSource.close();
     }
 
-    public Bid get(Integer bidID) { return bidDataSource.getBid(bidID); }
+    public Bid get(Integer bidID) throws Exception { return bidDataSource.getBid(bidID); }
 
-    public void addBid(Bid bid) {bidDataSource.addBid(bid);}
+    public void addBid(Bid bid) throws Exception {bidDataSource.addBid(bid);}
 
-    public ArrayList<Object[]> getBidList(Integer orgID, Boolean buyType) {
+    public ArrayList<Object[]> getBidList(Integer orgID, Boolean buyType) throws Exception {
         return bidDataSource.getBidList(orgID, buyType);
     }
 
-    public void checkTrades() { bidDataSource.checkTrades();}
+    public void checkTrades() throws Exception { bidDataSource.checkTrades();}
 
 
 }

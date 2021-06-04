@@ -4,11 +4,9 @@ import com.company.Client;
 import com.company.Database.Assets.AssetData;
 import com.company.Database.Bids.BidData;
 import com.company.Database.OrganisationUnit.OrganisationUnitData;
-import com.company.GUI.TradingGUI.SellGUI.SellAssetFrame;
 import com.company.Model.Asset;
 import com.company.Model.Bid;
-import com.company.Model.OrgAsset;
-import com.company.Model.OrganisationUnit;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -136,10 +134,15 @@ public class BuyAssetFrame extends JFrame implements KeyListener, ActionListener
 
                 Asset asset = (Asset) assetsList.getSelectedValue();
 
-                Bid bid = new Bid(asset.getAssetID(), Client.getLoggedInOrgID(), "open", true, price, quantity);
-                bidData.addBid(bid);
-                JOptionPane.showMessageDialog(getContentPane(), "Successfully added new buy bid :)");
-                BuyAssetFrame.this.dispose();
+                try {
+                    Bid bid = new Bid(asset.getAssetID(), Client.getLoggedInOrgID(), "open", true, price, quantity);
+                    bidData.addBid(bid);
+                    JOptionPane.showMessageDialog(getContentPane(), "Successfully added new buy bid :)");
+                    BuyAssetFrame.this.dispose();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(getContentPane(), e.getMessage());
+                }
+
             } else {
                 JOptionPane.showMessageDialog(getContentPane(), "Error: not enough credits available");
 

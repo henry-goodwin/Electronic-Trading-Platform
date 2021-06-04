@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 public class JDBCBidDataSource implements BidDataSource {
 
+    // SQL Statments
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `Bids` (" +
             "  `bidID` int(11) NOT NULL AUTO_INCREMENT," +
             "  `assetID` int(11) NOT NULL," +
@@ -70,8 +71,10 @@ public class JDBCBidDataSource implements BidDataSource {
             "`inactiveQuantity` = ?" +
             "WHERE `bidID` = ?;";
 
+    // Database connection
     private Connection connection;
 
+    // Prepared Statements
     private PreparedStatement addBid;
     private PreparedStatement getBid;
     private PreparedStatement getBidList;
@@ -79,13 +82,19 @@ public class JDBCBidDataSource implements BidDataSource {
     private PreparedStatement getActiveBuys;
     private PreparedStatement updateBid;
 
+    /**
+     * Constructor for Database
+     */
     public JDBCBidDataSource() {
+        // Connect to database
         connection = DBConnector.getInstance();
 
         try {
+            // Try create table if it doesn't already exist
             Statement statement = connection.createStatement();
             statement.execute(CREATE_TABLE);
 
+            // Prepare statements
             addBid = connection.prepareStatement(INSERT_BID);
             getBid = connection.prepareStatement(GET_BID);
             getBidList = connection.prepareStatement(GET_BID_LIST);
@@ -98,8 +107,13 @@ public class JDBCBidDataSource implements BidDataSource {
         }
     }
 
+    /**
+     * Add bid to the database
+     * @param bid bid to set
+     * @throws Exception Throws exception if bid fails
+     */
     @Override
-    public void addBid(Bid bid) {
+    public void addBid(Bid bid) throws Exception {
         try {
             addBid.setInt(1, bid.getAssetID());
             addBid.setInt(2, bid.getOrgID());
@@ -111,17 +125,23 @@ public class JDBCBidDataSource implements BidDataSource {
 
         } catch (SQLException exception) {
             exception.printStackTrace();
+            throw new Exception("SQL Error");
         }
-
-
     }
 
+    /**
+     * Get bid from database
+     * @param bidID bidID to search for
+     * @return bid with bidID
+     * @throws Exception Throws exception if no bid is found or if error is found
+     */
     @Override
-    public Bid getBid(Integer bidID) {
-        Bid bid = new Bid();
+    public Bid getBid(Integer bidID) throws Exception {
+        if (bidID < 0) throw new Exception("Bid ID is negative");
         ResultSet resultSet = null;
 
         try {
+            Bid bid = new Bid();
             getBid.setInt(1, bidID);
             resultSet = getBid.executeQuery();
 
@@ -135,13 +155,19 @@ public class JDBCBidDataSource implements BidDataSource {
                 bid.setActiveQuantity(resultSet.getDouble("activeQuantity"));
                 bid.setInactiveQuantity(resultSet.getDouble("inactiveQuantity"));
                 bid.setDate(resultSet.getDate("date"));
+                return bid;
+            } else {
+                throw new Exception("No Bid Found, please try again");
             }
         } catch (SQLException exception) {
             exception.printStackTrace();
+            throw new Exception("SQL Error");
         }
-        return bid;
     }
 
+    /**
+     * Close connection to database
+     */
     @Override
     public void close() {
         try {
@@ -151,9 +177,16 @@ public class JDBCBidDataSource implements BidDataSource {
         }
     }
 
+    /**
+     * Get list of all active bids for orgID
+     * @param orgID OrgID to search for
+     * @param buyType type of bid (true = buy Bid, false = sell bid)
+     * @return Array list of active bid
+     * @throws Exception
+     */
     @Override
-    public ArrayList<Object[]> getBidList(Integer orgID, boolean buyType) {
-        ArrayList<Object[]> assetList = new ArrayList<>();
+    public ArrayList<Object[]> getBidList(Integer orgID, boolean buyType) throws Exception {
+        ArrayList<Object[]> bidList = new ArrayList<>();
         ResultSet resultSet = null;
 
         AssetData assetData = null;
@@ -182,21 +215,23 @@ public class JDBCBidDataSource implements BidDataSource {
                     Asset asset = assetData.get(resultSet.getInt("assetID"));
 
                     Object[] temp = new Object[] {bid ,asset, bid.getStatus(), bid.getPrice(), bid.getActiveQuantity(), bid.getInactiveQuantity(), bid.getDate()};
-                    assetList.add(temp);
+                    bidList.add(temp);
                 }
+                return bidList;
+
             } catch (SQLException exception) {
                 exception.printStackTrace();
+                throw new Exception("SQL Error");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw new Exception("Error failed to get bidList");
         }
-
-        return assetList;
     }
 
     @Override
-    public void checkTrades() {
+    public void checkTrades() throws Exception {
         // Get all active sell bids
         ArrayList<Bid> activeSellBids = activeSellBids();
         OrganisationUnitData organisationUnitData = new OrganisationUnitData(new OrganisationUnitNDS());
@@ -213,6 +248,7 @@ public class JDBCBidDataSource implements BidDataSource {
                     Double buyingQuantity = buyBid.getActiveQuantity() - buyBid.getInactiveQuantity();
                     Double sellingQuantity = sellBid.getActiveQuantity() - sellBid.getInactiveQuantity();
 
+
                     Double purchasedAmount;
                     if(buyingQuantity > sellingQuantity) {
                         purchasedAmount = sellingQuantity;
@@ -221,8 +257,8 @@ public class JDBCBidDataSource implements BidDataSource {
                     }
 
                     // Update Bids
-                    sellBid.updateInactiveQuantity(purchasedAmount);
-                    buyBid.updateInactiveQuantity(purchasedAmount);
+                    sellBid.addInactiveQuantity(purchasedAmount);
+                    buyBid.addInactiveQuantity(purchasedAmount);
 
                     // Mark as closed if all units are bought
                     if (buyBid.getActiveQuantity().equals(buyBid.getInactiveQuantity())) {
@@ -278,7 +314,12 @@ public class JDBCBidDataSource implements BidDataSource {
         }
     }
 
-    private ArrayList<Bid> activeSellBids() {
+    /**
+     * Gets array list of all active sell bids
+     * @return array list of all active sell bids
+     * @throws Exception Throw exception if error is found
+     */
+    private ArrayList<Bid> activeSellBids() throws Exception {
         ArrayList<Bid> activeSellBids = new ArrayList<Bid>();
 
         try {
@@ -301,13 +342,22 @@ public class JDBCBidDataSource implements BidDataSource {
 
                 activeSellBids.add(bid);
             }
+
+            return activeSellBids;
+
         } catch (SQLException exception) {
             exception.printStackTrace();
+            throw new Exception("SQL Error");
         }
-        return activeSellBids;
     }
 
-    private ArrayList<Bid> assetBuyBids(Integer assetID) {
+    /**
+     * Get array list of all active buy bids for a asset
+     * @param assetID assetID ID to search for
+     * @return array list of all active buy bids for an asset
+     * @throws Exception Throw exception if error is found
+     */
+    private ArrayList<Bid> assetBuyBids(Integer assetID) throws Exception {
 
         ArrayList<Bid> assetBuyBids = new ArrayList<Bid>();
 
@@ -332,13 +382,16 @@ public class JDBCBidDataSource implements BidDataSource {
                 buyBid.setDate(buyResultSet.getDate("date"));
                 assetBuyBids.add(buyBid);
             }
+
+            return assetBuyBids;
+
         } catch (SQLException throwables) {
-                throwables.printStackTrace();
+            throwables.printStackTrace();
+            throw new Exception("SQL Error");
         }
-        return assetBuyBids;
     }
 
-    private void syncData(OrganisationUnitData organisationUnitData, OrgAssetData orgAssetData, Bid buyBid, Bid sellBid, OrganisationUnit buyUnit, OrganisationUnit sellUnit, OrgAsset buyOrgAsset, OrgAsset sellOrgAsset) {
+    private void syncData(OrganisationUnitData organisationUnitData, OrgAssetData orgAssetData, Bid buyBid, Bid sellBid, OrganisationUnit buyUnit, OrganisationUnit sellUnit, OrgAsset buyOrgAsset, OrgAsset sellOrgAsset) throws Exception {
         try {
 
 //         Update Buy Bid in database
@@ -361,8 +414,10 @@ public class JDBCBidDataSource implements BidDataSource {
 
         } catch (SQLException exception) {
             exception.printStackTrace();
+            throw new Exception("SQL Error");
         } catch (Exception e) {
             e.printStackTrace();
+            throw new Exception("Error syncing data, please try again");
         }
     }
 
