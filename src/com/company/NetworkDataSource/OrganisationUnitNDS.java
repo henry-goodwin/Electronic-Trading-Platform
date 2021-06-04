@@ -3,6 +3,7 @@ package com.company.NetworkDataSource;
 import com.company.Database.OrganisationUnit.OrganisationUnitDataSource;
 import com.company.Model.OrganisationUnit;
 import com.company.Server.Command;
+import com.company.Server.ServerException;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -54,10 +55,12 @@ public class OrganisationUnitNDS implements OrganisationUnitDataSource {
         try {
             // tell the server to expect a person's details
             outputStream.writeObject(Command.ADD_ORGANISATION_UNIT);
-
             // send the actual data
             outputStream.writeObject(organisationUnit);
             outputStream.flush();
+
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to add unit, please try again");
+
         } catch (IOException e) {
             e.printStackTrace();
             throw new Exception("Failed to add unit");
@@ -76,7 +79,7 @@ public class OrganisationUnitNDS implements OrganisationUnitDataSource {
             outputStream.writeObject(Command.GET_ORGANISATION_UNIT);
             outputStream.writeObject(organisationUnitID);
             outputStream.flush();
-
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to get unit, please try again");
             OrganisationUnit organisationUnit = (OrganisationUnit) inputStream.readObject();
             return organisationUnit;
 
@@ -103,7 +106,7 @@ public class OrganisationUnitNDS implements OrganisationUnitDataSource {
             outputStream.writeObject(Command.UPDATE_ORG_UNIT);
             outputStream.writeObject(organisationUnit);
             outputStream.flush();
-
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to update unit, please try again");
         } catch (IOException e) {
             e.printStackTrace();
             throw new Exception("Failed to update organizational unit");
@@ -120,6 +123,7 @@ public class OrganisationUnitNDS implements OrganisationUnitDataSource {
         try {
             outputStream.writeObject(Command.GET_ORG_LIST);
             outputStream.flush();
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to get list of units, please try again");
             return (ArrayList<Object[]>) inputStream.readObject();
         } catch (IOException | ClassNotFoundException | ClassCastException e) {
             e.printStackTrace();

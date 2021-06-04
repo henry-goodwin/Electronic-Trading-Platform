@@ -3,10 +3,12 @@ package com.company.NetworkDataSource;
 import com.company.Server.Command;
 import com.company.Database.Users.UsersDataSource;
 import com.company.Model.User;
+import com.company.Server.ServerException;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,7 +43,7 @@ public class UsersNDS implements UsersDataSource {
     }
 
     @Override
-    public void addUser(User user) {
+    public void addUser(User user) throws ServerException {
         try {
             // tell the server to expect a person's details
             outputStream.writeObject(Command.ADD_USER);
@@ -49,8 +51,15 @@ public class UsersNDS implements UsersDataSource {
             // send the actual data
             outputStream.writeObject(user);
             outputStream.flush();
+
+            if (!((Boolean) inputStream.readObject())) throw new ServerException("Failed to add user, please try again");
+
         } catch (IOException e) {
             e.printStackTrace();
+            throw new ServerException("Failed to add user, please try again");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new ServerException("Failed to add user, please try again");
         }
     }
 
@@ -84,52 +93,56 @@ public class UsersNDS implements UsersDataSource {
     }
 
     @Override
-    public Boolean checkUsernameAvailability(String username) {
+    public Boolean checkUsernameAvailability(String username) throws ServerException {
         try {
             outputStream.writeObject(Command.CHECK_AVAILABILITY);
             outputStream.writeObject(username);
             outputStream.flush();
 
+            if (!((Boolean) inputStream.readObject())) throw new ServerException("Error, invalid username");
             Boolean availability = (Boolean) inputStream.readObject();
             return availability;
 
         } catch (IOException e) {
             e.printStackTrace();
+            throw new ServerException("Error, invalid username");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            throw new ServerException("Error, invalid username");
         }
-
-
-        return null;
     }
 
     @Override
-    public User getUser(String username) {
+    public User getUser(String username) throws ServerException {
         try {
             outputStream.writeObject(Command.GET_USERNAME_USER);
             outputStream.writeObject(username);
             outputStream.flush();
-
+            if (!((Boolean) inputStream.readObject())) throw new ServerException("Failed to get user");
             User user = (User) inputStream.readObject();
             return user;
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            throw new ServerException("Error, invalid username");
         }
-
-        return null;
     }
 
     @Override
-    public void deleteUser(Integer userID) {
+    public void deleteUser(Integer userID) throws ServerException{
         try {
             outputStream.writeObject(Command.DELETE_USER);
             outputStream.writeObject(userID);
             outputStream.flush();
 
+            if (!((Boolean) inputStream.readObject())) throw new ServerException("Failed to delete user, please try again");
+
         } catch (IOException e) {
             e.printStackTrace();
-            System.exit(1);
+            throw new ServerException("Failed to delete user");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new ServerException("Input stream fail");
         }
     }
 
@@ -144,52 +157,53 @@ public class UsersNDS implements UsersDataSource {
     }
 
     @Override
-    public Set<User> userSet() {
+    public Set<User> userSet() throws ServerException {
         try {
             outputStream.writeObject(Command.GET_USER_SET);
             outputStream.flush();
+            if (!((Boolean) inputStream.readObject())) throw new ServerException("Failed to get userSet, please try again");
             return (Set<User>) inputStream.readObject();
         } catch (IOException | ClassNotFoundException | ClassCastException e) {
             e.printStackTrace();
-            return new HashSet<>();
+            throw new ServerException("Error");
         }
     }
 
     @Override
-    public boolean login(String username, String hashedPassword) {
+    public boolean login(String username, String hashedPassword) throws ServerException {
         try {
             outputStream.writeObject(Command.LOGIN);
             outputStream.writeObject(username);
             outputStream.writeObject(hashedPassword);
             outputStream.flush();
-
+            if (!((Boolean) inputStream.readObject())) throw new ServerException("Login Failed, please try again");
             return (Boolean) inputStream.readObject();
 
         } catch (IOException e) {
             e.printStackTrace();
+            throw new ServerException("Login Failed: please try again");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            throw new ServerException("Login Failed: please try again");
         }
-
-        return false;
     }
 
     @Override
-    public boolean checkPassword(Integer userID, String hashedPassword) {
+    public boolean checkPassword(Integer userID, String hashedPassword) throws ServerException {
         try {
             outputStream.writeObject(Command.CHECK_PASSWORD);
             outputStream.writeObject(userID);
             outputStream.writeObject(hashedPassword);
             outputStream.flush();
-
+            if (!((Boolean) inputStream.readObject())) throw new ServerException("Check Password Failed");
             return (Boolean) inputStream.readObject();
 
         } catch (IOException e) {
             e.printStackTrace();
+            throw new ServerException("Check password failed");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            throw new ServerException("Check password failed");
         }
-
-        return false;
     }
 }

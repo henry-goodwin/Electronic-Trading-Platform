@@ -4,12 +4,11 @@ import com.company.Database.OrgUnitEmployees.OrgUnitEmployeesData;
 import com.company.Database.OrganisationUnit.OrganisationUnitData;
 import com.company.Database.Users.UsersData;
 import com.company.GUI.AdminGUI.OrgUnitTableModel;
-import com.company.GUI.TradingGUI.OrgAssetTableModel;
-import com.company.Model.Asset;
 import com.company.Model.OrganisationUnit;
 import com.company.NetworkDataSource.OrganisationUnitNDS;
 import com.company.NetworkDataSource.UnitEmployeeNDS;
 import com.company.NetworkDataSource.UsersNDS;
+import com.company.Testing.TestingException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +26,7 @@ public class ManageOrgUnitsFrame extends JFrame {
     private JTable orgUnitsTable;
     private OrgUnitTableModel orgUnitTableModel;
 
+    private JButton updateTableBtn;
     private JButton editCreditsBtn;
     private JButton addUsersBtn;
 
@@ -57,6 +57,9 @@ public class ManageOrgUnitsFrame extends JFrame {
 
         editCreditsBtn = new JButton("Edit Credits");
         editCreditsBtn.addActionListener(e -> editCredits());
+
+        updateTableBtn = new JButton("Update Table");
+        updateTableBtn.addActionListener(e -> updateTable());
 
         addUsersBtn = new JButton("Add User");
         addUsersBtn.addActionListener(e -> addUser());
@@ -89,9 +92,14 @@ public class ManageOrgUnitsFrame extends JFrame {
         constraints.gridy = 1;
         constraints.weighty = 1;
         constraints.weightx = 1;
-        manageOrgPanel.add(editCreditsBtn, constraints);
+        manageOrgPanel.add(updateTableBtn, constraints);
 
         constraints.gridy = 2;
+        constraints.weighty = 1;
+        constraints.weightx = 1;
+        manageOrgPanel.add(editCreditsBtn, constraints);
+
+        constraints.gridy = 3;
         constraints.weighty = 1;
         constraints.weightx = 1;
         manageOrgPanel.add(addUsersBtn, constraints);
@@ -120,7 +128,11 @@ public class ManageOrgUnitsFrame extends JFrame {
 
     private void addUser() {
         OrganisationUnit organisationUnit = (OrganisationUnit) orgUnitTableModel.getValueAt(orgUnitsTable.getSelectedRow(), 0);
-        new AddOrgUserFrame(organisationUnit.getID(), new OrgUnitEmployeesData(new UnitEmployeeNDS()), new UsersData(new UsersNDS()));
+        try {
+            new AddOrgUserFrame(organisationUnit.getID(), new OrgUnitEmployeesData(new UnitEmployeeNDS()), new UsersData(new UsersNDS()));
+        } catch (TestingException e) {
+            e.printStackTrace();
+        }
     }
 
     private void newOrgUnitFrame () {

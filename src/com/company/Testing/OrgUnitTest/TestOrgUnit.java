@@ -13,7 +13,7 @@ public class TestOrgUnit {
      * Before each test, create new Organisation Unit
      */
     @BeforeEach
-    public void ConstructOrganisationUnit() {
+    void ConstructOrganisationUnit() {
         try {
             this.organisationUnit = new OrganisationUnit();
             this.organisationUnit.setID(5);
@@ -31,7 +31,7 @@ public class TestOrgUnit {
      * @throws Exception throw exception if wrong organisational unit name is returned
      */
     @Test
-    public void TestToString() throws Exception {
+    void TestToString() throws Exception {
         assertEquals("Sales", organisationUnit.toString());
     }
 

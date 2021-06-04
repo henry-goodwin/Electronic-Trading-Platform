@@ -104,6 +104,7 @@ public class NetworkServer {
      * @param command command we're handling
      * @throws IOException if the client has disconnected
      * @throws ClassNotFoundException if the client sends an invalid object
+     * @throws ServerException if database query fails
      */
     private void handleCommand(Socket socket, ObjectInputStream inputStream, ObjectOutputStream outputStream,
                                Command command) throws IOException, ClassNotFoundException {
@@ -118,16 +119,29 @@ public class NetworkServer {
                 // client is sending us a new User
                 final User user = (User) inputStream.readObject();
                 synchronized (usersDatabase) {
-                    usersDatabase.addUser(user);
+                    try {
+                        usersDatabase.addUser(user);
+                        outputStream.writeObject(true); // Write true if add user is successful
+                    } catch (Exception e) {
+                        outputStream.writeObject(false);
+                    }
                 }
+                outputStream.flush();
             }
             break;
 
             case GET_ID_USER: {
                 final Integer userID = (Integer) inputStream.readObject();
                 synchronized (usersDatabase) {
-                    final User user = usersDatabase.getUser(userID);
-                    outputStream.writeObject(user);
+                    final User user;
+                    try {
+                        user = usersDatabase.getUser(userID);
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(user);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
                 outputStream.flush();
             }
@@ -136,8 +150,16 @@ public class NetworkServer {
             case GET_USERNAME_USER: {
                 final String username = (String) inputStream.readObject();
                 synchronized (usersDatabase) {
-                    final User user = usersDatabase.getUser(username);
-                    outputStream.writeObject(user);
+                    final User user;
+                    try {
+                        user = usersDatabase.getUser(username);
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(user);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
                 outputStream.flush();
             }
@@ -145,8 +167,16 @@ public class NetworkServer {
             case CHECK_AVAILABILITY: {
                 final String username = (String) inputStream.readObject();
                 synchronized (usersDatabase) {
-                    final Boolean result = usersDatabase.checkUsernameAvailability(username);
-                    outputStream.writeObject(result);
+                    final Boolean result;
+                    try {
+                        result = usersDatabase.checkUsernameAvailability(username);
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(result);
+
+                    } catch (Exception e) {
+                        outputStream.writeObject(false);
+                        e.printStackTrace();
+                    }
                 }
                 outputStream.flush();
             }
@@ -155,14 +185,31 @@ public class NetworkServer {
                 // one parameter - the person's name
                 final Integer userID = inputStream.readInt();
                 synchronized (usersDatabase) {
-                    usersDatabase.deleteUser(userID);
+                    try {
+                        usersDatabase.deleteUser(userID);
+                        outputStream.writeObject(true); // Write true if add user is successful
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false); // Write false if fails
+                    }
                 }
+                outputStream.flush();
             }
             break;
 
             case GET_USER_SET: {
                 synchronized (usersDatabase) {
-                    outputStream.writeObject(usersDatabase.userSet());
+                    try {
+                        Set<User> userSet = usersDatabase.userSet();
+                        outputStream.writeObject(true); // Write true if add user is successful
+                        outputStream.writeObject(userSet);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false); // Write false if fails
+
+                    }
                 }
                 outputStream.flush();
             }
@@ -172,6 +219,7 @@ public class NetworkServer {
                 final Person person = (Person) inputStream.readObject();
                 synchronized (personsDatabase) {
                     personsDatabase.addPerson(person);
+
                 }
             }
             break;
@@ -199,10 +247,14 @@ public class NetworkServer {
                 synchronized (organisationUnitDatabase) {
                     try {
                         organisationUnitDatabase.addOrganisationUnit(organisationUnit);
+                        outputStream.writeObject(true); // Write true if add user is successful
+
                     } catch (Exception e) {
                         e.printStackTrace();
+                        outputStream.writeObject(false); // Write false if fails
                     }
                 }
+                outputStream.flush();
             }
             break;
 
@@ -212,10 +264,11 @@ public class NetworkServer {
                     final OrganisationUnit organisationUnit;
                     try {
                         organisationUnit = organisationUnitDatabase.getOrganisationUnit(organisationalUnitID);
+                        outputStream.writeObject(true); // Write true if add user is successful
                         outputStream.writeObject(organisationUnit);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        outputStream.writeObject(null);
+                        outputStream.writeObject(false); // Write false if fails
                     }
                 }
                 outputStream.flush();
@@ -344,7 +397,14 @@ public class NetworkServer {
                 final String hashedPassword = (String) inputStream.readObject();
 
                 synchronized (usersDatabase) {
-                    outputStream.writeObject(usersDatabase.login(username, hashedPassword));
+                    try {
+                        Boolean loginResult = usersDatabase.login(username, hashedPassword);
+                        outputStream.writeObject(true); // Write true if add user is successful
+                        outputStream.writeObject(loginResult);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
                 outputStream.flush();
             }
@@ -375,8 +435,16 @@ public class NetworkServer {
                 final Integer userID = (Integer) inputStream.readObject();
 
                 synchronized (usersDatabase) {
-                   usersDatabase.changePassword(newPassword, userID);
+                    try {
+                        usersDatabase.changePassword(newPassword, userID);
+                        outputStream.writeObject(true); // Write true if add user is successful
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
+                outputStream.flush();
             }
             break;
 
@@ -385,7 +453,14 @@ public class NetworkServer {
                 final String hashedPassword = (String) inputStream.readObject();
 
                 synchronized (usersDatabase) {
-                    outputStream.writeObject(usersDatabase.checkPassword(userID, hashedPassword));
+                    try {
+                        Boolean checkPassword = usersDatabase.checkPassword(userID, hashedPassword);
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(checkPassword);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
                 outputStream.flush();
             }
@@ -415,10 +490,13 @@ public class NetworkServer {
                 synchronized (organisationUnitDatabase) {
                     try {
                         organisationUnitDatabase.updateOrgUnit(organisationUnit);
+                        outputStream.writeObject(true);
                     } catch (Exception e) {
                         e.printStackTrace();
+                        outputStream.writeObject(false);
                     }
                 }
+                outputStream.flush();
             }
             break;
 
@@ -434,10 +512,13 @@ public class NetworkServer {
             case GET_ORG_LIST: {
                 synchronized (organisationUnitDatabase) {
                     try {
-                        outputStream.writeObject(organisationUnitDatabase.getList());
+                        ArrayList<Object[]> objects = organisationUnitDatabase.getList();
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(objects);
+
                     } catch (Exception e) {
                         e.printStackTrace();
-                        outputStream.writeObject(new ArrayList<>());
+                        outputStream.writeObject(false);
                     }
                 }
                 outputStream.flush();
@@ -502,7 +583,9 @@ public class NetworkServer {
 
                     // We have a new connection from a client. Use a runnable and thread to handle
                     // the client. The lambda here wraps the functional interface (Runnable).
-                    final Thread clientThread = new Thread(() -> handleConnection(socket));
+                    final Thread clientThread = new Thread(() -> {
+                            handleConnection(socket);
+                    });
                     clientThread.start();
                 } catch (SocketTimeoutException ignored) {
                     // Do nothing. A timeout is normal- we just want the socket to

@@ -13,6 +13,7 @@ import com.company.Model.UnitEmployee;
 import com.company.Model.User;
 import com.company.NetworkDataSource.*;
 import com.company.Server.Command;
+import com.company.Testing.TestingException;
 import com.company.Utilities.PasswordHasher;
 
 import javax.swing.JOptionPane;
@@ -74,34 +75,48 @@ public class LoginFrame extends JFrame {
      */
     private void login() {
         String username = usernameField.getText();
-        String hashPassword = PasswordHasher.hashString(String.valueOf(passwordField.getPassword()));
+        String hashPassword = null;
 
-        // Reset the password
-        passwordField.setText("");
+        try {
+            hashPassword = PasswordHasher.hashString(String.valueOf(passwordField.getPassword()));
+            // Reset the password
+            passwordField.setText("");
 
-        if(usersData.login(username, hashPassword)) {
-            User loggedInUser = usersData.get(username);
-            Client.setUserID(loggedInUser.getUserID());
-            Client.setPersonID(loggedInUser.getPersonID());
-            // Check if user is admin
-            if (loggedInUser.getAccountType().equals("Admin")) {
-                // Present Admin Screen
-                new AdminFrame();
+            try {
+                Boolean loginStatus = usersData.login(username, hashPassword);
+                if(loginStatus) {
+                    User loggedInUser = usersData.get(username);
+                    Client.setUserID(loggedInUser.getUserID());
+                    Client.setPersonID(loggedInUser.getPersonID());
+                    // Check if user is admin
+                    if (loggedInUser.getAccountType().equals("Admin")) {
+                        // Present Admin Screen
+                        new AdminFrame();
 
-            } else if (loggedInUser.getAccountType().equals("Standard")) {
-                // Present Standard Screen
-                OrgUnitEmployeesData orgUnitEmployeesData = new OrgUnitEmployeesData(new UnitEmployeeNDS());
-                UnitEmployee unitEmployee = orgUnitEmployeesData.get(loggedInUser.getUserID());
-                Client.setOrgID(unitEmployee.getOrgID());
+                    } else if (loggedInUser.getAccountType().equals("Standard")) {
+                        // Present Standard Screen
+                        OrgUnitEmployeesData orgUnitEmployeesData = new OrgUnitEmployeesData(new UnitEmployeeNDS());
+                        UnitEmployee unitEmployee = orgUnitEmployeesData.get(loggedInUser.getUserID());
+                        Client.setOrgID(unitEmployee.getOrgID());
 
-                // Need to find out what orgID user belongs to
-                new TradingFrame(new OrganisationUnitData(new OrganisationUnitNDS()), new PersonsData(new PersonsNDS()), new UsersData(new UsersNDS()));
+                        // Need to find out what orgID user belongs to
+                        new TradingFrame(new OrganisationUnitData(new OrganisationUnitNDS()), new PersonsData(new PersonsNDS()), new UsersData(new UsersNDS()));
+                    }
+
+                    LoginFrame.this.dispose();
+
+                } else {
+                    JOptionPane.showMessageDialog(getContentPane(), "Login Failed: Invalid Username/Password");
+                }
+            } catch (TestingException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(getContentPane(), "Login Failed: Invalid Username/Password");
             }
 
-            LoginFrame.this.dispose();
 
-        } else {
-            JOptionPane.showMessageDialog(getContentPane(), "Login Failed: Invalid Username/Password");
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(getContentPane(), "Organisational Unit Error, please contact your system admin");
         }
         // Login and open GUI
     }

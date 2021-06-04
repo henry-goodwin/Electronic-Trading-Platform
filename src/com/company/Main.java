@@ -7,6 +7,7 @@ import com.company.Database.Persons.PersonsData;
 import com.company.Database.Users.UsersData;
 import com.company.GUI.LoginGUI.LoginFrame;
 import com.company.NetworkDataSource.*;
+import com.company.Testing.TestingException;
 
 public class Main {
 
@@ -17,7 +18,11 @@ public class Main {
      */
     private static void createAndShowGUI() {
 
-        new LoginFrame(new UsersData(new UsersNDS()));
+        try {
+            new LoginFrame(new UsersData(new UsersNDS()));
+        } catch (TestingException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

@@ -112,6 +112,8 @@ public class JDBCOrganisationUnitDataSource implements OrganisationUnitDataSourc
                     organisationUnit.setName(resultSet.getString("name"));
                     organisationUnit.setCredits(resultSet.getDouble("credits"));
                     return organisationUnit;
+                } else {
+                    throw new Exception("No organisational unit found");
                 }
 
             } catch (SQLException exception) {
@@ -121,8 +123,6 @@ public class JDBCOrganisationUnitDataSource implements OrganisationUnitDataSourc
         } else {
             throw new Exception("Invalid Org ID");
         }
-
-        return null;
     }
 
     /**

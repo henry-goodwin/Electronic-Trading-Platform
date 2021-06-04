@@ -12,8 +12,11 @@ public class PasswordHasher {
      * SHA-256 hashes a string
      * @param inputString input string
      * @return a hashed string
+     * @throws Exception throws exception if inputString is invalid
      */
-    public static String hashString(String inputString) {
+    public static String hashString(String inputString) throws Exception {
+        if (!inputString.matches("^[a-zA-Z0-9]{3,}$")) throw new Exception("Error, password is invalid, please ensure it is between 3-10 characters");
+
         MessageDigest digest;
         StringBuilder stringBuffer = new StringBuilder();
 

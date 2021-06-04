@@ -5,6 +5,7 @@ import com.company.Database.Users.UsersData;
 import com.company.GUI.AdminGUI.AdminFrame;
 import com.company.NetworkDataSource.PersonsNDS;
 import com.company.NetworkDataSource.UsersNDS;
+import com.company.Testing.TestingException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,7 +52,11 @@ public class ManageUsersFrame extends JFrame {
     }
 
     private void newUserFrame () {
-        new NewUserGUI(new UsersData(new UsersNDS()), new PersonsData(new PersonsNDS()));
+        try {
+            new NewUserGUI(new UsersData(new UsersNDS()), new PersonsData(new PersonsNDS()));
+        } catch (TestingException e) {
+            JOptionPane.showMessageDialog(getContentPane(), "Error");
+        }
     }
 
     private void newPersonFrame() { new NewPersonGUI(new PersonsData(new PersonsNDS())); }

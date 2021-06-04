@@ -10,6 +10,7 @@ import com.company.GUI.LoginGUI.LoginFrame;
 import com.company.NetworkDataSource.AssetNDS;
 import com.company.NetworkDataSource.OrganisationUnitNDS;
 import com.company.NetworkDataSource.UsersNDS;
+import com.company.Testing.TestingException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -87,7 +88,11 @@ public class AdminFrame extends JFrame {
             frame.dispose();
         }
 
-        new LoginFrame(new UsersData(new UsersNDS()));
+        try {
+            new LoginFrame(new UsersData(new UsersNDS()));
+        } catch (TestingException e) {
+            e.printStackTrace();
+        }
     }
 
     private void manageOrg() {
@@ -96,7 +101,11 @@ public class AdminFrame extends JFrame {
 
     private void manageUsers() {
 
-        new ManageUsersFrame(new UsersData(new UsersNDS()));
+        try {
+            new ManageUsersFrame(new UsersData(new UsersNDS()));
+        } catch (TestingException e) {
+            e.printStackTrace();
+        }
 
     }
 

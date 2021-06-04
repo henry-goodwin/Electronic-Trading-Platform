@@ -12,6 +12,7 @@ import com.company.GUI.TradingGUI.SellGUI.SellPanel;
 import com.company.GUI.UserGUI.ChangePasswordFrame;
 import com.company.Model.OrganisationUnit;
 import com.company.NetworkDataSource.*;
+import com.company.Testing.TestingException;
 import com.company.Utilities.PasswordHasher;
 
 import javax.swing.*;
@@ -57,6 +58,7 @@ public class TradingFrame extends JFrame {
         OrganisationUnit organisationUnit = null;
         try {
             organisationUnit = organisationUnitData.get(Client.getLoggedInOrgID());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -98,7 +100,11 @@ public class TradingFrame extends JFrame {
             frame.dispose();
         }
 
-        new LoginFrame(new UsersData(new UsersNDS()));
+        try {
+            new LoginFrame(new UsersData(new UsersNDS()));
+        } catch (TestingException e) {
+            JOptionPane.showMessageDialog(getContentPane(), "Logout Failed");
+        }
     }
 
     private void passwordChange(String oldPassword) {
@@ -115,11 +121,23 @@ public class TradingFrame extends JFrame {
         //if yes is pressed
         if (option == JOptionPane.OK_OPTION) {
             // Check password matches
-            hashPassword = PasswordHasher.hashString(String.valueOf(passField.getPassword()));
-            if (usersData.checkPassword(Client.getLoggedInUserID(), hashPassword)) {
-                passwordChange(hashPassword);
-            } else {
-                JOptionPane.showMessageDialog(getContentPane(), "Error: Incorrect Password");
+            try {
+                hashPassword = PasswordHasher.hashString(String.valueOf(passField.getPassword()));
+
+                try {
+                    if (usersData.checkPassword(Client.getLoggedInUserID(), hashPassword)) {
+                        passwordChange(hashPassword);
+                    } else {
+                        JOptionPane.showMessageDialog(getContentPane(), "Error: Incorrect Password");
+                    }
+                } catch (TestingException e) {
+                    JOptionPane.showMessageDialog(getContentPane(), "Error: Incorrect Password");
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(getContentPane(), e.getMessage());
+
             }
         }
         // if cancel is pressed then password won't be changed

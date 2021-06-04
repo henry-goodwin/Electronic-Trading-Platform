@@ -10,7 +10,7 @@ public interface UsersDataSource {
      *
      * @param user User to add
      */
-    void addUser(User user);
+    void addUser(User user) throws Exception;
 
     /**
      * Changes the user's password
@@ -20,7 +20,7 @@ public interface UsersDataSource {
      * */
 
 
-    void changePassword(String newPassword, Integer userID);
+    void changePassword(String newPassword, Integer userID) throws Exception;
     /**
      * Extracts all the details of a User from the database based on the
      * userID passed in.
@@ -28,7 +28,7 @@ public interface UsersDataSource {
      * @param userID The userID as a Integer to search for.
      * @return all details in a User object for the UserID
      */
-    User getUser(Integer userID);
+    User getUser(Integer userID) throws Exception;
 
     /**
      * Checks if a username is available based on the username passed in
@@ -37,7 +37,7 @@ public interface UsersDataSource {
      * @param username The username as a String to search for.
      * @return boolean value of username availability
      */
-    Boolean checkUsernameAvailability(String username);
+    Boolean checkUsernameAvailability(String username) throws Exception;
 
 
     /**
@@ -47,21 +47,21 @@ public interface UsersDataSource {
      * @param username The username as a String to search for.
      * @return all details in a User object for the username
      */
-    User getUser(String username);
+    User getUser(String username) throws Exception;
 
     /**
      * Deletes a User from the database.
      *
      * @param userID The userID to delete from the database.
      */
-    void deleteUser(Integer userID);
+    void deleteUser(Integer userID) throws Exception;
 
     /**
      * Deletes a User from the database.
      *
      * @param username The username to delete from the database.
      */
-    void deleteUser(String username);
+    void deleteUser(String username) throws Exception;
 
     /**
      * Finalizes any resources used by the data source and ensures data is
@@ -75,10 +75,10 @@ public interface UsersDataSource {
      *
      * @return set of usernames.
      */
-    Set<User> userSet();
+    Set<User> userSet() throws Exception;
 
-    boolean login(String username, String hashedPassword);
+    boolean login(String username, String hashedPassword) throws Exception;
 
-    boolean checkPassword(Integer userID, String hashedPassword);
+    boolean checkPassword(Integer userID, String hashedPassword) throws Exception;
 
 }

@@ -5,6 +5,7 @@ import com.company.Database.Persons.PersonsData;
 import com.company.Database.Users.UsersData;
 import com.company.Model.Person;
 import com.company.Model.User;
+import com.company.Testing.TestingException;
 import com.company.Utilities.PasswordHasher;
 
 import javax.swing.*;
@@ -79,7 +80,9 @@ public class ChangePasswordFrame extends JFrame {
         private void changePassword() {
             // Check status of fields
                 // Perform Checks on passwords
-                String hashedPassword = PasswordHasher.hashString(String.valueOf(passwordField.getPassword()));
+            String hashedPassword = null;
+            try {
+                hashedPassword = PasswordHasher.hashString(String.valueOf(passwordField.getPassword()));
                 String hashedConfirmPassword = PasswordHasher.hashString(String.valueOf(confirmPasswordField.getPassword()));
                 //If the new password is the same as it was, then the user is prompted to use a new password
                 if (hashedPassword.equals(oldPassword)) {
@@ -88,7 +91,11 @@ public class ChangePasswordFrame extends JFrame {
                     confirmPasswordField.setText("");
                 }//If the passwords match then
                 else if (hashedPassword.equals(hashedConfirmPassword)) {
-                    usersData.changePassword(hashedPassword, Client.getLoggedInUserID());
+                    try {
+                        usersData.changePassword(hashedPassword, Client.getLoggedInUserID());
+                    } catch (TestingException e) {
+                        JOptionPane.showMessageDialog(getContentPane(), "Password has been changed");
+                    }
                     JOptionPane.showMessageDialog(getContentPane(), "Password has been changed");
                     ChangePasswordFrame.this.dispose();
                 } else {
@@ -96,6 +103,10 @@ public class ChangePasswordFrame extends JFrame {
                     passwordField.setText("");
                     confirmPasswordField.setText("");
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(getContentPane(), e.getMessage());
             }
         }
+}
 
