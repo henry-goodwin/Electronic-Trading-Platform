@@ -13,7 +13,7 @@ public interface PersonsDataSource {
      *
      * @param person Person to add
      */
-    void addPerson(Person person);
+    void addPerson(Person person) throws Exception;
 
     /**
      * Extracts all the details of a User from the database based on the
@@ -22,7 +22,7 @@ public interface PersonsDataSource {
      * @param personID The personID as a Integer to search for.
      * @return all details in a Person object for the personID
      */
-    Person getPerson(Integer personID);
+    Person getPerson(Integer personID) throws Exception;
 
     /**
      * Finalizes any resources used by the data source and ensures data is
@@ -36,6 +36,6 @@ public interface PersonsDataSource {
      *
      * @return set of personIDs.
      */
-    Set<Person> personsSet();
+    Set<Person> personsSet() throws Exception;
 
 }

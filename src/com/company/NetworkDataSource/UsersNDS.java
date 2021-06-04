@@ -22,8 +22,9 @@ public class UsersNDS implements UsersDataSource {
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
 
-
-
+    /**
+     * Connect to network data source
+     */
     public UsersNDS() {
         try {
             // Persist a single connection through the whole lifetime of the application.
@@ -42,6 +43,11 @@ public class UsersNDS implements UsersDataSource {
         }
     }
 
+    /**
+     * Sends user to the server so that it can be added to the database
+     * @param user User to add
+     * @throws ServerException Throws exception if add fails
+     */
     @Override
     public void addUser(User user) throws ServerException {
         try {
@@ -63,35 +69,58 @@ public class UsersNDS implements UsersDataSource {
         }
     }
 
+    /**
+     * Gets user from the server
+     * @param userID The userID as a Integer to search for.
+     * @return User with the userID
+     * @throws Exception throw exception if fails
+     */
     @Override
-    public User getUser(Integer userID) {
+    public User getUser(Integer userID) throws Exception {
         try {
             outputStream.writeObject(Command.GET_ID_USER);
             outputStream.writeObject(userID);
             outputStream.flush();
+
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to get user, please try again");
 
             User user = (User) inputStream.readObject();
             return user;
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            throw new Exception("Failed to add user, please try again");
         }
-
-        return null;
     }
 
+    /**
+     * Sends the change password request to the server
+     * @param newPassword the new password that the user wants
+     * @param userID the ID of the user that wants to change their password
+     * @throws Exception Throw exception if change password fails
+     */
     @Override
-    public void changePassword(String newPassword, Integer userID) {
+    public void changePassword(String newPassword, Integer userID) throws Exception {
         try{
             outputStream.writeObject(Command.CHANGE_PASSWORD);
             outputStream.writeObject(newPassword);
             outputStream.writeObject(userID);
             outputStream.flush();
+
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to change password");
+
         } catch (IOException e) {
             e.printStackTrace();
+            throw new Exception("Failed to change password");
         }
     }
 
+    /**
+     * Sends check username availability request to the server
+     * @param username The username as a String to search for.
+     * @return Return true if username is available, return false if username is not available
+     * @throws ServerException Throws exception if fails
+     */
     @Override
     public Boolean checkUsernameAvailability(String username) throws ServerException {
         try {
@@ -112,6 +141,12 @@ public class UsersNDS implements UsersDataSource {
         }
     }
 
+    /**
+     * Sends get user request to the database
+     * @param username The username as a String to search for.
+     * @return User with the username
+     * @throws ServerException throw exception if fails
+     */
     @Override
     public User getUser(String username) throws ServerException {
         try {
@@ -128,6 +163,11 @@ public class UsersNDS implements UsersDataSource {
         }
     }
 
+    /**
+     * Sends delete user request to the server
+     * @param userID The userID to delete from the database.
+     * @throws ServerException Throws exception if fails to delete user
+     */
     @Override
     public void deleteUser(Integer userID) throws ServerException{
         try {
@@ -156,6 +196,11 @@ public class UsersNDS implements UsersDataSource {
 
     }
 
+    /**
+     * Gets set of users from the server
+     * @return Set of users in the database
+     * @throws ServerException Throw exception if fails
+     */
     @Override
     public Set<User> userSet() throws ServerException {
         try {
@@ -169,6 +214,13 @@ public class UsersNDS implements UsersDataSource {
         }
     }
 
+    /**
+     * Sends login request to the server
+     * @param username to login
+     * @param hashedPassword to login
+     * @return Return true if login successful, return falls if login failed
+     * @throws ServerException Throw exception if login fails
+     */
     @Override
     public boolean login(String username, String hashedPassword) throws ServerException {
         try {
@@ -188,6 +240,13 @@ public class UsersNDS implements UsersDataSource {
         }
     }
 
+    /**
+     * Send check password request to the server
+     * @param userID userID to check password
+     * @param hashedPassword hashed password to check
+     * @return return true if passwords match, return false if passwords don't match
+     * @throws ServerException Throw exception if fails
+     */
     @Override
     public boolean checkPassword(Integer userID, String hashedPassword) throws ServerException {
         try {

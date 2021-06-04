@@ -71,13 +71,14 @@ public class NewPersonGUI extends JFrame {
         if (firstName.equals("") || lastName.equals("")) {
             JOptionPane.showMessageDialog(getContentPane(), "Error: Please ensure all fields are valid");
         }else{
-        if (firstName.matches("(^[a-zA-Z]+$)") && lastName.matches("(^[a-zA-Z]+$)")){
-            personsData.addUser(new Person(firstName, lastName));
-            JOptionPane.showMessageDialog(getContentPane(), "Successfully added new person :)");
-            NewPersonGUI.this.dispose();
-        } else{
-            JOptionPane.showMessageDialog(getContentPane(), "Error: Please ensure name have no numbers or symbols");
-            }}
+            try {
+                personsData.addUser(new Person(firstName, lastName));
+                JOptionPane.showMessageDialog(getContentPane(), "Successfully added new person :)");
+                NewPersonGUI.this.dispose();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(getContentPane(), e.getMessage());
+            }
+        }
     }
 
 }

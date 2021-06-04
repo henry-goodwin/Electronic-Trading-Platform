@@ -218,17 +218,31 @@ public class NetworkServer {
             case ADD_PERSON: {
                 final Person person = (Person) inputStream.readObject();
                 synchronized (personsDatabase) {
-                    personsDatabase.addPerson(person);
-
+                    try {
+                        personsDatabase.addPerson(person);
+                        outputStream.writeObject(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
+                outputStream.flush();
             }
             break;
 
             case GET_PERSON: {
                 final Integer personID = (Integer) inputStream.readObject();
                 synchronized (personsDatabase) {
-                    final Person person = personsDatabase.getPerson(personID);
-                    outputStream.writeObject(person);
+                    final Person person;
+                    try {
+                        person = personsDatabase.getPerson(personID);
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(person);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
                 outputStream.flush();
             }
@@ -236,7 +250,14 @@ public class NetworkServer {
 
             case GET_PERSON_SET: {
                 synchronized (personsDatabase) {
-                    outputStream.writeObject(personsDatabase.personsSet());
+                    try {
+                        Set<Person> personSet = personsDatabase.personsSet();
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(personSet);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
                 outputStream.flush();
             }

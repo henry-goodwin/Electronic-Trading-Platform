@@ -262,4 +262,5 @@ public class TestOrgUnit {
 
         assertEquals("Accounting", organisationUnit.getName());
     }
+
 }

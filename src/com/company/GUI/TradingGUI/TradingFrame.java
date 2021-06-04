@@ -56,21 +56,25 @@ public class TradingFrame extends JFrame {
         add(adminMenuBar, BorderLayout.PAGE_START);
 
         OrganisationUnit organisationUnit = null;
+
+        JPanel tradingPanel = new JPanel();
+
         try {
             organisationUnit = organisationUnitData.get(Client.getLoggedInOrgID());
+            String orgName = organisationUnit.getName();
+            String fullName = null;
+            fullName = personsData.get(Client.getLoggedInPersonID()).toString();
+            String credits = String.valueOf(organisationUnit.getCredits());
+
+            tradingPanel.setLayout(new BorderLayout());
+            String welcomeString = "Name: " + fullName + " || Organisational Unit: " + orgName + " || Credits: " + credits;
+            nameLabel = new JLabel(welcomeString);
+            tradingPanel.add(nameLabel, BorderLayout.PAGE_START);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String orgName = organisationUnit.getName();
-        String fullName = personsData.get(Client.getLoggedInPersonID()).toString();
-        String credits = String.valueOf(organisationUnit.getCredits());
 
-        JPanel tradingPanel = new JPanel();
-        tradingPanel.setLayout(new BorderLayout());
-        String welcomeString = "Name: " + fullName + " || Organisational Unit: " + orgName + " || Credits: " + credits;
-        nameLabel = new JLabel(welcomeString);
-        tradingPanel.add(nameLabel, BorderLayout.PAGE_START);
 
         tabbedPane = new JTabbedPane();
         tabbedPane.setForeground(Color.BLACK);

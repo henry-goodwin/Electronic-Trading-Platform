@@ -16,7 +16,7 @@ public class UsersData {
      * Constructor initializes the list model that holds userID as Integers and
      * attempts to read any data saved from previous invocations of the
      * application.
-     *
+     * @throws Exception throws exception if fails to get list
      */
     public UsersData(UsersDataSource dataSource) throws TestingException {
         listModel = new DefaultListModel<User>();
@@ -38,6 +38,7 @@ public class UsersData {
      * Adds a User to the database.
      *
      * @param user User to add to the database.
+     * @throws Exception throws exception if fails to add user
      */
     public void addUser(User user) throws TestingException {
         // check to see if the person is already in the book
@@ -58,6 +59,7 @@ public class UsersData {
      *
      * @param newPassword the new password that the user wants
      * @param userID the ID of the user that wants to change their password
+     * @throws Exception throws exception if fails to change password
      * */
 
     public void changePassword(String newPassword, Integer userID) throws TestingException{
@@ -96,6 +98,7 @@ public class UsersData {
      *
      * @param key the username to retrieve.
      * @return the User object related to the username.
+     * @throws Exception throws exception if fails
      */
     public User get(Object key) throws TestingException {
         try {

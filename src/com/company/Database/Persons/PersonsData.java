@@ -14,14 +14,23 @@ public class PersonsData {
     private DefaultListModel<Person> personDefaultListModel;
     private PersonsDataSource personsDataSource;
 
-    public PersonsData(PersonsDataSource dataSource) {
+    /**
+     * Constructor that initialises variables
+     * @param dataSource
+     * @throws Exception Throws exception if fails to get list
+     */
+    public PersonsData(PersonsDataSource dataSource) throws Exception {
 
         personsDataSource = dataSource;
-
         personDefaultListModel = new DefaultListModel<Person>();
 
-        for (Person person : personsDataSource.personsSet()) {
-            personDefaultListModel.addElement(person);
+        try {
+            for (Person person : personsDataSource.personsSet()) {
+                personDefaultListModel.addElement(person);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Get Persons List Failed");
         }
     }
 
@@ -38,8 +47,9 @@ public class PersonsData {
      *
      * @param key the id to retrieve.
      * @return the Person object related to the id.
+     * @throws Exception Throws exception if fails
      */
-    public Person get(Object key) {
+    public Person get(Object key) throws Exception {
         return personsDataSource.getPerson((Integer) key);
     }
 
@@ -56,8 +66,9 @@ public class PersonsData {
      * Adds a Person to the database.
      *
      * @param person Person to add to the database.
+     * @throws Exception Throws exception if fails
      */
-    public void addUser(Person person) {
+    public void addUser(Person person) throws Exception {
        personsDataSource.addPerson(person);
     }
 

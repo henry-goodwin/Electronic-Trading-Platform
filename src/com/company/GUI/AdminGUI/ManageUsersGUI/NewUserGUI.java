@@ -137,7 +137,6 @@ public class NewUserGUI extends JFrame {
 
                     String username = usernameField.getText();
 
-                    // Check that username is free
                     try {
                         Boolean checkUsername = usersData.checkUsernameAvailability(username);
                         if (checkUsername) {

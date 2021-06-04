@@ -12,6 +12,7 @@ import java.util.TreeSet;
 
 public class JDBCPersonsDataSource implements PersonsDataSource {
 
+    // SQL Statements
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `Persons` (" +
             "  `personID` int(11) NOT NULL AUTO_INCREMENT," +
             "  `firstName` varchar(255) NOT NULL," +
@@ -32,25 +33,27 @@ public class JDBCPersonsDataSource implements PersonsDataSource {
 
     private static final String GET_PERSON = "SELECT * FROM `cab302`.`Persons` WHERE personID=?;";
 
+    // Database Connection
     private Connection connection;
 
+    // Create prepared statements
     private PreparedStatement addPerson;
-
-    private PreparedStatement getPersonList;
-
     private PreparedStatement getPerson;
-
     private PreparedStatement getPersons;
 
+    // Initialise database
     public JDBCPersonsDataSource() {
+        // Connect to database
         connection = DBConnector.getInstance();
 
         try {
+            // Try create table
             Statement statement = connection.createStatement();
             statement.execute(CREATE_TABLE);
+
+            // Prepare statements
             getPersons = connection.prepareStatement(GET_PERSONS);
             addPerson = connection.prepareStatement(INSERT_PERSON);
-            getPersonList = connection.prepareStatement(GET_PERSONID);
             getPerson = connection.prepareStatement(GET_PERSON);
 
         } catch (SQLException exception) {
@@ -58,8 +61,15 @@ public class JDBCPersonsDataSource implements PersonsDataSource {
         }
     }
 
+    /**
+     * Add person to the database
+     * @param person Person to add
+     * @throws Exception throws exception if
+     */
     @Override
-    public void addPerson(Person person) {
+    public void addPerson(Person person) throws Exception {
+        if (person.getFirstname().equals("") || person.getLastname().equals("")) throw new Exception("Invalid  name");
+
         try {
             addPerson.setString(1, person.getFirstname());
             addPerson.setString(2, person.getLastname());
@@ -68,16 +78,25 @@ public class JDBCPersonsDataSource implements PersonsDataSource {
 
         } catch (SQLException exception) {
             exception.printStackTrace();
+            throw new Exception("SQL Error");
         }
     }
 
+    /**
+     * Gets a person from the database
+     * @param personID The personID as a Integer to search for.
+     * @return Person with the personID
+     * @throws Exception throws exception personID is invalid
+     */
     @Override
-    public Person getPerson(Integer personID) {
-        Person person = new Person();
+    public Person getPerson(Integer personID) throws Exception {
+
+        if (personID < 0) throw new Exception("Invalid personID");
+
         ResultSet resultSet = null;
 
         try {
-
+            Person person = new Person();
             getPerson.setInt(1,personID);
             resultSet = getPerson.executeQuery();
 
@@ -86,16 +105,21 @@ public class JDBCPersonsDataSource implements PersonsDataSource {
                 person.setPersonID(resultSet.getInt("personID"));
                 person.setFirstname(resultSet.getString("firstName"));
                 person.setLastname(resultSet.getString("lastName"));
+                return person;
 
+            } else {
+                throw new Exception("No person found");
             }
 
         } catch (SQLException exception) {
             exception.printStackTrace();
+            throw new Exception("SQL Error");
         }
-
-        return person;
     }
 
+    /**
+     * Closes connection to database
+     */
     @Override
     public void close() {
         try {
@@ -105,24 +129,32 @@ public class JDBCPersonsDataSource implements PersonsDataSource {
         }
     }
 
+    /**
+     * Gets set of persons in database
+     * @return Set of persons
+     * @throws Exception throws exception if fails
+     */
     @Override
-    public Set<Person> personsSet() {
-        Set<Person> persons = new TreeSet<Person>();
+    public Set<Person> personsSet() throws Exception {
         ResultSet resultSet = null;
 
         try {
+            Set<Person> persons = new TreeSet<Person>();
             resultSet = getPersons.executeQuery();
 
             while (resultSet.next()) {
                 Person person = new Person(resultSet.getInt("personID"), resultSet.getString("firstName"), resultSet.getString("lastName"));
                 persons.add(person);
             }
-
+            return persons;
         } catch (SQLException exception) {
             // Failed
             exception.printStackTrace();
-        }
+            throw new Exception("SQL Error");
 
-        return persons;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Failed to get persons set");
+        }
     }
 }

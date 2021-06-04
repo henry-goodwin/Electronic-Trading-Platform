@@ -3,6 +3,7 @@ package com.company.NetworkDataSource;
 import com.company.Server.Command;
 import com.company.Database.Persons.PersonsDataSource;
 import com.company.Model.Person;
+import com.company.Server.ServerException;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -39,8 +40,13 @@ public class PersonsNDS implements PersonsDataSource {
         }
     }
 
+    /**
+     * Sends person to the server so that it can be added to the database
+     * @param person Person to add
+     * @throws Exception Throws exception if add fails
+     */
     @Override
-    public void addPerson(Person person) {
+    public void addPerson(Person person) throws Exception {
         try {
             // tell the server to expect a person's details
             outputStream.writeObject(Command.ADD_PERSON);
@@ -48,26 +54,37 @@ public class PersonsNDS implements PersonsDataSource {
             // send the actual data
             outputStream.writeObject(person);
             outputStream.flush();
+
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to add person, please try again");
+
         } catch (IOException e) {
             e.printStackTrace();
+            throw new Exception("Failed to add person, please try again");
         }
     }
 
+    /**
+     * Gets person from the server
+     * @param personID The personID as a Integer to search for.
+     * @return Person with the person ID
+     * @throws Exception Throw exception if fails
+     */
     @Override
-    public Person getPerson(Integer personID) {
+    public Person getPerson(Integer personID) throws Exception {
         try {
             outputStream.writeObject(Command.GET_PERSON);
             outputStream.writeObject(personID);
             outputStream.flush();
+
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to get person, please try again");
 
             Person person = (Person) inputStream.readObject();
             return person;
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            throw new Exception("Failed to get person, please try again");
         }
-
-        return null;
     }
 
     @Override
@@ -75,15 +92,21 @@ public class PersonsNDS implements PersonsDataSource {
 
     }
 
+    /**
+     * Gets set of people from the server
+     * @return Set of people in the database
+     * @throws Exception Throw exception if fails
+     */
     @Override
-    public Set<Person> personsSet() {
+    public Set<Person> personsSet() throws Exception {
         try {
             outputStream.writeObject(Command.GET_PERSON_SET);
             outputStream.flush();
+            if (!((Boolean) inputStream.readObject())) throw new ServerException("Failed to get userSet, please try again");
             return (Set<Person>) inputStream.readObject();
         } catch (IOException | ClassNotFoundException | ClassCastException e) {
             e.printStackTrace();
-            return new HashSet<>();
+            throw new Exception("Failed to get set, please try again");
         }
     }
 }

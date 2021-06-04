@@ -56,9 +56,20 @@ public class ManageUsersFrame extends JFrame {
             new NewUserGUI(new UsersData(new UsersNDS()), new PersonsData(new PersonsNDS()));
         } catch (TestingException e) {
             JOptionPane.showMessageDialog(getContentPane(), "Error");
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(getContentPane(), "Error, please try again later");
         }
     }
 
-    private void newPersonFrame() { new NewPersonGUI(new PersonsData(new PersonsNDS())); }
+    private void newPersonFrame() {
+        try {
+            new NewPersonGUI(new PersonsData(new PersonsNDS()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(getContentPane(), "Error, please try again later");
+
+        }
+    }
 
 }

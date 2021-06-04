@@ -177,5 +177,41 @@ public class TestUsers {
 
     }
 
+    @Test
+    void TestCheckPasswordValid() throws Exception {
+        User user = new User(1, "Standard", 2, "davey", PasswordHasher.hashString("deadly"));
+        assertEquals(true, mockUsersDatabase.checkPassword(user.getUserID(), user.getPasswordHash()));
+    }
+
+    @Test
+    void TestCheckPasswordInValid() throws Exception {
+        User user = new User(1, "Standard", 2, "davey", PasswordHasher.hashString("deadly"));
+        assertEquals(false, mockUsersDatabase.checkPassword(user.getUserID(), "invalidPassword"));
+    }
+
+    @Test
+    void TestLoginValid() throws Exception {
+        User user = new User(1, "Standard", 2, "davey", PasswordHasher.hashString("deadly"));
+
+        assertEquals(true, mockUsersDatabase.login(user.getUsername(), user.getPasswordHash()));
+    }
+
+    @Test
+    void TestLoginInvalidUsername() throws Exception {
+        User user = new User(1, "Standard", 2, "dag vey", PasswordHasher.hashString("deadly"));
+
+        assertThrows(Exception.class, () -> {
+            mockUsersDatabase.login(user.getUsername(), user.getPasswordHash());
+        });
+    }
+
+    @Test
+    void TestLoginInvalidPassword() throws Exception {
+        User user = new User(1, "Standard", 2, "davey", PasswordHasher.hashString("wrong"));
+
+        assertEquals(false, mockUsersDatabase.login(user.getUsername(), user.getPasswordHash()));
+
+    }
+
 
 }

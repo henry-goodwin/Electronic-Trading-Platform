@@ -2,10 +2,12 @@ package com.company.Testing.UsersTest;
 
 import com.company.Database.Users.UsersDataSource;
 import com.company.Model.User;
+import com.company.Testing.TestingException;
 import com.company.Utilities.PasswordHasher;
 
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class MockUsersDatabase implements UsersDataSource {
 
@@ -148,18 +150,51 @@ public class MockUsersDatabase implements UsersDataSource {
 
     }
 
+    /**
+     * Gets set of users in the database
+     * @return set of Users
+     * @throws TestingException Throw exception if get fails
+     */
     @Override
-    public Set<User> userSet() {
-        return null;
+    public Set<User> userSet() throws Exception {
+        Set<User> userSet = new TreeSet<User>();
+
+        for(Integer key: dataUserID.keySet()) {
+            userSet.add(dataUserID.get(key));
+        }
+        return userSet;
     }
 
+
+    /**
+     * Login user
+     * @param username username to login
+     * @param hashedPassword hashedPassword to login
+     * @return Return true if login successful, return false if login failed
+     * @throws TestingException Throw exception if error encountered
+     */
     @Override
-    public boolean login(String username, String hashedPassword) {
-        return false;
+    public boolean login(String username, String hashedPassword) throws Exception {
+        if (!username.matches("^[a-zA-Z0-9]([._-](?![._-])|[a-zA-Z0-9]){3,18}[a-zA-Z0-9]$")) throw new Exception("Invalid username");
+        if (!checkUsernameAvailability(username)) {
+            User user = getUser(username);
+            return user.getPasswordHash().equals(hashedPassword);
+        } else {
+            throw new TestingException("Username does not exist");
+        }
     }
 
+    /**
+     * Check if password exists
+     * @param userID userID to check
+     * @param hashedPassword hashedPassword to check
+     * @return Return true if passwords are equal, return false if password are not equal
+     * @throws Exception Throw exception if userID isnt valid
+     */
     @Override
-    public boolean checkPassword(Integer userID, String hashedPassword) {
-        return false;
+    public boolean checkPassword(Integer userID, String hashedPassword) throws TestingException {
+        if (userID < 0) throw new TestingException("Invalid userID");
+        User user = dataUserID.get(userID);
+        return user.getPasswordHash().equals(hashedPassword);
     }
 }
