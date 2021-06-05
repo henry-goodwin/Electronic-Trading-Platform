@@ -64,12 +64,11 @@ public class OrganisationUnitData {
     }
 
     public ArrayList<Object[]> getList() throws Exception {
-        try {
-            return organisationUnitDataSource.getList();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception("Failed to get list");
-        }
+        return organisationUnitDataSource.getList();
+    }
+
+    public void updateCredits(Integer orgUnitID, Double creditsToUpdate) throws Exception {
+        organisationUnitDataSource.updateOrgUnitCredits(orgUnitID, creditsToUpdate);
     }
 
 }

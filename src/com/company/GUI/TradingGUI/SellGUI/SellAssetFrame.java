@@ -37,7 +37,11 @@ public class SellAssetFrame extends JFrame implements KeyListener, ActionListene
         this.bidData = bidData;
 
         orgUnitAssetTableModel = new OrgAssetTableModel();
-        orgUnitAssetTableModel.setData(this.orgAssetData.getAssetList(Client.getLoggedInOrgID()));
+        try {
+            orgUnitAssetTableModel.setData(this.orgAssetData.getAssetList(Client.getLoggedInOrgID()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         assetsTable = new JTable(orgUnitAssetTableModel);
         assetsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

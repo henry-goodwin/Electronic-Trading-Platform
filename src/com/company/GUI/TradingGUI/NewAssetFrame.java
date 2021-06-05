@@ -1,5 +1,6 @@
 package com.company.GUI.TradingGUI;
 
+import com.company.Client;
 import com.company.Database.Assets.AssetData;
 import com.company.Database.Assets.AssetDataSource;
 import com.company.Database.OrgUnitAssets.OrgAssetData;
@@ -80,19 +81,30 @@ public class NewAssetFrame extends JFrame {
         } else {
             // Check if org already has this asset
             Asset asset = (Asset) namesList.getSelectedValue();
-            Integer orgID = 1;
+            Integer orgID = Client.getLoggedInOrgID();
             // returns true if asset is available
-            if (orgAssetData.checkAsset(orgID, asset.getAssetID())) {
-                Double quantity = Double.parseDouble(quantityField.getText());
-                orgAssetData.addOrgAsset(new OrgAsset(1,
-                        asset.getAssetID(),
-                        quantity));
-                JOptionPane.showMessageDialog(getContentPane(), "Successfully added new organisation unit asset :)");
-                NewAssetFrame.this.dispose();
-            } else {
-                JOptionPane.showMessageDialog(getContentPane(), "Error: Asset Already exists, please edit instead");
-            }
+            try {
+                if (orgAssetData.checkAsset(orgID, asset.getAssetID())) {
+                    Double quantity = Double.parseDouble(quantityField.getText());
+                    try {
+                        orgAssetData.addOrgAsset(new OrgAsset(orgID,
+                                asset.getAssetID(),
+                                quantity));
+                        JOptionPane.showMessageDialog(getContentPane(), "Successfully added new organisation unit asset :)");
+                        NewAssetFrame.this.dispose();
 
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(getContentPane(), e.getMessage());
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(getContentPane(), "Error: Asset Already exists, please edit instead");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(getContentPane(), e.getMessage());
+            }
         }
     }
 

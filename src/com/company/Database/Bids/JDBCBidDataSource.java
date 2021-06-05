@@ -58,12 +58,12 @@ public class JDBCBidDataSource implements BidDataSource {
     private static final String GET_ACTIVE_BID_LIST = "SELECT * " +
             "FROM `cab302`.`Bids`" +
             "WHERE (`buyType`, `status`) = (?,?)" +
-            "ORDER BY `date`;";
+            "ORDER BY `assetID`, `date`, `price`;";
 
     private static final String GET_ACTIVE_BUY_LIST = "SELECT * " +
             "FROM `cab302`.`Bids`" +
             "WHERE (`buyType`, `status`, `assetID`) = (?,?,?)" +
-            "ORDER BY (`price`);";
+            "ORDER BY (`date`);";
 
     private static final String UPDATE_BID = "UPDATE `cab302`.`Bids`" +
             "SET" +
@@ -230,89 +230,102 @@ public class JDBCBidDataSource implements BidDataSource {
         }
     }
 
+
+
     @Override
     public void checkTrades() throws Exception {
-        // Get all active sell bids
-        ArrayList<Bid> activeSellBids = activeSellBids();
-        OrganisationUnitData organisationUnitData = new OrganisationUnitData(new OrganisationUnitNDS());
-        OrgAssetData orgAssetData = new OrgAssetData(new OrgAssetNDS());
+        // Get all active sell bids, sorted by assetID, lowest price & date
+        ArrayList<Bid> sortedActiveBids = activeSellBids();
 
-        // For each sell bid in active sell bids
-        for (Bid sellBid: activeSellBids) {
-            ArrayList<Bid> assetBuyBids = assetBuyBids(sellBid.getAssetID());
+        // For each active sell bid
+        for (Bid sellBid: sortedActiveBids) {
+            // Find all buy bids, sorted by date (process earliest buy bids first)
+            ArrayList<Bid> sortedActiveBuyBids = assetBuyBids(sellBid.getAssetID());
 
-            for (Bid buyBid: assetBuyBids) {
-                // Check that buy price meets sell price
+            // For each buy bid (for asset)
+            for (Bid buyBid: sortedActiveBuyBids) {
+                // Check that the buy price meets the sell price
                 if (buyBid.getPrice() >= sellBid.getPrice()) {
-                    // Find how much is available to buy and sell
-                    Double buyingQuantity = buyBid.getActiveQuantity() - buyBid.getInactiveQuantity();
-                    Double sellingQuantity = sellBid.getActiveQuantity() - sellBid.getInactiveQuantity();
+                    // Check that bid is open
+                    if (buyBid.getStatus().equals("open") && sellBid.getStatus().equals("open")) {
+
+                        // Find out how much can be sold/bought
+                        Double buyingQuantity = buyBid.getActiveQuantity() - buyBid.getInactiveQuantity();
+                        Double sellingQuantity = sellBid.getActiveQuantity() - sellBid.getInactiveQuantity();
+
+                        Double purchasedAmount;
+                        if(buyingQuantity > sellingQuantity) {
+                            purchasedAmount = sellingQuantity;
+                        } else {
+                            purchasedAmount = buyingQuantity;
+                        }
+
+                        // Purchase price
+                        Double purchasePrice = purchasedAmount * sellBid.getPrice();
+
+                        OrgAssetData orgAssetData = new OrgAssetData(new OrgAssetNDS());
+                        OrganisationUnitData organisationUnitData = new OrganisationUnitData(new OrganisationUnitNDS());
+
+                        // Check that organisation has enough credits to buy & organisation has enough asset to sell
+                        if (checkAsset(orgAssetData, sellBid.getOrgID(), sellBid.getAssetID(), purchasedAmount) && checkCredits(organisationUnitData, buyBid.getOrgID(), purchasePrice)) {
+                            // Update the bid in database
+                            updateBid(buyBid.getBidID(), buyBid.getActiveQuantity(), buyBid.getInactiveQuantity(), purchasedAmount);
+                            updateBid(sellBid.getBidID(), sellBid.getActiveQuantity(), sellBid.getInactiveQuantity(), purchasedAmount);
+
+                            // Update bid in loop
+                            buyBid.addInactiveQuantity(purchasedAmount);
+                            sellBid.addInactiveQuantity(purchasedAmount);
+                            if (sellBid.getActiveQuantity().equals(sellBid.getInactiveQuantity())) sellBid.setStatus("closed");
+                            if (buyBid.getActiveQuantity().equals(buyBid.getInactiveQuantity())) sellBid.setStatus("closed");
 
 
-                    Double purchasedAmount;
-                    if(buyingQuantity > sellingQuantity) {
-                        purchasedAmount = sellingQuantity;
-                    } else {
-                        purchasedAmount = buyingQuantity;
+
+                            // Process the sale of asset
+                            updateOrgUnitCredits(organisationUnitData,sellBid.getOrgID(), purchasePrice);
+                            updateOrgUnitAsset(orgAssetData,sellBid.getOrgID(), sellBid.getAssetID(), -purchasedAmount);
+
+                            // Process the purchase of asset
+                            updateOrgUnitCredits(organisationUnitData,buyBid.getOrgID(), -purchasePrice);
+                            updateOrgUnitAsset(orgAssetData,buyBid.getOrgID(), buyBid.getAssetID(), purchasedAmount);
+                        }
                     }
-
-                    // Update Bids
-                    sellBid.addInactiveQuantity(purchasedAmount);
-                    buyBid.addInactiveQuantity(purchasedAmount);
-
-                    // Mark as closed if all units are bought
-                    if (buyBid.getActiveQuantity().equals(buyBid.getInactiveQuantity())) {
-                        // Mark as sold
-                        buyBid.setStatus("closed");
-                    }
-
-                    if (sellBid.getActiveQuantity().equals(sellBid.getInactiveQuantity())) {
-                        // Mark as sold
-                        sellBid.setStatus("closed");
-                    }
-
-                    // Update org units credits
-                    // Get Buy Org Unit
-                    OrganisationUnit buyOrganisationUnit = null;
-                    try {
-                        buyOrganisationUnit = organisationUnitData.get(buyBid.getOrgID());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-                        buyOrganisationUnit.removeCredits(purchasedAmount * buyBid.getPrice());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        break;
-                    }
-
-                    // Get Sell Org Unit
-                    OrganisationUnit sellOrganisationUnit = null;
-                    try {
-                        sellOrganisationUnit = organisationUnitData.get(sellBid.getOrgID());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        sellOrganisationUnit.addCredits(purchasedAmount * sellBid.getPrice());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        break;
-                    }
-
-                    OrgAsset buyOrgAsset = orgAssetData.get(buyBid.getOrgID(), buyBid.getAssetID());
-                    buyOrgAsset.addQuantity(purchasedAmount);
-
-                    OrgAsset sellOrgAsset = orgAssetData.get(sellBid.getOrgID(), sellBid.getAssetID());
-                    sellOrgAsset.removeQuantity(purchasedAmount);
-
-                    syncData(organisationUnitData, orgAssetData, buyBid, sellBid, buyOrganisationUnit, sellOrganisationUnit, buyOrgAsset, sellOrgAsset);
                 }
             }
-
         }
     }
+
+    @Override
+    public void updateBid(Integer bidID, Double activeQuantity, Double inactiveQuantity, Double purchaseAmount) throws Exception {
+        Double newInactiveQuantity = inactiveQuantity + purchaseAmount;
+        String newStatus = "open";
+        if (activeQuantity.equals(newInactiveQuantity)) newStatus = "closed";
+
+        updateBid.setString(1, newStatus);
+        updateBid.setDouble(2, newInactiveQuantity);
+        updateBid.setInt(3, bidID);
+
+        updateBid.executeUpdate();
+    }
+
+    private void updateOrgUnitCredits(OrganisationUnitData organisationUnitData,Integer orgUnitID, Double creditsToUpdate) throws Exception {
+        // Org Unit Database
+        organisationUnitData.updateCredits(orgUnitID, creditsToUpdate);
+    }
+
+    private void updateOrgUnitAsset(OrgAssetData orgAssetData,Integer orgUnitID, Integer assetID, Double purchaseAmount) throws Exception{
+        orgAssetData.updateData(orgUnitID, assetID, purchaseAmount);
+    }
+
+    private Boolean checkCredits(OrganisationUnitData organisationUnitData, Integer orgID, Double creditsToCheck) throws Exception {
+        OrganisationUnit organisationUnit = organisationUnitData.get(orgID);
+        return (organisationUnit.getCredits() >= creditsToCheck);
+    }
+
+    private Boolean checkAsset(OrgAssetData orgAssetData, Integer orgID, Integer assetID, Double quantityToCheck) throws Exception {
+        OrgAsset orgAsset = orgAssetData.get(orgID, assetID);
+        return (orgAsset.getQuantity() >= quantityToCheck);
+    }
+
 
     /**
      * Gets array list of all active sell bids
@@ -324,9 +337,9 @@ public class JDBCBidDataSource implements BidDataSource {
 
         try {
             getActiveBids.setBoolean(1, false);
-            getActiveBids.setBoolean(2, false);
+            getActiveBids.setString(2, "open");
             ResultSet sellResultSet = null;
-            sellResultSet = getBidList.executeQuery();
+            sellResultSet = getActiveBids.executeQuery();
 
             while (sellResultSet.next()) {
                 Bid bid = new Bid();
@@ -390,35 +403,4 @@ public class JDBCBidDataSource implements BidDataSource {
             throw new Exception("SQL Error");
         }
     }
-
-    private void syncData(OrganisationUnitData organisationUnitData, OrgAssetData orgAssetData, Bid buyBid, Bid sellBid, OrganisationUnit buyUnit, OrganisationUnit sellUnit, OrgAsset buyOrgAsset, OrgAsset sellOrgAsset) throws Exception {
-        try {
-
-//         Update Buy Bid in database
-            updateBid.setString(1, buyBid.getStatus());
-            updateBid.setDouble(2, buyBid.getInactiveQuantity());
-            updateBid.setInt(3, buyBid.getBidID());
-            updateBid.executeUpdate();
-
-            // Update Sell Bid in database
-            updateBid.setString(1, sellBid.getStatus());
-            updateBid.setDouble(2, sellBid.getInactiveQuantity());
-            updateBid.setInt(3, sellBid.getBidID());
-            updateBid.executeUpdate();
-
-            organisationUnitData.updateUnit(buyUnit);
-            organisationUnitData.updateUnit(sellUnit);
-
-            orgAssetData.updateOrgAsset(buyOrgAsset);
-            orgAssetData.updateOrgAsset(sellOrgAsset);
-
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-            throw new Exception("SQL Error");
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception("Error syncing data, please try again");
-        }
-    }
-
 }

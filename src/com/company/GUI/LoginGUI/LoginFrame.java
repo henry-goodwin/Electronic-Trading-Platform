@@ -116,9 +116,8 @@ public class LoginFrame extends JFrame {
 
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(getContentPane(), "Organisational Unit Error, please contact your system admin");
+            JOptionPane.showMessageDialog(getContentPane(), "Login Failed, please try again");
         }
-        // Login and open GUI
     }
 
     /**

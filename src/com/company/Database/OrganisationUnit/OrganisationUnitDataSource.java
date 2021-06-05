@@ -36,6 +36,8 @@ public interface OrganisationUnitDataSource {
      */
     void updateOrgUnit(OrganisationUnit organisationUnit) throws Exception;
 
+    void updateOrgUnitCredits(Integer orgUnitID, Double creditsToUpdate) throws Exception;
+
     /**
      * Gets list of organisation units
      * @return Arraylist of organisational units

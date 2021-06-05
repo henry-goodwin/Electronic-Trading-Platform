@@ -31,7 +31,7 @@ public class OrgAssetData {
      *
      * @return the OrgAsset object related to the id.
      */
-    public OrgAsset get(Integer orgID, Integer assetID) {
+    public OrgAsset get(Integer orgID, Integer assetID) throws Exception {
         return orgUnitAssetDataSource.getOrgAsset(orgID, assetID);
     }
 
@@ -40,21 +40,25 @@ public class OrgAssetData {
      *
      * @param orgAsset OrgAsset to add to the database.
      */
-    public void addOrgAsset(OrgAsset orgAsset) {
+    public void addOrgAsset(OrgAsset orgAsset) throws Exception {
         orgUnitAssetDataSource.addAsset(orgAsset);
     }
 
-    public Boolean checkAsset(Integer orgID, Integer assetID) {
+    public Boolean checkAsset(Integer orgID, Integer assetID) throws Exception {
         return orgUnitAssetDataSource.checkAsset(orgID, assetID);
     }
 
-    public ArrayList<Object[]> getAssetList(Integer orgID) {
+    public ArrayList<Object[]> getAssetList(Integer orgID) throws Exception {
         return orgUnitAssetDataSource.getAssetList(orgID);
     }
 
-    public void updateQuantity(Integer orgID, Integer assetID ,Double quantity) {
+    public void updateQuantity(Integer orgID, Integer assetID ,Double quantity) throws Exception {
         orgUnitAssetDataSource.updateQuantity(orgID, assetID, quantity);
     }
 
-    public void updateOrgAsset(OrgAsset orgAsset) { orgUnitAssetDataSource.updateOrgAsset(orgAsset); }
+    public void updateOrgAsset(OrgAsset orgAsset) throws Exception { orgUnitAssetDataSource.updateOrgAsset(orgAsset); }
+
+    public void updateData(Integer orgUnitID, Integer assetID, Double quantity) throws Exception {
+        orgUnitAssetDataSource.updateData(orgUnitID, assetID, quantity);
+    }
 }

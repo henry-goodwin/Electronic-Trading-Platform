@@ -234,6 +234,6 @@ public class Bid implements Comparable<Bid>, Serializable {
      */
     @Override
     public int compareTo(Bid other) {
-        return date.compareTo(other.date);
+        return price.compareTo(other.price);
     }
 }

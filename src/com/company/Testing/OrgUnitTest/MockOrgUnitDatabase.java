@@ -98,6 +98,11 @@ public class MockOrgUnitDatabase implements OrganisationUnitDataSource {
         }
     }
 
+    @Override
+    public void updateOrgUnitCredits(Integer orgUnitID, Double creditsToUpdate) throws Exception {
+
+    }
+
     /**
      * Gets array list of all organisation units, used for JLists
      * @return arrayList of all organisational units

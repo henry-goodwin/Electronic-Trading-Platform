@@ -26,7 +26,7 @@ public class JDBCOrganisationUnitDataSource implements OrganisationUnitDataSourc
 
     private static final String GET_ORGANISATION_UNIT = "SELECT * FROM `cab302`.`OrganisationUnit` WHERE organisationUnitID=?;";
 
-    private static final String UPDATE_ORGANISATION_UNIT = "UPDATE `cab302`.`OrganisationUnit`" +
+    private static final String UPDATE_ORGANISATION_UNIT_CREDITS = "UPDATE `cab302`.`OrganisationUnit`" +
             "SET `credits` = ?" +
             "WHERE `organisationUnitID` = ?;";
 
@@ -40,7 +40,7 @@ public class JDBCOrganisationUnitDataSource implements OrganisationUnitDataSourc
     private PreparedStatement addOrganisationUnit;
     private PreparedStatement getOrganisationUnits;
     private PreparedStatement getOrganisationUnit;
-    private PreparedStatement updateOrganisationUnit;
+    private PreparedStatement updateOrganisationUnitCredits;
     private PreparedStatement getList;
 
     /**
@@ -59,7 +59,7 @@ public class JDBCOrganisationUnitDataSource implements OrganisationUnitDataSourc
             addOrganisationUnit = connection.prepareStatement(INSERT_ORGANISATION_UNIT);
             getOrganisationUnit = connection.prepareStatement(GET_ORGANISATION_UNIT);
             getOrganisationUnits = connection.prepareStatement(GET_ORGANISATION_UNITS);
-            updateOrganisationUnit = connection.prepareStatement(UPDATE_ORGANISATION_UNIT);
+            updateOrganisationUnitCredits = connection.prepareStatement(UPDATE_ORGANISATION_UNIT_CREDITS);
             getList = connection.prepareStatement(GET_LIST);
 
         } catch (SQLException exception) {
@@ -147,15 +147,26 @@ public class JDBCOrganisationUnitDataSource implements OrganisationUnitDataSourc
             throw new Exception("Invalid Org Unit");
         } else {
             try {
-                updateOrganisationUnit.setDouble(1, organisationUnit.getCredits());
-                updateOrganisationUnit.setInt(2, organisationUnit.getID());
-                updateOrganisationUnit.executeUpdate();
+                updateOrganisationUnitCredits.setDouble(1, organisationUnit.getCredits());
+                updateOrganisationUnitCredits.setInt(2, organisationUnit.getID());
+                updateOrganisationUnitCredits.executeUpdate();
 
             } catch (SQLException exception) {
                 exception.printStackTrace();
                 throw new Exception(exception.getMessage());
             }
         }
+    }
+
+    @Override
+    public void updateOrgUnitCredits(Integer orgUnitID, Double creditsToUpdate) throws Exception {
+        // Get Organisational Unit
+        OrganisationUnit organisationUnit = getOrganisationUnit(orgUnitID);
+        Double newCreditAmount = organisationUnit.getCredits() + creditsToUpdate;
+
+        updateOrganisationUnitCredits.setDouble(1, newCreditAmount);
+        updateOrganisationUnitCredits.setInt(2, orgUnitID);
+        updateOrganisationUnitCredits.executeUpdate();
     }
 
     /**

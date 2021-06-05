@@ -14,6 +14,7 @@ import java.util.TreeSet;
 
 public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
 
+    // SQL Statements
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `OrganisationUnitAssets` (" +
             "`organisationUnitID` int(11) NOT NULL," +
             "`assetID` int(11) NOT NULL," +
@@ -87,7 +88,7 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
 
 
     @Override
-    public void addAsset(OrgAsset orgAsset) {
+    public void addAsset(OrgAsset orgAsset) throws Exception {
         try {
             addOrgAsset.setInt(1, orgAsset.getOrganisationUnitID());
             addOrgAsset.setInt(2, orgAsset.getAssetID());
@@ -96,11 +97,12 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
 
         } catch (SQLException exception) {
             exception.printStackTrace();
+            throw new Exception("SQL Error");
         }
     }
 
     @Override
-    public OrgAsset getOrgAsset(Integer orgID, Integer assetID) {
+    public OrgAsset getOrgAsset(Integer orgID, Integer assetID) throws Exception {
         ResultSet resultSet = null;
 
         try {
@@ -112,13 +114,14 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
 
                 return new OrgAsset(resultSet.getInt("organisationUnitID"), resultSet.getInt("assetID"), resultSet.getDouble("quantity"));
 
+            } else {
+                throw new Exception("Error: no org asset found");
             }
 
         } catch (SQLException exception) {
             exception.printStackTrace();
+            throw new Exception("SQL error");
         }
-
-        return new OrgAsset();
     }
 
     @Override
@@ -131,7 +134,7 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
     }
 
     @Override
-    public Set<OrgAsset> OrgAssetSet() {
+    public Set<OrgAsset> OrgAssetSet() throws Exception {
         Set<OrgAsset> orgAssetSet = new TreeSet<OrgAsset>();
         ResultSet resultSet = null;
 
@@ -142,15 +145,15 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
                 OrgAsset orgAsset = new OrgAsset(resultSet.getInt("organisationUnitID"), resultSet.getInt("assetID"), resultSet.getDouble("quantity"));
                 orgAssetSet.add(orgAsset);
             }
+            return orgAssetSet;
         } catch (SQLException exception) {
             exception.printStackTrace();
+            throw exception;
         }
-
-        return orgAssetSet;
     }
 
     @Override
-    public Set<OrgAsset> myOrgAssetSet(Integer orgID) {
+    public Set<OrgAsset> myOrgAssetSet(Integer orgID) throws Exception {
         Set<OrgAsset> orgAssetSet = new TreeSet<OrgAsset>();
         ResultSet resultSet = null;
 
@@ -163,15 +166,16 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
                 OrgAsset orgAsset = new OrgAsset(resultSet.getInt("organisationUnitID"), resultSet.getInt("assetID"), resultSet.getDouble("quantity"));
                 orgAssetSet.add(orgAsset);
             }
+            return orgAssetSet;
+
         } catch (SQLException exception) {
             exception.printStackTrace();
+            throw exception;
         }
-
-        return orgAssetSet;
     }
 
     @Override
-    public Boolean checkAsset(Integer orgID, Integer assetID) {
+    public Boolean checkAsset(Integer orgID, Integer assetID) throws Exception {
         Integer count = 0;
         ResultSet resultSet = null;
 
@@ -183,14 +187,16 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
             if (resultSet.next()) {
                 count = resultSet.getInt("COUNT(*)");
             }
+
+            return  (count <= 0);
+
         } catch (SQLException exception) {
-            exception.printStackTrace();
+            throw exception;
         }
-        return  (count <= 0);
     }
 
     @Override
-    public ArrayList<Object[]> getAssetList(Integer orgID) {
+    public ArrayList<Object[]> getAssetList(Integer orgID) throws Exception {
         ArrayList<Object[]> assetList = new ArrayList<>();
         ResultSet resultSet = null;
 
@@ -200,19 +206,20 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
 
             while (resultSet.next()) {
                 // Find Asset
-//                AssetData assetData = new AssetData(new AssetNDS());
                 OrgAsset asset = getOrgAsset(orgID, resultSet.getInt("assetID"));
                 Object[] temp = new Object[] {asset, resultSet.getDouble("quantity")};
                 assetList.add(temp);
             }
+
+            return assetList;
+
         } catch (SQLException exception) {
-            exception.printStackTrace();
+            throw exception;
         }
-        return assetList;
     }
 
     @Override
-    public void updateQuantity(Integer orgID, Integer assetID, Double quantity) {
+    public void updateQuantity(Integer orgID, Integer assetID, Double quantity) throws Exception {
         try {
             updateAssetQuantity.setDouble(1, quantity);
             updateAssetQuantity.setInt(2, orgID);
@@ -220,12 +227,12 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
             updateAssetQuantity.executeUpdate();
 
         } catch (SQLException exception) {
-            exception.printStackTrace();
+            throw exception;
         }
     }
 
     @Override
-    public void updateOrgAsset(OrgAsset orgAsset) {
+    public void updateOrgAsset(OrgAsset orgAsset) throws Exception {
         try {
             updateAsset.setDouble(1, orgAsset.getQuantity());
             updateAsset.setInt(2, orgAsset.getOrganisationUnitID());
@@ -233,7 +240,26 @@ public class JDBCOrgAssetDataSource implements OrgUnitAssetDataSource{
             updateAsset.executeUpdate();
 
         } catch (SQLException exception) {
-            exception.printStackTrace();
+            throw exception;
+        }
+    }
+
+    @Override
+    public void updateData(Integer orgUnitID, Integer assetID, Double quantity) throws Exception {
+        // Check if asset exists in org
+        if (!checkAsset(orgUnitID, assetID)) {
+            // Asset Exists, update asset
+            OrgAsset existingOrgAsset = getOrgAsset(orgUnitID, assetID);
+            Double newQuantity = existingOrgAsset.getQuantity() + quantity;
+            updateAsset.setDouble(1, newQuantity);
+            updateAsset.setInt(2, orgUnitID);
+            updateAsset.setInt(3, assetID);
+            updateAsset.executeUpdate();
+
+        } else {
+            // Asset Does not exist, insert new asset
+            OrgAsset newOrgAsset = new OrgAsset(orgUnitID, assetID, quantity);
+            addAsset(newOrgAsset);
         }
     }
 }

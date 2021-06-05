@@ -131,4 +131,15 @@ public class BidNDS implements BidDataSource {
             throw new Exception("Failed to check trades, please try again");
         }
     }
+
+    @Override
+    public void updateBid(Integer bidID, Double activeQuantity, Double inactiveQuantity, Double purchaseAmount) throws Exception {
+        outputStream.writeObject(Command.UPDATE_BID);
+        outputStream.writeObject(bidID);
+        outputStream.writeObject(activeQuantity);
+        outputStream.writeObject(inactiveQuantity);
+        outputStream.writeObject(purchaseAmount);
+        outputStream.flush();
+        if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to update bid, please try again");
+    }
 }

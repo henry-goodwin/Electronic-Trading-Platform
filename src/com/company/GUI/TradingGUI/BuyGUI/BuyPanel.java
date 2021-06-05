@@ -15,6 +15,7 @@ import java.awt.*;
 public class BuyPanel extends JPanel {
 
     private JButton buyAssetButton;
+    private JButton refreshTableButton;
     private JTable buyOrdersTable;
     private BidTableModel buyTableModel;
 
@@ -35,6 +36,9 @@ public class BuyPanel extends JPanel {
         buyOrdersTable = new JTable(buyTableModel);
         buyOrdersTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+        refreshTableButton = new JButton("Refresh Table");
+        refreshTableButton.addActionListener(e -> refreshTable());
+
         buyAssetButton = new JButton("New Buy Order");
         buyAssetButton.addActionListener(e -> buyAsset());
 
@@ -50,11 +54,17 @@ public class BuyPanel extends JPanel {
         constraints.anchor = GridBagConstraints.PAGE_START;
         constraints.insets = new Insets(10,10,10,10);
 
+
         constraints.gridy = 0;
         constraints.weighty = 1;
         add(new JScrollPane(buyOrdersTable), constraints);
 
         constraints.gridy = 1;
+        constraints.weighty = 1;
+        constraints.weightx = 1;
+        add(refreshTableButton, constraints);
+
+        constraints.gridy = 2;
         constraints.weighty = 1;
         constraints.weightx = 1;
         add(buyAssetButton, constraints);
@@ -66,4 +76,17 @@ public class BuyPanel extends JPanel {
         } catch (Exception e) {
         }
     }
+
+    private void refreshTable() {
+        buyTableModel = new BidTableModel();
+        try {
+            buyTableModel.setData(this.bidData.getBidList(Client.getLoggedInOrgID(), true));
+            buyTableModel.fireTableDataChanged();
+            buyOrdersTable.updateUI();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -17,6 +17,7 @@ import com.company.Database.Users.JDBCUsersDataSource;
 import com.company.Database.Users.UsersDataSource;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -398,8 +399,14 @@ public class NetworkServer {
             case ADD_ORG_ASSET: {
                 final OrgAsset orgAsset = (OrgAsset) inputStream.readObject();
                 synchronized (orgAssetDatabase) {
-                    orgAssetDatabase.addAsset(orgAsset);
+                    try {
+                        orgAssetDatabase.addAsset(orgAsset);
+                        outputStream.writeObject(true);
+                    } catch (Exception e) {
+                        outputStream.writeObject(false);
+                    }
                 }
+                outputStream.flush();
             }
             break;
 
@@ -408,7 +415,13 @@ public class NetworkServer {
                 final Integer assetID = (Integer) inputStream.readObject();
 
                 synchronized (orgAssetDatabase) {
-                    outputStream.writeObject(orgAssetDatabase.getOrgAsset(orgID, assetID));
+                    try {
+                        OrgAsset orgAsset = orgAssetDatabase.getOrgAsset(orgID, assetID);
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(orgAsset);
+                    } catch (Exception e) {
+                        outputStream.writeObject(false);
+                    }
                 }
                 outputStream.flush();
             }
@@ -419,7 +432,14 @@ public class NetworkServer {
                 final Integer orgID = (Integer) inputStream.readObject();
 
                 synchronized (orgAssetDatabase) {
-                    outputStream.writeObject(orgAssetDatabase.myOrgAssetSet(orgID));
+                    try {
+                        Set<OrgAsset> orgAssetSet = orgAssetDatabase.myOrgAssetSet(orgID);
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(orgAssetSet);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
 
                 outputStream.flush();
@@ -431,7 +451,14 @@ public class NetworkServer {
                 final Integer assetID = (Integer) inputStream.readObject();
 
                 synchronized (orgAssetDatabase) {
-                    outputStream.writeObject(orgAssetDatabase.checkAsset(orgID, assetID));
+                    try {
+                        Boolean checkAsset = orgAssetDatabase.checkAsset(orgID, assetID);
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(checkAsset);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
                 outputStream.flush();
             }
@@ -441,7 +468,14 @@ public class NetworkServer {
                 final Integer orgID = (Integer) inputStream.readObject();
 
                 synchronized (orgAssetDatabase) {
-                    outputStream.writeObject(orgAssetDatabase.getAssetList(orgID));
+                    try {
+                        ArrayList<Object[]> arrayList = orgAssetDatabase.getAssetList(orgID);
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(arrayList);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
                 outputStream.flush();
             }
@@ -453,8 +487,15 @@ public class NetworkServer {
                 final Double quantity = (Double) inputStream.readObject();
 
                 synchronized (orgAssetDatabase) {
-                    orgAssetDatabase.updateQuantity(orgID, assetID, quantity);
+                    try {
+                        orgAssetDatabase.updateQuantity(orgID, assetID, quantity);
+                        outputStream.writeObject(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
+                outputStream.flush();
             }
             break;
 
@@ -596,8 +637,15 @@ public class NetworkServer {
                 final OrgAsset orgAsset = (OrgAsset) inputStream.readObject();
 
                 synchronized (orgAssetDatabase) {
-                    orgAssetDatabase.updateOrgAsset(orgAsset);
+                    try {
+                        orgAssetDatabase.updateOrgAsset(orgAsset);
+                        outputStream.writeObject(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
                 }
+                outputStream.flush();
             }
             break;
 
@@ -633,6 +681,56 @@ public class NetworkServer {
                     outputStream.writeObject(unitEmployeeDatabase.getEmployee(userID));
                 }
                 outputStream.flush();
+            }
+            break;
+
+            case UPDATE_ORG_UNIT_CREDITS: {
+                final Integer orgID = (Integer) inputStream.readObject();
+                final Double quantity = (Double) inputStream.readObject();
+
+                synchronized (organisationUnitDatabase) {
+                    try {
+                        organisationUnitDatabase.updateOrgUnitCredits(orgID, quantity);
+                        outputStream.writeObject(true);
+                    } catch (Exception e) {
+                        outputStream.writeObject(false);
+                    }
+                }
+                outputStream.flush();
+            }
+            break;
+
+            case UPDATE_BID: {
+                final Integer bidID = (Integer) inputStream.readObject();
+                final Double activeQuantity = (Double) inputStream.readObject();
+                final Double inactiveQuantity = (Double) inputStream.readObject();
+                final Double purchaseAmount = (Double) inputStream.readObject();
+
+                synchronized (bidDatabase) {
+                    try {
+                        bidDatabase.updateBid(bidID, activeQuantity, inactiveQuantity, purchaseAmount);
+                        outputStream.writeObject(true);
+                    } catch (Exception e) {
+                        outputStream.writeObject(false);
+                    }
+                }
+                outputStream.flush();
+            }
+            break;
+
+            case UPDATE_DATA: {
+                final Integer orgUnitID = (Integer) inputStream.readObject();
+                final Integer assetID = (Integer) inputStream.readObject();
+                final Double quantity = (Double) inputStream.readObject();
+
+                synchronized (orgAssetDatabase) {
+                    try {
+                        orgAssetDatabase.updateData(orgUnitID, assetID, quantity);
+                        outputStream.writeObject(true);
+                    } catch (Exception e) {
+                        outputStream.writeObject(false);
+                    }
+                }
             }
             break;
         }

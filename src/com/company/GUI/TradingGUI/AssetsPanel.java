@@ -32,7 +32,12 @@ public class AssetsPanel extends JPanel {
         this.orgAssetData = orgAssetData;
 
         orgAssetTableModel = new OrgAssetTableModel();
-        orgAssetTableModel.setData(this.orgAssetData.getAssetList(Client.getLoggedInOrgID()));
+
+        try {
+            orgAssetTableModel.setData(this.orgAssetData.getAssetList(Client.getLoggedInOrgID()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         assetsTable = new JTable(orgAssetTableModel);
         assetsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -89,7 +94,11 @@ public class AssetsPanel extends JPanel {
 
         JFrame superFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         String newQuantity = JOptionPane.showInputDialog(superFrame.getContentPane(),"Enter new quantity");
-        orgAssetData.updateQuantity(1, asset.getAssetID() ,Double.parseDouble(newQuantity));
+        try {
+            orgAssetData.updateQuantity(1, asset.getAssetID() ,Double.parseDouble(newQuantity));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(superFrame.getContentPane(), e.getMessage());
+        }
 
     }
 

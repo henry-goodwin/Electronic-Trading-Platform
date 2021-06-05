@@ -16,4 +16,6 @@ public interface BidDataSource {
 
     void checkTrades() throws Exception;
 
+    void updateBid(Integer bidID, Double activeQuantity, Double inactiveQuantity ,Double purchaseAmount) throws Exception;
+
 }

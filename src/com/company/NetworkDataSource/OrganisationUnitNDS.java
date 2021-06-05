@@ -113,6 +113,15 @@ public class OrganisationUnitNDS implements OrganisationUnitDataSource {
         }
     }
 
+    @Override
+    public void updateOrgUnitCredits(Integer orgUnitID, Double creditsToUpdate) throws Exception {
+        outputStream.writeObject(Command.UPDATE_ORG_UNIT_CREDITS);
+        outputStream.writeObject(orgUnitID);
+        outputStream.writeObject(creditsToUpdate);
+        outputStream.flush();
+        if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to update credits, please try again");
+    }
+
     /**
      * Gets the list of organisation units from the server
      * @return Array List of organisational units

@@ -42,7 +42,7 @@ public class SellPanel extends JPanel {
             try {
                 bidData.checkTrades();
             } catch (Exception exception) {
-                exception.printStackTrace();
+            // Print fail
             }
         });
 

@@ -16,14 +16,13 @@ public class OrgAsset implements Comparable<OrgAsset>, Serializable {
 
     public OrgAsset(){}
 
-    public OrgAsset(Integer organisationUnitID, Integer assetID, Double quantity) {
-        this.organisationUnitID = organisationUnitID;
-        this.assetID = assetID;
-        this.quantity = quantity;
+    public OrgAsset(Integer organisationUnitID, Integer assetID, Double quantity) throws Exception {
+        setOrgID(organisationUnitID);
+        setAssetID(assetID);
+        setQuantity(quantity);
     }
 
     public String toString() {
-
         AssetData assetData = null;
         try {
             assetData = new AssetData(new AssetNDS());
@@ -31,23 +30,29 @@ public class OrgAsset implements Comparable<OrgAsset>, Serializable {
             return assetName;
         } catch (Exception e) {
             e.printStackTrace();
+            return "";
         }
-        return "";
     }
 
     public Integer getOrganisationUnitID() {return organisationUnitID;}
 
-    public OrganisationUnit getOrganisationUnit() {
+    public OrganisationUnit getOrganisationUnit() throws Exception {
         // Create Connection to database & get OrganisationUnit
         OrganisationUnitData organisationUnitData = new OrganisationUnitData(new OrganisationUnitNDS());
-        try {
-            return organisationUnitData.get(organisationUnitID);
-        } catch (Exception e) {
-            return new OrganisationUnit();
-        }
+        return organisationUnitData.get(organisationUnitID);
+    }
+
+    public void setOrgID(Integer orgID) throws Exception {
+        if (orgID < 0) throw new Exception("Error: Org ID is less than 0");
+        this.organisationUnitID = orgID;
     }
 
     public Integer getAssetID() { return assetID; }
+
+    public void setAssetID(Integer assetID) throws Exception {
+        if (assetID < 0) throw new Exception("Error: Asset ID is less than 0");
+        this.assetID = assetID;
+    }
 
     public Asset getAsset() throws Exception {
         // Create Connection to database & get Asset
@@ -55,11 +60,23 @@ public class OrgAsset implements Comparable<OrgAsset>, Serializable {
         return assetData.get(assetID);
     }
 
-    public void setQuantity(Double quantity) {
+    public void setQuantity(Double quantity) throws Exception {
+        if (quantity < 0) throw new Exception("Quantity is less than 0");
         this.quantity = quantity;
+
     }
-    public void addQuantity(Double quantity) {this.quantity += quantity;}
-    public void removeQuantity(Double quantity) {this.quantity -= quantity;}
+    public void addQuantity(Double quantity) throws Exception {
+        if (quantity < 0) throw new Exception("Error Quantity is less than 0");
+        if (this.quantity == null) throw new Exception("Error: Org Asset Quantity is null");
+        this.quantity += quantity;
+    }
+
+    public void removeQuantity(Double quantity) throws Exception {
+        if (quantity < 0) throw new Exception("Error Quantity is less than 0");
+        if (this.quantity == null) throw new Exception("Error: Org Asset Quantity is null");
+
+        this.quantity -= quantity;
+    }
 
 
     public Double getQuantity() {

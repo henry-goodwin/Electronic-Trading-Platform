@@ -30,5 +30,8 @@ public class BidData {
 
     public void checkTrades() throws Exception { bidDataSource.checkTrades();}
 
+    public void updateBid(Integer bidID, Double activeQuantity, Double inactiveQuantity, Double purchaseAmount) throws Exception {
+        bidDataSource.updateBid(bidID, activeQuantity, inactiveQuantity, purchaseAmount);
+    }
 
 }

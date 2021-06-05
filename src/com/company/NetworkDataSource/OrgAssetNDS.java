@@ -3,6 +3,7 @@ package com.company.NetworkDataSource;
 import com.company.Database.OrgUnitAssets.OrgUnitAssetDataSource;
 import com.company.Model.OrgAsset;
 import com.company.Server.Command;
+import com.company.Server.ServerException;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -41,35 +42,22 @@ public class OrgAssetNDS implements OrgUnitAssetDataSource {
     }
 
     @Override
-    public void addAsset(OrgAsset orgAsset) {
-        try {
-            outputStream.writeObject(Command.ADD_ORG_ASSET);
-            outputStream.writeObject(orgAsset);
-            outputStream.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void addAsset(OrgAsset orgAsset) throws Exception {
+        outputStream.writeObject(Command.ADD_ORG_ASSET);
+        outputStream.writeObject(orgAsset);
+        outputStream.flush();
+        if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to add org asset, please try again");
     }
 
     @Override
-    public OrgAsset getOrgAsset(Integer orgID, Integer assetID) {
-        try {
-            outputStream.writeObject(Command.GET_ORG_ASSET);
-            outputStream.writeObject(orgID);
-            outputStream.writeObject(assetID);
-            outputStream.flush();
-
-            OrgAsset orgAsset = (OrgAsset) inputStream.readObject();
-            return orgAsset;
-
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-
-
+    public OrgAsset getOrgAsset(Integer orgID, Integer assetID) throws Exception {
+        outputStream.writeObject(Command.GET_ORG_ASSET);
+        outputStream.writeObject(orgID);
+        outputStream.writeObject(assetID);
+        outputStream.flush();
+        if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to get org asset, please try again");
+        OrgAsset orgAsset = (OrgAsset) inputStream.readObject();
+        return orgAsset;
     }
 
     @Override
@@ -78,86 +66,65 @@ public class OrgAssetNDS implements OrgUnitAssetDataSource {
     }
 
     @Override
-    public Set<OrgAsset> OrgAssetSet() {
-        try {
-            outputStream.writeObject(Command.GET_ORG_ASSET_SET);
-            outputStream.flush();
-            return (Set<OrgAsset>) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException | ClassCastException e) {
-            e.printStackTrace();
-            return new HashSet<>();
-        }
+    public Set<OrgAsset> OrgAssetSet() throws Exception {
+        outputStream.writeObject(Command.GET_ORG_ASSET_SET);
+        outputStream.flush();
+        if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to get org asset set, please try again");
+        return (Set<OrgAsset>) inputStream.readObject();
     }
 
     @Override
-    public Set<OrgAsset> myOrgAssetSet(Integer orgID) {
-        try {
-            outputStream.writeObject(Command.GET_MY_ORG_ASSET_SET);
-            outputStream.writeObject(orgID);
-            outputStream.flush();
-            return (Set<OrgAsset>) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException | ClassCastException e) {
-            e.printStackTrace();
-            return new HashSet<>();
-        }
+    public Set<OrgAsset> myOrgAssetSet(Integer orgID) throws Exception {
+        outputStream.writeObject(Command.GET_MY_ORG_ASSET_SET);
+        outputStream.writeObject(orgID);
+        outputStream.flush();
+        if (!((Boolean) inputStream.readObject())) throw new Exception("Failed, please try again");
+        return (Set<OrgAsset>) inputStream.readObject();
     }
 
     @Override
-    public Boolean checkAsset(Integer orgID, Integer assetID) {
-        try {
-            outputStream.writeObject(Command.GET_ORG_ASSET_COUNT);
-            outputStream.writeObject(orgID);
-            outputStream.writeObject(assetID);
-            outputStream.flush();
-
-            return (Boolean) inputStream.readObject();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return false;
+    public Boolean checkAsset(Integer orgID, Integer assetID) throws Exception {
+        outputStream.writeObject(Command.GET_ORG_ASSET_COUNT);
+        outputStream.writeObject(orgID);
+        outputStream.writeObject(assetID);
+        outputStream.flush();
+        if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to check org asset, please try again");
+        return (Boolean) inputStream.readObject();
     }
 
     @Override
-    public ArrayList<Object[]> getAssetList(Integer orgID) {
-        try {
-            outputStream.writeObject(Command.GET_ASSET_LIST);
-            outputStream.writeObject(orgID);
-            outputStream.flush();
-            return (ArrayList<Object[]>) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException | ClassCastException e) {
-            e.printStackTrace();
-            return new ArrayList<Object[]>();
-        }
+    public ArrayList<Object[]> getAssetList(Integer orgID) throws Exception {
+        outputStream.writeObject(Command.GET_ASSET_LIST);
+        outputStream.writeObject(orgID);
+        outputStream.flush();
+        if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to get org asset list, please try again");
+        return (ArrayList<Object[]>) inputStream.readObject();
     }
 
     @Override
-    public void updateQuantity(Integer orgID, Integer assetID, Double quantity) {
-        try {
-            outputStream.writeObject(Command.UPDATE_ORG_ASSET_QUANTITY);
-            outputStream.writeObject(orgID);
-            outputStream.writeObject(assetID);
-            outputStream.writeObject(quantity);
-            outputStream.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+    public void updateQuantity(Integer orgID, Integer assetID, Double quantity) throws Exception {
+        outputStream.writeObject(Command.UPDATE_ORG_ASSET_QUANTITY);
+        outputStream.writeObject(orgID);
+        outputStream.writeObject(assetID);
+        outputStream.writeObject(quantity);
+        outputStream.flush();
+        if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to update org asset, please try again");
     }
 
     @Override
-    public void updateOrgAsset(OrgAsset orgAsset) {
-        try {
+    public void updateOrgAsset(OrgAsset orgAsset) throws Exception {
             outputStream.writeObject(Command.UPDATE_ORG_ASSET);
             outputStream.writeObject(orgAsset);
             outputStream.flush();
+            if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to update org asset, please try again");
+    }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public void updateData(Integer orgUnitID, Integer assetID, Double quantity) throws Exception {
+        outputStream.writeObject(Command.UPDATE_DATA);
+        outputStream.writeObject(orgUnitID);
+        outputStream.writeObject(assetID);
+        outputStream.writeObject(quantity);
+        if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to update org asset, please try again");
     }
 }

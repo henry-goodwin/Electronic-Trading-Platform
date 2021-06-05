@@ -1,14 +1,16 @@
 package com.company.Testing.BidsTest;
 
 import com.company.Database.Bids.BidDataSource;
+import com.company.Model.Asset;
 import com.company.Model.Bid;
+import com.company.Testing.AssetsTest.MockAssetDatabase;
+import com.company.Testing.OrgUnitTest.MockOrgUnitDatabase;
 
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.*;
 
 public class MockBidDatabase implements BidDataSource {
 
@@ -16,6 +18,7 @@ public class MockBidDatabase implements BidDataSource {
 
     public MockBidDatabase() {
         data = new TreeMap<Integer, Bid>();
+//        mockOrgUnitDatabase = new MockOrgUnitDatabase();
 
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         try {
@@ -69,6 +72,70 @@ public class MockBidDatabase implements BidDataSource {
 
     @Override
     public void checkTrades() {
+        // Find all sell bids
+        Set<Bid> sellBids = new TreeSet<Bid>();
+        for (Integer key: data.keySet()) {
+            Bid bid = data.get(key);
+            if (!bid.getBuyType()) {
+                sellBids.add(bid);
+            }
+        }
+
+        // Sort sell bids by date & price (processes by assetNumber, date, lowest selling price)
+
+        // For each sell bid find all buy bids
+        for (Bid sellBid: sellBids) {
+            // Find all buy bids
+            Set<Bid> buyBids = new TreeSet<Bid>();
+            for (Integer key: data.keySet()) {
+                Bid bid = data.get(key);
+
+                if (bid.getBuyType() && bid.getAssetID() == sellBid.getAssetID()) buyBids.add(bid);
+            }
+
+            // Sort buy bids by price
+            List<Bid> sortedList = new ArrayList<Bid>(buyBids);
+            Collections.sort(sortedList);
+            buyBids = new LinkedHashSet<>(sortedList);          //list -> set
+
+            for (Bid buyBid: buyBids) {
+                // Check that buy price is greater or equal to sell price
+                if (buyBid.getPrice() >= sellBid.getPrice()) {
+
+                    // Find how much is available to buy and sell
+                    Double buyingQuantity = buyBid.getActiveQuantity() - buyBid.getInactiveQuantity();
+                    Double sellingQuantity = sellBid.getActiveQuantity() - sellBid.getInactiveQuantity();
+
+                    Double purchasedAmount;
+                    if(buyingQuantity > sellingQuantity) {
+                        purchasedAmount = sellingQuantity;
+                    } else {
+                        purchasedAmount = buyingQuantity;
+                    }
+
+                    // Try Update Bids
+                    try {
+                        sellBid.addInactiveQuantity(purchasedAmount);
+                        buyBid.addInactiveQuantity(purchasedAmount);
+
+                        // Process Sale
+                        // Remove purchase amount of units of asset from organisation unit
+                        // Increase Org Unit Credits by (purchase amount x selling price)
+
+                        // Process buy
+                        // If asset does not exists create org asset for the number of units bought
+                        // If asset does exist increase org unit asset by number of units bought
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void updateBid(Integer bidID, Double activeQuantity, Double inactiveQuantity, Double purchaseAmount) throws Exception {
 
     }
 }
