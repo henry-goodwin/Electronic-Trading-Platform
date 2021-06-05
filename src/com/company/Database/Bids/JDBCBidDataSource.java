@@ -27,7 +27,7 @@ public class JDBCBidDataSource implements BidDataSource {
             "  `price` double NOT NULL," +
             "  `activeQuantity` double NOT NULL," +
             "  `inactiveQuantity` double NOT NULL DEFAULT 0.0," +
-            "  `date` date NOT NULL DEFAULT current_timestamp()," +
+            "  `date` DATETIME NOT NULL DEFAULT current_timestamp()," +
             "  PRIMARY KEY (`bidID`)," +
             "  FOREIGN KEY (`assetID`)" +
             "  REFERENCES Assets (`assetID`)" +
@@ -160,7 +160,7 @@ public class JDBCBidDataSource implements BidDataSource {
                 bid.setPrice(resultSet.getDouble("price"));
                 bid.setActiveQuantity(resultSet.getDouble("activeQuantity"));
                 bid.setInactiveQuantity(resultSet.getDouble("inactiveQuantity"));
-                bid.setDate(resultSet.getDate("date"));
+                bid.setDate(resultSet.getTimestamp("date"));
                 return bid;
             } else {
                 throw new Exception("No Bid Found, please try again");
@@ -216,7 +216,7 @@ public class JDBCBidDataSource implements BidDataSource {
                     bid.setPrice(resultSet.getDouble("price"));
                     bid.setActiveQuantity(resultSet.getDouble("activeQuantity"));
                     bid.setInactiveQuantity(resultSet.getDouble("inactiveQuantity"));
-                    bid.setDate(resultSet.getDate("date"));
+                    bid.setDate(resultSet.getTimestamp("date"));
 
                     Asset asset = assetData.get(resultSet.getInt("assetID"));
 
@@ -256,7 +256,7 @@ public class JDBCBidDataSource implements BidDataSource {
             bid.setPrice(resultSet.getDouble("price"));
             bid.setActiveQuantity(resultSet.getDouble("activeQuantity"));
             bid.setInactiveQuantity(resultSet.getDouble("inactiveQuantity"));
-            bid.setDate(resultSet.getDate("date"));
+            bid.setDate(resultSet.getTimestamp("date"));
             bidList.add(bid);
         }
         return bidList;
@@ -380,7 +380,7 @@ public class JDBCBidDataSource implements BidDataSource {
                 bid.setPrice(sellResultSet.getDouble("price"));
                 bid.setActiveQuantity(sellResultSet.getDouble("activeQuantity"));
                 bid.setInactiveQuantity(sellResultSet.getDouble("inactiveQuantity"));
-                bid.setDate(sellResultSet.getDate("date"));
+                bid.setDate(sellResultSet.getTimestamp("date"));
 
                 activeSellBids.add(bid);
             }
@@ -421,7 +421,7 @@ public class JDBCBidDataSource implements BidDataSource {
                 buyBid.setPrice(buyResultSet.getDouble("price"));
                 buyBid.setActiveQuantity(buyResultSet.getDouble("activeQuantity"));
                 buyBid.setInactiveQuantity(buyResultSet.getDouble("inactiveQuantity"));
-                buyBid.setDate(buyResultSet.getDate("date"));
+                buyBid.setDate(buyResultSet.getTimestamp("date"));
                 assetBuyBids.add(buyBid);
             }
 

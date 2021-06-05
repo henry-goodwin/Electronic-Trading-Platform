@@ -7,6 +7,7 @@ import com.company.Testing.AssetsTest.MockAssetDatabase;
 import com.company.Testing.OrgUnitTest.MockOrgUnitDatabase;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,7 +23,7 @@ public class MockBidDatabase implements BidDataSource {
 
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         try {
-            Date sqlDate = new Date(df.parse("04-06-2021").getTime());
+            Timestamp sqlDate = new Timestamp(df.parse("04-06-2021 HH:MM:YY").getTime());
             Bid buyAssetBid = new Bid(1,1,1,"open",true, 4.00, 155.0, 20.0, sqlDate);
             Bid sellAssetBid = new Bid(2,1,1,"open", false, 3.50, 500.0, 302.0,sqlDate);
 

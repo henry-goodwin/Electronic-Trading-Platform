@@ -11,9 +11,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.TextTitle;
-import org.jfree.data.time.Day;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.time.*;
 import org.jfree.data.xy.XYDataset;
 
 import javax.swing.*;
@@ -51,10 +49,11 @@ public class PastHistoryGUI extends JFrame {
             chartPanel.setBackground(Color.white);
             add(chartPanel);
         } catch (Exception e) {
-
+            System.out.println(e.getMessage());
         }
 
         pack();
+        setSize(700, 700);
         setLocationByPlatform(true);
         setVisible(true);
     }
@@ -67,7 +66,7 @@ public class PastHistoryGUI extends JFrame {
 
         var timeSeries = new TimeSeries("Price History");
         for (Bid bid: bidsData) {
-            timeSeries.add(new Day(bid.getDate()), bid.getPrice());
+            timeSeries.addOrUpdate(new Day(bid.getDate()), bid.getPrice());
         }
 
         TimeSeriesCollection dataset = new TimeSeriesCollection();

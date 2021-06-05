@@ -2,6 +2,7 @@ package com.company.Model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Bid implements Comparable<Bid>, Serializable {
 
@@ -14,7 +15,7 @@ public class Bid implements Comparable<Bid>, Serializable {
     private Double price;
     private Double activeQuantity;
     private Double inactiveQuantity;
-    private java.sql.Date date;
+    private Timestamp date;
 
     /**
      * Constructor for new bid
@@ -29,7 +30,7 @@ public class Bid implements Comparable<Bid>, Serializable {
      * @param date date to set
      * @throws Exception Throw exception if set fails
      */
-    public Bid(Integer bidID, Integer assetID, Integer orgID, String status, Boolean buyType, Double price, Double activeQuantity, Double inactiveQuantity,java.sql.Date date) throws Exception {
+    public Bid(Integer bidID, Integer assetID, Integer orgID, String status, Boolean buyType, Double price, Double activeQuantity, Double inactiveQuantity,Timestamp date) throws Exception {
         setBidID(bidID);
         setAssetID(assetID);
         setOrgID(orgID);
@@ -170,7 +171,7 @@ public class Bid implements Comparable<Bid>, Serializable {
      * Set the Bids Date
      * @param date date to set
      */
-    public void setDate(Date date) {this.date = date;}
+    public void setDate(Timestamp date) {this.date = date;}
 
     /**
      * Gets the bidID
@@ -225,7 +226,7 @@ public class Bid implements Comparable<Bid>, Serializable {
      * Gets the date of bid
      * @return date bid was posted
      */
-    public java.sql.Date getDate() { return date; }
+    public Timestamp getDate() { return date; }
 
     /**
      * Compare bids by date

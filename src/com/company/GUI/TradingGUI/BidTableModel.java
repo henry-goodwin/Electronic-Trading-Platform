@@ -5,6 +5,7 @@ import com.company.Model.Bid;
 
 import javax.swing.table.AbstractTableModel;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -55,7 +56,7 @@ public class BidTableModel extends AbstractTableModel {
         Double[] quantities = new Double[values];
         Double[] activeQuantities = new Double[values];
 
-        Date[] dates = new Date[values];
+        Timestamp[] dates = new Timestamp[values];
 
         for (int i = 0; i < values; i++) {
             bids[i] = (Bid) bidList.get(i)[0];
@@ -64,7 +65,7 @@ public class BidTableModel extends AbstractTableModel {
             prices[i] = (Double) bidList.get(i)[3];
             quantities[i] = (Double) bidList.get(i)[4];
             activeQuantities[i] = (Double) bidList.get(i)[5];
-            dates[i] = (Date) bidList.get(i)[6];
+            dates[i] = (Timestamp) bidList.get(i)[6];
         }
 
         Bid bid = bids[rowIndex];
@@ -73,7 +74,7 @@ public class BidTableModel extends AbstractTableModel {
         Double price = prices[rowIndex];
         Double quantity = quantities[rowIndex];
         Double activeQuantity = activeQuantities[rowIndex];
-        Date date = dates[rowIndex];
+        Timestamp date = dates[rowIndex];
 
         switch (columnIndex) {
             case 0:
