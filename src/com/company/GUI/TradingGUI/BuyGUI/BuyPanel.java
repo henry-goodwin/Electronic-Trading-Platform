@@ -78,12 +78,9 @@ public class BuyPanel extends JPanel {
     }
 
     private void refreshTable() {
-        buyTableModel = new BidTableModel();
         try {
             buyTableModel.setData(this.bidData.getBidList(Client.getLoggedInOrgID(), true));
-            buyTableModel.fireTableDataChanged();
             buyOrdersTable.updateUI();
-
         } catch (Exception e) {
             e.printStackTrace();
         }

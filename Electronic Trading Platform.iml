@@ -24,5 +24,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="com.guicedee.services:jfreechart:1.1.1.9-jre15" level="project" />
   </component>
 </module>

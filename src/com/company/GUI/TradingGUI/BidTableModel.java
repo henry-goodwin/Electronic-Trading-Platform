@@ -17,6 +17,7 @@ public class BidTableModel extends AbstractTableModel {
 
     public void setData(ArrayList<Object[]> data) {
         bidList = data;
+        fireTableDataChanged();
     }
 
 

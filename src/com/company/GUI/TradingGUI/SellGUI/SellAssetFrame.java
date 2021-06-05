@@ -24,6 +24,7 @@ public class SellAssetFrame extends JFrame implements KeyListener, ActionListene
     private JTextField unitPriceField;
     private JButton placeSellOrder;
     private JLabel priceLabel;
+    private JButton seePriceHistoryButton;
 
     private OrgAssetData orgAssetData;
     private BidData bidData;
@@ -46,6 +47,9 @@ public class SellAssetFrame extends JFrame implements KeyListener, ActionListene
         assetsTable = new JTable(orgUnitAssetTableModel);
         assetsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+        seePriceHistoryButton = new JButton("See Asset Price History");
+        seePriceHistoryButton.addActionListener(e -> seePriceHistory());
+
         quantityField = new JTextField();
         quantityField.addKeyListener(this);
         unitPriceField = new JTextField();
@@ -58,7 +62,7 @@ public class SellAssetFrame extends JFrame implements KeyListener, ActionListene
 
         setupLayout();
 
-        setSize(500,500);
+        setSize(700,700);
         setLocationByPlatform(true);
         setVisible(true);
     }
@@ -69,39 +73,43 @@ public class SellAssetFrame extends JFrame implements KeyListener, ActionListene
 
         constraints.fill = GridBagConstraints.BOTH;
         constraints.anchor = GridBagConstraints.PAGE_START;
-        constraints.insets = new Insets(10,10,10,10);
 
         constraints.gridy = 0;
-        constraints.weighty = 1;
+        constraints.weighty = 2;
         constraints.weightx = 1;
         sellPanel.add(new JScrollPane(assetsTable), constraints);
 
         constraints.gridy = 1;
         constraints.weighty = 1;
         constraints.weightx = 1;
-        sellPanel.add(new JLabel("Quantity"), constraints);
+        sellPanel.add(seePriceHistoryButton, constraints);
 
         constraints.gridy = 2;
         constraints.weighty = 1;
         constraints.weightx = 1;
-        sellPanel.add(quantityField, constraints);
+        sellPanel.add(new JLabel("Quantity"), constraints);
 
         constraints.gridy = 3;
         constraints.weighty = 1;
         constraints.weightx = 1;
-        sellPanel.add(new JLabel("Unit Price (Credits)"), constraints);
+        sellPanel.add(quantityField, constraints);
 
         constraints.gridy = 4;
         constraints.weighty = 1;
         constraints.weightx = 1;
-        sellPanel.add(unitPriceField, constraints);
+        sellPanel.add(new JLabel("Unit Price (Credits)"), constraints);
 
         constraints.gridy = 5;
         constraints.weighty = 1;
         constraints.weightx = 1;
-        sellPanel.add(priceLabel, constraints);
+        sellPanel.add(unitPriceField, constraints);
 
         constraints.gridy = 6;
+        constraints.weighty = 1;
+        constraints.weightx = 1;
+        sellPanel.add(priceLabel, constraints);
+
+        constraints.gridy = 7;
         constraints.weighty = 1;
         constraints.weightx = 1;
         sellPanel.add(placeSellOrder, constraints);
@@ -133,6 +141,10 @@ public class SellAssetFrame extends JFrame implements KeyListener, ActionListene
                 }
             }
         }
+
+    }
+
+    private void seePriceHistory() {
 
     }
 

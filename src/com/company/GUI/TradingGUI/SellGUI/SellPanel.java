@@ -15,9 +15,9 @@ public class SellPanel extends JPanel {
 
     private JButton sellAssetBtn;
     private JTable sellOrdersTable;
-    private BidTableModel bidTableModel;
-    private JButton checkTrades;
+    private JButton refreshTableButton;
 
+    private BidTableModel bidTableModel;
     private BidData bidData;
 
     public SellPanel(BidData bidData) {
@@ -37,14 +37,8 @@ public class SellPanel extends JPanel {
         sellAssetBtn = new JButton("New Sell Order");
         sellAssetBtn.addActionListener(e -> sellAsset());
 
-        checkTrades = new JButton("Check trades");
-        checkTrades.addActionListener(e -> {
-            try {
-                bidData.checkTrades();
-            } catch (Exception exception) {
-            // Print fail
-            }
-        });
+        refreshTableButton = new JButton("Refresh Table");
+        refreshTableButton.addActionListener(e -> refreshTable());
 
         setupLayout();
 
@@ -65,12 +59,22 @@ public class SellPanel extends JPanel {
         constraints.gridy = 1;
         constraints.weighty = 1;
         constraints.weightx = 1;
-        add(sellAssetBtn, constraints);
+        add(refreshTableButton, constraints);
 
         constraints.gridy = 2;
         constraints.weighty = 1;
         constraints.weightx = 1;
-        add(checkTrades, constraints);
+        add(sellAssetBtn, constraints);
+
+    }
+
+    private void refreshTable() {
+        try {
+            bidTableModel.setData(this.bidData.getBidList(Client.getLoggedInOrgID(), false));
+            sellOrdersTable.updateUI();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void sellAsset() {

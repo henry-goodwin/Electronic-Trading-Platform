@@ -21,7 +21,7 @@ public class Main {
         try {
             new LoginFrame(new UsersData(new UsersNDS()));
         } catch (TestingException e) {
-            e.printStackTrace();
+            System.exit(1);
         }
     }
 

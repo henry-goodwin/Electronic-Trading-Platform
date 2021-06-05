@@ -13,6 +13,7 @@ public class OrgAssetTableModel extends AbstractTableModel {
 
     public void setData(ArrayList<Object[]> data) {
         orgAssetList = data;
+        fireTableDataChanged();
     }
 
     @Override
