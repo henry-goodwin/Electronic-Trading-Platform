@@ -1,9 +1,8 @@
 package com.company.Testing.OrgUnitTest;
 
-import com.company.Database.OrganisationUnit.OrganisationUnitDataSource;
-import com.company.Model.OrganisationUnit;
+import com.company.Common.DataSource.OrganisationUnitDataSource;
+import com.company.Common.Model.OrganisationUnit;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class MockOrgUnitDatabase implements OrganisationUnitDataSource {

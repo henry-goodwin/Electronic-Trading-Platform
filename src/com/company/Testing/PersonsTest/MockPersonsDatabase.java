@@ -1,7 +1,7 @@
 package com.company.Testing.PersonsTest;
 
-import com.company.Database.Persons.PersonsDataSource;
-import com.company.Model.Person;
+import com.company.Common.DataSource.PersonsDataSource;
+import com.company.Common.Model.Person;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;

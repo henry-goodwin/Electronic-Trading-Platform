@@ -1,6 +1,6 @@
 package com.company.Testing.AssetsTest;
 
-import com.company.Model.Asset;
+import com.company.Common.Model.Asset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

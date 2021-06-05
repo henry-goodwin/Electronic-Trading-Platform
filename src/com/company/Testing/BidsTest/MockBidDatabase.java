@@ -1,12 +1,8 @@
 package com.company.Testing.BidsTest;
 
-import com.company.Database.Bids.BidDataSource;
-import com.company.Model.Asset;
-import com.company.Model.Bid;
-import com.company.Testing.AssetsTest.MockAssetDatabase;
-import com.company.Testing.OrgUnitTest.MockOrgUnitDatabase;
+import com.company.Common.DataSource.BidDataSource;
+import com.company.Common.Model.Bid;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;

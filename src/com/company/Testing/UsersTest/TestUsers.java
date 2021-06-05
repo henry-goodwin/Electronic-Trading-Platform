@@ -1,8 +1,8 @@
 package com.company.Testing.UsersTest;
 
-import com.company.Model.User;
+import com.company.Common.Model.User;
 import com.company.Testing.TestingException;
-import com.company.Utilities.PasswordHasher;
+import com.company.Common.PasswordHasher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

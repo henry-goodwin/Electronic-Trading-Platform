@@ -1,8 +1,7 @@
 package com.company.Testing.AssetsTest;
 
-import com.company.Database.Assets.AssetDataSource;
-import com.company.Model.Asset;
-import com.company.Model.Person;
+import com.company.Common.DataSource.AssetDataSource;
+import com.company.Common.Model.Asset;
 
 import java.util.Set;
 import java.util.TreeMap;

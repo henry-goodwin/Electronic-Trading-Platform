@@ -1,30 +1,29 @@
 package com.company.Server;
 
-import com.company.Database.Assets.AssetDataSource;
-import com.company.Database.Assets.JDBCAssetDataSource;
-import com.company.Database.Bids.BidDataSource;
-import com.company.Database.Bids.JDBCBidDataSource;
-import com.company.Database.OrgUnitAssets.JDBCOrgAssetDataSource;
-import com.company.Database.OrgUnitAssets.OrgUnitAssetDataSource;
-import com.company.Database.OrgUnitEmployees.JDBCOrgUnitEmployeeDataSource;
-import com.company.Database.OrgUnitEmployees.OrgUnitEmployeeDataSource;
-import com.company.Database.OrganisationUnit.JDBCOrganisationUnitDataSource;
-import com.company.Database.OrganisationUnit.OrganisationUnitDataSource;
-import com.company.Model.*;
-import com.company.Database.Persons.JDBCPersonsDataSource;
-import com.company.Database.Persons.PersonsDataSource;
-import com.company.Database.Users.JDBCUsersDataSource;
-import com.company.Database.Users.UsersDataSource;
+import com.company.Common.DataSource.AssetDataSource;
+import com.company.Common.Model.*;
+import com.company.Server.Database.JDBCAssetDataSource;
+import com.company.Common.DataSource.BidDataSource;
+import com.company.Server.Database.JDBCBidDataSource;
+import com.company.Server.Database.JDBCOrgAssetDataSource;
+import com.company.Common.DataSource.OrgUnitAssetDataSource;
+import com.company.Server.Database.JDBCOrgUnitEmployeeDataSource;
+import com.company.Common.DataSource.OrgUnitEmployeeDataSource;
+import com.company.Server.Database.JDBCOrganisationUnitDataSource;
+import com.company.Common.DataSource.OrganisationUnitDataSource;
+import com.company.Common.Model.*;
+import com.company.Server.Database.JDBCPersonsDataSource;
+import com.company.Common.DataSource.PersonsDataSource;
+import com.company.Server.Database.JDBCUsersDataSource;
+import com.company.Common.DataSource.UsersDataSource;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.*;
-import java.util.Timer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NetworkServer {

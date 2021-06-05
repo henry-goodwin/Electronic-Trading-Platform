@@ -1,10 +1,9 @@
 package com.company.Testing.BidsTest;
 
-import com.company.Model.Bid;
+import com.company.Common.Model.Bid;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.*;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;

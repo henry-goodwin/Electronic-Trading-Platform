@@ -1,6 +1,6 @@
 package com.company.Testing.PersonsTest;
 
-import com.company.Model.Person;
+import com.company.Common.Model.Person;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.*;
 

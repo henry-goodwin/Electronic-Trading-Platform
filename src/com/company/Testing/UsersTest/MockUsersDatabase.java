@@ -1,9 +1,9 @@
 package com.company.Testing.UsersTest;
 
-import com.company.Database.Users.UsersDataSource;
-import com.company.Model.User;
+import com.company.Common.DataSource.UsersDataSource;
+import com.company.Common.Model.User;
 import com.company.Testing.TestingException;
-import com.company.Utilities.PasswordHasher;
+import com.company.Common.PasswordHasher;
 
 import java.util.Set;
 import java.util.TreeMap;

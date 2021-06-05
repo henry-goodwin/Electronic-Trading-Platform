@@ -1,6 +1,6 @@
 package com.company.Testing.OrgUnitTest;
 
-import com.company.Model.OrganisationUnit;
+import com.company.Common.Model.OrganisationUnit;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.*;
 
