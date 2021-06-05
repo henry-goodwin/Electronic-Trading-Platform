@@ -71,6 +71,11 @@ public class MockBidDatabase implements BidDataSource {
     }
 
     @Override
+    public ArrayList<Bid> getHistoryList(Integer assetID) throws Exception {
+        return null;
+    }
+
+    @Override
     public void checkTrades() {
         // Find all sell bids
         Set<Bid> sellBids = new TreeSet<Bid>();

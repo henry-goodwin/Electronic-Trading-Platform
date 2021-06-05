@@ -34,4 +34,7 @@ public class BidData {
         bidDataSource.updateBid(bidID, activeQuantity, inactiveQuantity, purchaseAmount);
     }
 
+    public ArrayList<Bid> getBidHistory(Integer assetID) throws Exception {
+        return bidDataSource.getHistoryList(assetID);
+    }
 }

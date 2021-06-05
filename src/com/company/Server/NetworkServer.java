@@ -734,6 +734,23 @@ public class NetworkServer {
                 }
             }
             break;
+
+            case GET_BID_HISTORY: {
+                final Integer assetID = (Integer) inputStream.readObject();
+
+                synchronized (bidDatabase) {
+                    try {
+                        ArrayList<Bid> bidHistory = bidDatabase.getHistoryList(assetID);
+                        outputStream.writeObject(true);
+                        outputStream.writeObject(bidHistory);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        outputStream.writeObject(false);
+                    }
+                }
+                outputStream.flush();
+            }
+            break;
         }
     }
 

@@ -71,6 +71,10 @@ public class JDBCBidDataSource implements BidDataSource {
             "`inactiveQuantity` = ?" +
             "WHERE `bidID` = ?;";
 
+    private static final String GET_HISTORY = "SELECT *" +
+            "FROM `cab302`.`Bids`" +
+            "WHERE (`buyType`, `status`, `assetID`) = (false, 'closed', ?);";
+
     // Database connection
     private Connection connection;
 
@@ -81,6 +85,7 @@ public class JDBCBidDataSource implements BidDataSource {
     private PreparedStatement getActiveBids;
     private PreparedStatement getActiveBuys;
     private PreparedStatement updateBid;
+    private PreparedStatement getHistory;
 
     /**
      * Constructor for Database
@@ -101,6 +106,7 @@ public class JDBCBidDataSource implements BidDataSource {
             getActiveBids = connection.prepareStatement(GET_ACTIVE_BID_LIST);
             getActiveBuys = connection.prepareStatement(GET_ACTIVE_BUY_LIST);
             updateBid = connection.prepareStatement(UPDATE_BID);
+            getHistory = connection.prepareStatement(GET_HISTORY);
 
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -230,6 +236,31 @@ public class JDBCBidDataSource implements BidDataSource {
         }
     }
 
+    @Override
+    public ArrayList<Bid> getHistoryList(Integer assetID) throws Exception {
+        ArrayList<Bid> bidList = new ArrayList<>();
+        ResultSet resultSet = null;
+
+        getHistory.setInt(1, assetID);
+
+        resultSet = getHistory.executeQuery();
+
+        while (resultSet.next()) {
+            // Find Asset
+            Bid bid = new Bid();
+            bid.setBidID(resultSet.getInt("bidID"));
+            bid.setAssetID(resultSet.getInt("assetID"));
+            bid.setOrgID(resultSet.getInt("organisationUnitID"));
+            bid.setStatus(resultSet.getString("status"));
+            bid.setBuyType(resultSet.getBoolean("buyType"));
+            bid.setPrice(resultSet.getDouble("price"));
+            bid.setActiveQuantity(resultSet.getDouble("activeQuantity"));
+            bid.setInactiveQuantity(resultSet.getDouble("inactiveQuantity"));
+            bid.setDate(resultSet.getDate("date"));
+            bidList.add(bid);
+        }
+        return bidList;
+    }
 
 
     @Override

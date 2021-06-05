@@ -2,12 +2,14 @@ package com.company.GUI.TradingGUI;
 
 import com.company.Client;
 import com.company.Database.Assets.AssetData;
+import com.company.Database.Bids.BidData;
 import com.company.Database.OrgUnitAssets.OrgAssetData;
 import com.company.Database.Users.UsersData;
 import com.company.GUI.UserGUI.ChangePasswordFrame;
 import com.company.Model.Asset;
 import com.company.Model.OrgAsset;
 import com.company.NetworkDataSource.AssetNDS;
+import com.company.NetworkDataSource.BidNDS;
 import com.company.NetworkDataSource.OrgAssetNDS;
 import com.company.Utilities.PasswordHasher;
 
@@ -119,7 +121,18 @@ public class AssetsPanel extends JPanel {
     }
 
     private void seePriceHistory() {
+        OrgAsset asset = (OrgAsset) orgAssetTableModel.getValueAt(assetsTable.getSelectedRow(), 0);
 
+        EventQueue.invokeLater(() -> {
+
+            PastHistoryGUI ex = null;
+            try {
+                ex = new PastHistoryGUI(new BidData(new BidNDS()), new AssetData(new AssetNDS()), asset.getAssetID());
+                ex.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 }

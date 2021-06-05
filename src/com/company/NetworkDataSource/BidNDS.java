@@ -116,6 +116,15 @@ public class BidNDS implements BidDataSource {
         }
     }
 
+    @Override
+    public ArrayList<Bid> getHistoryList(Integer assetID) throws Exception {
+        outputStream.writeObject(Command.GET_BID_HISTORY);
+        outputStream.writeObject(assetID);
+        outputStream.flush();
+        if (!((Boolean) inputStream.readObject())) throw new Exception("Failed to get bid list, please try again");
+        return (ArrayList<Bid>) inputStream.readObject();
+    }
+
     /**
      * Check trades in database
      * @throws Exception

@@ -43,5 +43,6 @@ public enum Command {
     GET_EMPLOYEE,
     UPDATE_ORG_UNIT_CREDITS,
     UPDATE_BID,
-    UPDATE_DATA
+    UPDATE_DATA,
+    GET_BID_HISTORY
 }

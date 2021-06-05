@@ -14,6 +14,8 @@ public interface BidDataSource {
 
     ArrayList<Object[]> getBidList(Integer orgID, boolean buyType) throws Exception;
 
+    ArrayList<Bid> getHistoryList(Integer assetID) throws Exception;
+
     void checkTrades() throws Exception;
 
     void updateBid(Integer bidID, Double activeQuantity, Double inactiveQuantity ,Double purchaseAmount) throws Exception;
