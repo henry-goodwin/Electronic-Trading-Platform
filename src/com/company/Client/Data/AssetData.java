@@ -58,14 +58,31 @@ public class AssetData {
         assetDataSource.addAsset(asset);
     }
 
+    /**
+     * Checks if name is available
+     * @param name name to search for
+     * @return return true if name is available, return false if not
+     * @throws Exception
+     */
     public Boolean nameAvailability(String name) throws Exception {
         return assetDataSource.checkName(name);
     }
 
+    /**
+     * Contacts the server to update an assets name
+     * @param assetID
+     * @param name
+     * @throws Exception
+     */
     public void updateAssetName(Integer assetID, String name) throws Exception {
         assetDataSource.updateAssetName(assetID, name);
     }
 
+    /**
+     * Contacts the server to delete an asset
+     * @param assetID assetID to delete
+     * @throws Exception
+     */
     public void deleteAsset(Integer assetID) throws Exception {
         assetDataSource.deleteAsset(assetID);
     }

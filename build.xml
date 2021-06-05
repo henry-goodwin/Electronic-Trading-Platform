@@ -1,0 +1,6 @@
+<project name="Electronic Trading System">
+    <target name ="compile">
+        <mkdir dir="target"/>
+        <javac srcdir="src" destdir="target" includeantruntime="false"/>
+    </target>
+</project>

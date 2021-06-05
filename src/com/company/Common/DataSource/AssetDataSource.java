@@ -41,7 +41,18 @@ public interface AssetDataSource {
      */
     Set<Asset> assetSet() throws Exception;
 
+    /**
+     * Updates an assets name
+     * @param assetID
+     * @param name
+     * @throws Exception
+     */
     void updateAssetName(Integer assetID, String name) throws Exception;
 
+    /**
+     * Deletes an asset
+     * @param assetID assetID to delete
+     * @throws Exception
+     */
     void deleteAsset(Integer assetID) throws Exception;
 }
