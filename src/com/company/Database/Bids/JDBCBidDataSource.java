@@ -244,8 +244,8 @@ public class JDBCBidDataSource implements BidDataSource {
 
             // For each buy bid (for asset)
             for (Bid buyBid: sortedActiveBuyBids) {
-                // Check that the buy price meets the sell price
-                if (buyBid.getPrice() >= sellBid.getPrice()) {
+                // Check that the buy price meets the sell price & that buy and sell bid org IDS are different
+                if (buyBid.getPrice() >= sellBid.getPrice() && !buyBid.getOrgID().equals(sellBid.getOrgID())) {
                     // Check that bid is open
                     if (buyBid.getStatus().equals("open") && sellBid.getStatus().equals("open")) {
 
@@ -277,8 +277,6 @@ public class JDBCBidDataSource implements BidDataSource {
                             sellBid.addInactiveQuantity(purchasedAmount);
                             if (sellBid.getActiveQuantity().equals(sellBid.getInactiveQuantity())) sellBid.setStatus("closed");
                             if (buyBid.getActiveQuantity().equals(buyBid.getInactiveQuantity())) sellBid.setStatus("closed");
-
-
 
                             // Process the sale of asset
                             updateOrgUnitCredits(organisationUnitData,sellBid.getOrgID(), purchasePrice);

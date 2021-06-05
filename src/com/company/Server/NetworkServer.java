@@ -16,14 +16,15 @@ import com.company.Database.Persons.PersonsDataSource;
 import com.company.Database.Users.JDBCUsersDataSource;
 import com.company.Database.Users.UsersDataSource;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.Timer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NetworkServer {
@@ -745,6 +746,26 @@ public class NetworkServer {
         return PORT;
     }
 
+    public void checkTrades() {
+
+        int delay=60*1000;// wait for second
+
+        javax.swing.Timer timer = new javax.swing.Timer(delay, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Checked Trade");
+                try {
+                    bidDatabase.checkTrades();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        });
+        timer.setRepeats(true);
+        timer.start();
+
+    }
+
     /**
      * Starts the server running on the default port
      */
@@ -759,6 +780,8 @@ public class NetworkServer {
         orgAssetDatabase = new JDBCOrgAssetDataSource();
         bidDatabase = new JDBCBidDataSource();
         unitEmployeeDatabase = new JDBCOrgUnitEmployeeDataSource();
+
+        checkTrades();
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             serverSocket.setSoTimeout(SOCKET_ACCEPT_TIMEOUT);
@@ -777,6 +800,7 @@ public class NetworkServer {
                             handleConnection(socket);
                     });
                     clientThread.start();
+
                 } catch (SocketTimeoutException ignored) {
                     // Do nothing. A timeout is normal- we just want the socket to
                     // occasionally timeout so we can check if the server is still running
@@ -787,6 +811,7 @@ public class NetworkServer {
                     e.printStackTrace();
                 }
             }
+
         } catch (IOException e) {
             // If we get an error starting up, show an error dialog then exit
             e.printStackTrace();
