@@ -12,6 +12,7 @@ public class OrgUnitTableModel extends AbstractTableModel {
 
     public void setData(ArrayList<Object[]> data) {
         orgList = data;
+        fireTableDataChanged();
     }
 
     @Override

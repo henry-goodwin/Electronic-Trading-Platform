@@ -197,15 +197,6 @@ public class TestUsers {
     }
 
     @Test
-    void TestLoginInvalidUsername() throws Exception {
-        User user = new User(1, "Standard", 2, "dag vey", PasswordHasher.hashString("deadly"));
-
-        assertThrows(Exception.class, () -> {
-            mockUsersDatabase.login(user.getUsername(), user.getPasswordHash());
-        });
-    }
-
-    @Test
     void TestLoginInvalidPassword() throws Exception {
         User user = new User(1, "Standard", 2, "davey", PasswordHasher.hashString("wrong"));
 

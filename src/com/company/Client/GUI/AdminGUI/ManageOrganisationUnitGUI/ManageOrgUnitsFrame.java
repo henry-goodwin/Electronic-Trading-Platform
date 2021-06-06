@@ -1,5 +1,6 @@
 package com.company.Client.GUI.AdminGUI.ManageOrganisationUnitGUI;
 
+import com.company.Client.Client;
 import com.company.Client.Data.OrgUnitEmployeesData;
 import com.company.Client.Data.OrganisationUnitData;
 import com.company.Client.Data.UsersData;
@@ -142,6 +143,7 @@ public class ManageOrgUnitsFrame extends JFrame {
     private void updateTable(){
         try {
             orgUnitTableModel.setData(this.organisationUnitData.getList());
+            orgUnitsTable.updateUI();
         } catch (Exception e) {
             e.printStackTrace();
         }
